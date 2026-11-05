@@ -1,0 +1,36 @@
+# Demo 1: Indoor pickup — walk to a bouncing ball and pick it up
+name: indoor_pickup
+width: 320
+height: 180
+fps: 12
+duration: 5.0
+background: indoor
+ground_y: 145
+scale: 3
+gravity: 420
+
+characters:
+  - name: hero
+    x: 40
+    preset: hero        # spiky brown hair, blue tee, brown trousers
+    hat: red
+    expression: neutral
+    pose: idle
+
+objects:
+  - name: ball
+    kind: ball
+    x: 200
+    y: 40
+    bounce: 0.6
+    color: orange
+
+timeline:
+  - { t: 0.0, action: cycle, target: hero, name: idle, speed: 0.6 }
+  - { t: 0.3, action: walk_to, target: hero, x: 185, speed: 55 }
+  - { t: 2.2, action: pose, target: hero, name: pickup }
+  - { t: 2.2, action: expression, target: hero, name: surprise }
+  - { t: 2.5, action: pickup, target: hero, object: ball }
+  - { t: 2.8, action: pose, target: hero, name: idle }
+  - { t: 2.8, action: expression, target: hero, name: happy }
+  - { t: 3.2, action: cycle, target: hero, name: wave, speed: 1.5 }

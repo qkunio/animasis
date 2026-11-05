@@ -1,0 +1,115 @@
+# 经济学小课堂 · 机会成本 (Opportunity Cost)
+# 小明只有 ¥10：冰淇淋 vs 玩游戏 1 小时 —— 选了一个，被放弃的那个就是机会成本。
+# Render: .venv/bin/python -m animasis render demos/econ_opportunity_cost.yaml -o demos/output/econ_opportunity_cost.mp4
+name: econ_opportunity_cost
+width: 320
+height: 180
+fps: 12
+duration: 36.0
+background: market
+ground_y: 150
+scale: 3
+gravity: 420
+
+characters:
+  - { name: xiaoming, preset: hero, x: -14, expression: neutral }          # 小明
+  - { name: vendor,   preset: bob,  x: 54, facing: 1, expression: happy }  # 冰淇淋摊主
+  - { name: xiaohong, preset: alice, x: 352, facing: -1, expression: happy } # 小红
+
+objects:
+  - { name: coin,     kind: coin,     held_by: xiaoming, w: 7, h: 7 }
+  - { name: icecream, kind: icecream, held_by: vendor,   w: 9, h: 13 }
+
+overlays:
+  # ---------------- props on the street (back layer; stall counters auto-draw in front)
+  - { kind: stall,   t: 0, x: 50, w: 58, h: 70, counter: 11, color: 5, sign: "冰淇淋", goods: icecream, goods_x: [-21, -12, 21] }
+  - { kind: cabinet, t: 0, x: 262, w: 22, h: 46, color: 11 }
+  - { kind: cabinet, t: 0, x: 290, w: 22, h: 46, color: 10 }
+  - { kind: text,    t: 0, x: 276, y: 69, text: "游戏厅", size: 13, bold: true, color: 7, outline: 16 }
+  - { kind: tag,     t: 0, until: 26.5, x: 50, y: 137, text: "¥10" }
+  - { kind: tag,     t: 0, until: 21.5, x: 276, y: 88, text: "1小时 ¥10" }
+
+  # ---------------- HUD: 小明的钱包
+  - { kind: hud, t: 3.5, until: 15.8, x: 6, y: 6, label: "小明", text: "¥10" }
+  - { kind: hud, t: 15.8, until: 26.5, x: 6, y: 6, label: "小明", text: "¥0", color: 5 }
+
+  # ---------------- beat 2: 只有 ¥10
+  - { kind: caption, t: 3.5, until: 7.6, text: "小明口袋里只有 ¥10", reveal: 14 }
+  # ---------------- beat 3: 两个想要的东西
+  - { kind: caption, t: 7.6, until: 9.8, text: "左边：一支冰淇淋，¥10", reveal: 14 }
+  - { kind: bubble,  t: 8.0, until: 9.8, follow: xiaoming, dx: -4, dy: -52, icons: [icecream], tail: right }
+  - { kind: caption, t: 9.8, until: 12.0, text: "右边：玩游戏 1 小时，也是 ¥10", reveal: 14 }
+  - { kind: bubble,  t: 10.2, until: 12.0, follow: xiaoming, dx: 4, dy: -52, icons: [console], tail: left }
+  - { kind: caption, t: 12.0, until: 14.4, text: "钱只够一个——只能二选一！", reveal: 14, color: 7 }
+  - { kind: bubble,  t: 12.0, until: 14.4, follow: xiaoming, dx: 0, dy: -52, icons: [icecream, console], text: "?" }
+
+  # ---------------- beat 4: 选择 + 交换
+  - { kind: caption, t: 14.4, until: 18.2, text: "他选了冰淇淋：付出 ¥10，换来一支甜筒", reveal: 14 }
+
+  # ---------------- beat 5: 放弃的那个
+  - { kind: caption, t: 18.2, until: 21.5, text: "同一时间，小红正在玩游戏……", reveal: 14 }
+  - { kind: bubble,  t: 19.6, until: 26.5, follow: xiaoming, dx: 6, dy: -52, icons: [console], cross: true, tail: left }
+  - { kind: tag,     t: 21.5, until: 26.5, x: 276, y: 88, text: "1小时 ¥10", strike: true }
+  - { kind: tag,     t: 21.5, until: 26.5, x: 276, y: 52, text: "机会成本", bg: 5, color: 4, border: 0, blink: 1.5 }
+  - { kind: caption, t: 21.5, until: 26.5, text: "放弃的「玩游戏 1 小时」= 冰淇淋的机会成本", reveal: 12, color: 7 }
+
+  # ---------------- title cards
+  - kind: card
+    t: 0
+    until: 3.5
+    bg: 25
+    stripe: 7
+    items:
+      - { text: "经济学小课堂", size: 12, color: 3 }
+      - { text: "机会成本", size: 32, color: 7 }
+      - { text: "Opportunity Cost", size: 12, color: 4 }
+      - { icons: [icecream, "VS", console], scale: 2, spacing: 12, at: 0.8 }
+  - kind: card
+    t: 26.5
+    until: 31.5
+    bg: 1
+    stripe: 5
+    items:
+      - { text: "什么是机会成本？", size: 16, color: 7 }
+      - { text: "做出一个选择时，", size: 12, color: 4, at: 0.6 }
+      - { text: "你放弃的选项中价值最高的那个", size: 13, color: 26, bold: true, at: 1.2 }
+      - { text: "它不只是钱——还有时间、精力和机会", size: 12, color: 3, at: 2.4 }
+  - kind: card
+    t: 31.5
+    until: 36.0
+    bg: 25
+    stripe: 7
+    items:
+      - { text: "下次做选择之前，问问自己：", size: 12, color: 4 }
+      - { text: "我放弃了什么？", size: 24, color: 7, at: 0.6 }
+      - { text: "经济学小课堂 · Animasis", size: 12, color: 3, at: 1.6 }
+
+timeline:
+  # beat 1-2: 小明走进集市
+  - { t: 0.0,  action: cycle,      target: vendor, name: idle, speed: 0.5 }
+  - { t: 3.5,  action: walk_to,    target: xiaoming, x: 160, speed: 48 }
+  # beat 3: 左看冰淇淋，右看游戏厅，犯难
+  - { t: 7.6,  action: face,       target: xiaoming, dir: -1 }
+  - { t: 7.8,  action: expression, target: xiaoming, name: happy }
+  - { t: 9.8,  action: face,       target: xiaoming, dir: 1 }
+  - { t: 12.0, action: expression, target: xiaoming, name: surprise }
+  - { t: 12.0, action: cycle,      target: xiaoming, name: idle, speed: 1.0 }
+  # beat 4: 走到冰淇淋摊，付钱，拿到甜筒
+  - { t: 14.4, action: expression, target: xiaoming, name: neutral }
+  - { t: 14.4, action: walk_to,    target: xiaoming, x: 96, speed: 50 }
+  - { t: 15.8, action: face,       target: xiaoming, dir: -1 }
+  - { t: 15.8, action: give,       target: xiaoming, to: vendor, object: coin }
+  - { t: 16.5, action: pose,       target: xiaoming, name: idle }
+  - { t: 16.5, action: give,       target: vendor, to: xiaoming, object: icecream }
+  - { t: 16.5, action: expression, target: xiaoming, name: happy }
+  - { t: 17.3, action: pose,       target: xiaoming, name: hold }
+  - { t: 17.4, action: cycle,      target: vendor, name: wave, speed: 1.3 }
+  - { t: 18.6, action: pose,       target: vendor, name: idle }
+  # beat 5: 小红来玩游戏；小明想到被放弃的那一小时
+  - { t: 18.0, action: walk_to,    target: xiaohong, x: 248, speed: 52 }
+  - { t: 19.6, action: face,       target: xiaoming, dir: 1 }
+  - { t: 19.7, action: face,       target: xiaohong, dir: 1 }
+  - { t: 19.8, action: pose,       target: xiaohong, name: give }
+  - { t: 20.4, action: expression, target: xiaoming, name: neutral }
+  - { t: 23.0, action: expression, target: xiaoming, name: blink }
+  - { t: 23.3, action: expression, target: xiaoming, name: happy }

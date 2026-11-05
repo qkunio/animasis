@@ -1,0 +1,153 @@
+# Animasis
+
+**EN** · Pixel animation toolkit for AI agents — skeleton, poses, light physics, YAML/JSON DSL, MP4/GIF export.  
+**中文** · 面向 AI agent 的像素动画开发环境：骨架绑定、姿态库、轻量物理、场景 DSL、渲染导出。
+
+---
+
+## Quick Start | 快速开始
+
+```bash
+cd /workspace/animasis
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+# needs ffmpeg on PATH for MP4
+
+# Render one scene
+animasis render demos/indoor_pickup.yaml -o demos/output/indoor_pickup.mp4
+
+# Render all demos
+python -m animasis.demos
+# or: animasis demos
+```
+
+Requirements | 依赖: Python 3.11+, Pillow, PyYAML, ffmpeg (system). Optional: numpy.
+
+---
+
+## Architecture | 架构
+
+```
+skeleton → pose → physics → composite → export
+   │         │        │          │          └─ MP4 (ffmpeg) / GIF (Pillow)
+   │         │        │          └─ palette + nearest-neighbor upscale
+   │         │        └─ gravity / AABB / bounce / held attachments
+   │         └─ idle / walk / jump / wave / pickup / …
+   └─ bones + face + apparel hang points
+```
+
+| Layer | Module | Role |
+|-------|--------|------|
+| Skeleton | `skeleton.py` | Humanoid bones, joint angles, attach points |
+| Face / apparel | `face.py`, `apparel.py` | Expressions, hats, props on hang points |
+| Pose | `poses.py` | Library + cycle blending (no broken limbs) |
+| Physics | `physics.py` | Gravity, ground/wall collision, restitution |
+| Sprite | `sprite.py` | Capsule-limb rasteriser, 3-tone shading, layered hair/clothes, soft outline |
+| Render | `render.py` | Fixed 33-color palette (light/base/shade ramps), NN scale, export |
+| DSL | `scene.py`, `builder.py` | YAML/JSON scenes + Python fluent builder |
+| CLI | `cli.py` | `animasis render scene.yaml -o out.mp4` |
+
+---
+
+## DSL Example | DSL 示例
+
+```yaml
+name: hello
+width: 320
+height: 180
+fps: 12
+duration: 3.0
+background: outdoor   # indoor | outdoor | room
+ground_y: 150
+scale: 3
+
+characters:
+  - name: hero
+    x: 40
+    cloth: blue
+    pants: red
+    hat: gold
+    expression: happy
+
+objects:
+  - name: ball
+    kind: ball
+    x: 160
+    y: 40
+    bounce: 0.65
+    color: orange
+
+timeline:
+  - { t: 0.0, action: walk_to, target: hero, x: 140, speed: 50 }
+  - { t: 1.5, action: jump, target: hero, vy: -220 }
+  - { t: 2.0, action: pickup, target: hero, object: ball }
+```
+
+### Python builder | Python 构建器
+
+```python
+from animasis import SceneBuilder
+
+SceneBuilder("hi") \
+    .background("outdoor").ground(150).duration(3) \
+    .character("hero", x=40, cloth="blue", hat="gold") \
+    .object("ball", x=160, y=40) \
+    .at(0.0, "walk_to", "hero", x=140, speed=50) \
+    .at(1.5, "jump", "hero", vy=-220) \
+    .render("out.mp4")
+```
+
+### Timeline actions | 时间轴动作
+
+`pose` · `cycle` · `expression` · `face` · `move` · `walk_to` · `jump` · `pickup` · `drop` · `give` · `impulse` · `say`
+
+Character presets | 角色预设: `hero`, `alice`, `bob`, `runner`, `kid` (`preset:`; override with `hair_style` short/spiky/long/bob/ponytail/buzz, `body` default/slim/stocky, `skin` light/medium/tan, `cloth`, `pants`, `hair`, `shoes`, `skirt`, `sleeves`, `belt`, `hat`)  
+Built-in poses | 内置姿态: `idle`, `walk_a/b`, `walk_pass_a/b`, `jump`, `crouch`, `land`, `wave`, `pickup`, `reach`, `give`, `receive`  
+Cycles | 循环: `idle`, `walk`, `wave`, `jump`, `pickup`
+
+---
+
+## Demos | 演示场景
+
+| File | One-liner |
+|------|-----------|
+| `demos/indoor_pickup.yaml` | Indoor: walk to a bouncing ball, pick it up, wave. / 室内捡球并挥手 |
+| `demos/two_person_handoff.yaml` | Two people wave, approach, hand over a gift. / 两人互动递物 |
+| `demos/outdoor_jump.yaml` | Outdoor run–jump with ball bounce physics. / 室外跳跃与弹跳物理 |
+
+Outputs land in `demos/output/*.mp4`.
+
+---
+
+## Aesthetic defaults | 审美默认
+
+- Unified 33-color retro palette (16 base + shading ramps) (`animasis.palette.PALETTE`)
+- Readable silhouettes with dark outlines
+- Face presets that stay simple (not uncanny)
+- Pose angles constrained so limbs do not fold backward
+- Nearest-neighbor upscale keeps crisp pixels
+
+---
+
+## CLI
+
+```bash
+animasis render scene.yaml -o out.mp4
+animasis render scene.json -o out.gif --scale 4
+animasis poses
+animasis demos -o demos/output
+python -m animasis.demos
+```
+
+---
+
+## License
+
+MIT
+
+---
+
+## Story demo: 经济学科普「机会成本」
+
+`demos/econ_opportunity_cost.yaml` → `demos/output/econ_opportunity_cost.mp4`：36 秒像素科普短片，用 `overlays:` 层（标题卡、字幕、价签、思考气泡、钱包 HUD、摊位道具）讲清机会成本。详见 [demos/econ_README.md](demos/econ_README.md)。重新渲染：`.venv/bin/python -m animasis render demos/econ_opportunity_cost.yaml -o demos/output/econ_opportunity_cost.mp4`

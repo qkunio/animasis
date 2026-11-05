@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "animasis"
+version = "0.1.0"
+description = "Pixel animation toolkit for AI agents — skeleton, poses, physics, DSL, MP4/GIF export"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Animasis" }]
+keywords = ["pixel", "animation", "skeleton", "agent", "dsl"]
+dependencies = [
+  "Pillow>=10.0",
+  "PyYAML>=6.0",
+]
+optional-dependencies = { numpy = ["numpy>=1.24"] }
+
+[project.scripts]
+animasis = "animasis.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/animasis/animasis"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["animasis*"]
+
+[tool.setuptools.package-data]
+animasis = ["py.typed"]

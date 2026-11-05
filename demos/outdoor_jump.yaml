@@ -1,0 +1,44 @@
+# Demo 3: Outdoor jump — run, jump arc, ball bounce physics
+name: outdoor_jump
+width: 320
+height: 180
+fps: 12
+duration: 5.5
+background: outdoor
+ground_y: 150
+scale: 3
+gravity: 420
+
+characters:
+  - name: runner
+    x: 30
+    preset: runner      # ginger ponytail, green top, slim build
+    expression: happy
+
+objects:
+  - name: ball
+    kind: ball
+    x: 100
+    y: 40
+    vx: 35
+    vy: -20
+    bounce: 0.7
+    color: orange
+  - name: crate
+    kind: box
+    x: 240
+    y: 144
+    w: 14
+    h: 12
+    bounce: 0.2
+    color: brown
+    dynamic: false
+
+timeline:
+  - { t: 0.0, action: walk_to, target: runner, x: 120, speed: 60 }
+  - { t: 1.8, action: jump, target: runner, vy: -240 }
+  - { t: 1.8, action: expression, target: runner, name: surprise }
+  - { t: 2.0, action: impulse, target: ball, vx: 50, vy: -180 }
+  - { t: 2.8, action: expression, target: runner, name: happy }
+  - { t: 3.0, action: walk_to, target: runner, x: 220, speed: 55 }
+  - { t: 4.5, action: cycle, target: runner, name: wave, speed: 1.6 }
