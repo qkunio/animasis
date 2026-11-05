@@ -299,7 +299,42 @@ def _hair_masks(n: int, m: int, f: int, style: str, pr: dict[str, float]) -> tup
         tie = (n - 6 * f + 0.5, m - 3 + 0.5)
         back |= capsule(tie, (n - 8 * f + 0.5, m + 4 + 0.5), 1.6)
         back |= capsule(tie, (n - 7 * f + 0.5, m - 2 + 0.5), 2.2)
+    if style == "topknot":  # 发髻: hair pulled up into a bun on the crown
+        top = m - pr["head_ry"] - 1.0
+        bun = (n - 1 * f + 0.5, top - 1.6)
+        front |= capsule(bun, bun, 2.3)
+        front |= {(n - 1 * f + k, int(top) + 1) for k in (-2, -1, 0, 1, 2)}
     return front, back
+
+
+def _beard_mask(n: int, m: int, f: int, style: str, pr: dict[str, float]) -> set[Pix]:
+    """Beard in the hair colour: ``short`` = full jaw (张飞), ``long`` = jaw + long beard (关羽)."""
+    c = n + f
+    rx, ry = pr["head_rx"], pr["head_ry"]
+    out: set[Pix] = set()
+    jaw = superellipse(n, m, rx + 0.6, ry + 1.2)
+    for (x, y) in jaw:
+        dx = (x - n) * f
+        if y >= m + 3 and dx >= -3:
+            if y == m + 3 and abs(x - c) <= 1:
+                continue  # keep the mouth readable
+            if y == m + 3 and dx < 1 and style == "long":
+                continue
+            out.add((x, y))
+    # sideburn toward the ear
+    for y in range(m + 1, m + 3):
+        out.add((n - 3 * f, y))
+    if style == "short":  # bushy: a little wider + spiky chin tufts
+        for k in (-2, 0, 2):
+            out.add((c + k, int(m + ry + 2)))
+    if style == "long":
+        y0 = int(m + ry + 1)
+        for i in range(10):
+            w = 2 if i < 4 else (1 if i < 8 else 0)
+            cx = c + (1 if i >= 6 else 0) * f
+            for k in range(-w, w + 1):
+                out.add((cx + k, y0 + i))
+    return out
 
 
 def _hair_colors(mask: set[Pix], ramp: Ramp, n: int, m: int) -> dict[Pix, int]:
@@ -342,6 +377,8 @@ def draw_sprite(ch: Character, hat: int | None = None) -> Canvas:
     if hat is not None:
         front_hair = {p for p in front_hair if p[1] > m - 4}
     cv.paint(_hair_colors(front_hair, hair_ramp, n, m), "head")
+    if look.beard:
+        cv.paint(shade(_beard_mask(n, m, f, look.beard, pr), hair_ramp, rim_light=False), "head")
     if hat is not None:
         hr = pal.ramp(hat)
         dome = {p for p in superellipse(n, m - 1, pr["head_rx"] + 1.0, pr["head_ry"] + 1.0) if p[1] <= m - 4}

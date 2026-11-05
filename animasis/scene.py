@@ -11,7 +11,8 @@ from . import palette as pal
 from .physics import Body, World
 from .poses import apply_pose, get_pose, sample_cycle
 from .overlay import Overlay, draw_overlays, overlay_from_dict
-from .render import composite_frame, export_frames
+from .camera import Camera, make_resolver, validate_targets
+from .render import _CLEAR, FrameBuffer, composite_frame, export_frames, fb_to_image
 from .skeleton import Character
 
 try:
@@ -33,7 +34,7 @@ class Scene:
     name: str = "scene"
     width: int = 320
     height: int = 180
-    fps: int = 12
+    fps: int = 60
     duration: float = 4.0
     background: str = "outdoor"
     ground_y: float = 140.0
@@ -44,6 +45,7 @@ class Scene:
     timeline: list[TimelineEvent] = field(default_factory=list)
     held: dict[str, str] = field(default_factory=dict)  # object -> character
     overlays: list[Overlay] = field(default_factory=list)  # timed text / props / title cards
+    camera: Camera | None = None  # optional shots / pan / zoom / cuts (see animasis.camera)
     _pose_state: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -101,7 +103,7 @@ def scene_from_dict(data: dict[str, Any]) -> Scene:
         name=str(data.get("name", "scene")),
         width=int(data.get("width", 320)),
         height=int(data.get("height", 180)),
-        fps=int(data.get("fps", 12)),
+        fps=int(data.get("fps", 60)),
         duration=float(data.get("duration", 4.0)),
         background=str(data.get("background", "outdoor")),
         ground_y=float(data.get("ground_y", 140)),
@@ -128,7 +130,10 @@ def scene_from_dict(data: dict[str, Any]) -> Scene:
             skirt=c.get("skirt"),
             hat=_as_color(c.get("hat"), None) if c.get("hat") else None,
             belt=_as_color(c.get("belt"), None),
+            beard=c.get("beard"),
         )
+        if c.get("visible") is False:
+            ch.visible = False
         if c.get("apparel"):
             ch.apparel["items"] = list(c.get("apparel") or [])
         pose = c.get("pose", "idle")
@@ -172,6 +177,9 @@ def scene_from_dict(data: dict[str, Any]) -> Scene:
             )
         )
     sc.timeline.sort(key=lambda e: e.time)
+    if data.get("camera"):
+        sc.camera = Camera.from_yaml(data["camera"], sc.width, sc.height)
+        validate_targets(sc.camera, sc.characters, sc.overlays)
     return sc
 
 
@@ -256,6 +264,20 @@ def _apply_event(scene: Scene, ev: TimelineEvent) -> None:
             "air_t0": ev.time,
             "jumping": True,
         }
+    elif a in ("show", "hide") and who in scene.characters:
+        scene.characters[who].visible = a == "show"
+    elif a == "attach" and who in scene.characters:
+        # put an object in a character's hand without a pickup pose
+        obj = str(p.get("object", p.get("item", "")))
+        if obj in scene.world.bodies:
+            for other in scene.characters.values():
+                if other.held_item == obj:
+                    other.held_item = None
+            scene.held[obj] = who
+            scene.world.bodies[obj].attached_to = who
+            scene.characters[who].held_item = obj
+    elif a == "background":
+        scene.background = str(p.get("name", scene.background))
     elif a == "say" and who in scene.characters:
         scene.characters[who].expression = str(p.get("expression", "happy"))
 
@@ -299,12 +321,44 @@ def _tick_continuous(scene: Scene, t: float, dt: float) -> None:
             ch.skeleton.set_pose(pose)
 
 
-def render_scene(scene: Scene, output: str | Path) -> Path:
+def _render_camera_frame(scene: Scene, t: float) -> "Image.Image":
+    """Stage -> camera crop/zoom (at output resolution) -> screen overlays -> fade."""
+    from PIL import Image
+
+    cam = scene.camera
+    resolve = make_resolver(scene.characters, scene.overlays, ground_y=scene.ground_y, t=t)
+    st = cam.state(t, resolve)
+    kw = dict(width=scene.width, height=scene.height, ground_y=scene.ground_y, characters=scene.characters)
+
+    def under(fb):
+        draw_overlays(fb.put, scene.overlays, t, "back", flip=st.flip, **kw)
+
+    def over(fb):
+        draw_overlays(fb.put, scene.overlays, t, "world_front", **kw)
+
+    fb = composite_frame(list(scene.characters.values()), scene.world, bg=scene.background,
+                         width=scene.width, height=scene.height, held=scene.held, under=under, over=over)
+    W, H, S = scene.width, scene.height, max(1, int(scene.scale))
+    stage = fb_to_image(fb)
+    img = stage.resize((W * S, H * S), Image.NEAREST, box=cam.view_box(st))
+    if st.flip:
+        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+    screen = FrameBuffer(W, H)
+    screen.buf = [[_CLEAR] * W for _ in range(H)]
+    draw_overlays(screen.put, scene.overlays, t, "screen", to_screen=cam.to_screen(st), flip=st.flip, **kw)
+    over_img = fb_to_image(screen, transparent=_CLEAR).resize((W * S, H * S), Image.NEAREST)
+    img.paste(over_img, (0, 0), over_img)
+    if st.brightness < 0.999:
+        img = Image.eval(img, lambda v, b=max(0.0, st.brightness): int(v * b))
+    return img
+
+
+def iter_frames(scene: Scene):
+    """Yield ``(t, PIL.Image)`` for every frame (shared by render_scene and preview tools)."""
     n_frames = max(1, int(scene.duration * scene.fps))
     dt = 1.0 / scene.fps
     events = list(scene.timeline)
     ei = 0
-    frames = []
 
     for i in range(n_frames):
         t = i * dt
@@ -313,6 +367,9 @@ def render_scene(scene: Scene, output: str | Path) -> Path:
             ei += 1
         _tick_continuous(scene, t, dt)
         scene.world.step(dt)
+        if scene.camera is not None:
+            yield t, _render_camera_frame(scene, t)
+            continue
         hooks = {}
         if scene.overlays:
             def _layer(name: str, t: float = t):
@@ -330,6 +387,9 @@ def render_scene(scene: Scene, output: str | Path) -> Path:
             held=scene.held,
             **hooks,
         )
-        frames.append(fb.to_image(scale=scene.scale))
+        yield t, fb.to_image(scale=scene.scale)
 
+
+def render_scene(scene: Scene, output: str | Path) -> Path:
+    frames = [img for _, img in iter_frames(scene)]
     return export_frames(frames, output, fps=scene.fps)

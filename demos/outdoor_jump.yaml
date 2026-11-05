@@ -2,7 +2,7 @@
 name: outdoor_jump
 width: 320
 height: 180
-fps: 12
+fps: 60
 duration: 5.5
 background: outdoor
 ground_y: 150

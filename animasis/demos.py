@@ -28,7 +28,7 @@ def build_indoor_pickup() -> SceneBuilder:
     b = (
         SceneBuilder("indoor_pickup")
         .size(320, 180)
-        .fps(12)
+        .fps(60)
         .duration(5.0)
         .background("indoor")
         .ground(145)
@@ -52,7 +52,7 @@ def build_two_person_handoff() -> SceneBuilder:
     b = (
         SceneBuilder("two_person_handoff")
         .size(320, 180)
-        .fps(12)
+        .fps(60)
         .duration(6.0)
         .background("room")
         .ground(145)
@@ -80,7 +80,7 @@ def build_outdoor_jump() -> SceneBuilder:
     b = (
         SceneBuilder("outdoor_jump")
         .size(320, 180)
-        .fps(12)
+        .fps(60)
         .duration(5.5)
         .background("outdoor")
         .ground(150)

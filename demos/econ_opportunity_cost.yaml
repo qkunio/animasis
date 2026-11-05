@@ -4,7 +4,7 @@
 name: econ_opportunity_cost
 width: 320
 height: 180
-fps: 12
+fps: 60
 duration: 36.0
 background: market
 ground_y: 150

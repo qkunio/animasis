@@ -111,6 +111,22 @@ POSES: dict[str, dict[str, float]] = {
         upper_arm_r=58, lower_arm_r=34,
         upper_arm_l=52, lower_arm_l=36,
     ),
+    # 作揖: lean forward, both hands clasped in front of the chest
+    "bow": _pose(
+        torso=22, head=6,
+        upper_arm_r=34, lower_arm_r=62, hand_r=10,
+        upper_arm_l=28, lower_arm_l=66, hand_l=10,
+        upper_leg_r=-6, upper_leg_l=-6,
+    ),
+    # hand raised to knock on a door
+    "knock": _pose(
+        torso=2, head=2,
+        upper_arm_r=70, lower_arm_r=70, hand_r=20,
+    ),
+    "phone": _pose(          # looking down at a phone held at chest height
+        head=10,
+        upper_arm_r=12, lower_arm_r=118, hand_r=-10,
+    ),
     "hold": _pose(
         upper_arm_r=20, lower_arm_r=70,
     ),

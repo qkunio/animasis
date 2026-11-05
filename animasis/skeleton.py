@@ -269,7 +269,7 @@ class Look:
 
     skin: int = pal.SKIN
     hair: int = pal.HAIR
-    hair_style: str = "short"      # short | spiky | long | bob | ponytail | buzz
+    hair_style: str = "short"      # short | spiky | long | bob | ponytail | buzz | topknot
     shirt: int = pal.CLOTH_A
     pants: int = pal.CLOTH_B
     shoes: int = pal.SHOE
@@ -279,6 +279,7 @@ class Look:
     hat: int | None = None
     blush: bool = True
     lashes: bool = False
+    beard: str | None = None       # None | short | long  (drawn in the hair colour)
 
 
 PRESETS: dict[str, dict[str, Any]] = {
@@ -335,10 +336,11 @@ class Character:
         skirt: bool | None = None,
         hat: int | None = None,
         belt: int | None = None,
+        beard: str | None = None,
     ) -> "Character":
         spec: dict[str, Any] = dict(PRESETS.get(preset or "", {}))
         overrides = dict(shirt=cloth, pants=pants, hair=hair, hair_style=hair_style, body=body,
-                         skin=skin, shoes=shoes, sleeves=sleeves, skirt=skirt, hat=hat, belt=belt)
+                         skin=skin, shoes=shoes, sleeves=sleeves, skirt=skirt, hat=hat, belt=belt, beard=beard)
         for k, v in overrides.items():
             if v is not None:
                 spec[k] = v

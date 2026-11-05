@@ -66,6 +66,6 @@ def draw_prop(put: Callable[[int, int, int], None], kind: str, x: float, y: floa
         draw_box(put, x, y, w=6, h=6, color=pal.ACCENT)
         put(int(x), int(y) - 1, pal.CLOTH_B)
     elif kind in ICONS:  # pixel-art props (icecream, coin, console): held from below
-        blit_icon(put, kind, x, y + 2, anchor="bottom" if kind == "icecream" else "center")
+        blit_icon(put, kind, x, y + 2, anchor="bottom" if kind in ("icecream", "fan") else "center")
     else:
         draw_box(put, x, y, w=4, h=4, color=pal.PROP)

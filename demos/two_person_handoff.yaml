@@ -2,7 +2,7 @@
 name: two_person_handoff
 width: 320
 height: 180
-fps: 12
+fps: 60
 duration: 6.0
 background: room
 ground_y: 145

@@ -10,3 +10,5 @@ demos/output/*
 *.mp4
 *.gif
 .DS_Store
+demos/audio/
+demos/frames/_debug_twist/

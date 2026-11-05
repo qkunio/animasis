@@ -2,7 +2,7 @@
 name: indoor_pickup
 width: 320
 height: 180
-fps: 12
+fps: 60
 duration: 5.0
 background: indoor
 ground_y: 145

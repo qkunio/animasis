@@ -29,6 +29,8 @@ KEY: dict[str, int] = {
     "g": 8,   # green
     "P": 11,  # purple
     "p": 29,  # purple shade
+    "N": 14,  # wood brown
+    "T": 10,  # deep blue
 }
 
 ICONS: dict[str, list[str]] = {
@@ -67,6 +69,35 @@ ICONS: dict[str, list[str]] = {
         "oCCCCco",
         ".occco.",
         "..ooo..",
+    ],
+    "fan": [                 # 羽扇: white feather fan, brown handle (held from below)
+        "..ooooo..",
+        ".oWWWWWo.",
+        "oWWLWLWWo",
+        "oWLWWWLWo",
+        "oWWWLWWWo",
+        ".oWWLWWo.",
+        "..oWLWo..",
+        "...oSo...",
+        "...oNo...",
+        "...oNo...",
+        "....o....",
+    ],
+    "letter": [              # 书信: rolled scroll with a red tie
+        ".ooooooooo.",
+        "oNWWWSWWWNo",
+        "oNWWWSWWWNo",
+        "oNWWWSWWWNo",
+        ".ooooooooo.",
+    ],
+    "phone": [               # 手机: black slab, map screen with a blue dot
+        "ooooo",
+        "oBBBo",
+        "oBWBo",
+        "oWTWo",
+        "oBWBo",
+        "oBBBo",
+        "ooooo",
     ],
     "cross": [
         "SS.....SS",

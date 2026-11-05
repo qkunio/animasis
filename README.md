@@ -151,3 +151,11 @@ MIT
 ## Story demo: 经济学科普「机会成本」
 
 `demos/econ_opportunity_cost.yaml` → `demos/output/econ_opportunity_cost.mp4`：36 秒像素科普短片，用 `overlays:` 层（标题卡、字幕、价签、思考气泡、钱包 HUD、摊位道具）讲清机会成本。详见 [demos/econ_README.md](demos/econ_README.md)。重新渲染：`.venv/bin/python -m animasis render demos/econ_opportunity_cost.yaml -o demos/output/econ_opportunity_cost.mp4`
+
+## Story demo: 三顾茅庐（edge-tts 中文旁白）
+
+`demos/sangu_maolu.yaml` → `demos/output/sangu_maolu.mp4`：88 秒有声像素短片，刘备三请诸葛亮（草庐 / 雪天 / 春日三种背景，关羽、张飞、书童配角），旁白为 edge-tts `zh-CN-YunxiNeural`。带相机分镜：33 个镜位，包括远景、中景、近景和特写，以及推拉摇、硬切、黑场和反打视角，由 YAML `camera:` 关键帧控制，可用 `animasis shots` 打印镜头表。详见 [demos/sangu_maolu_README.md](demos/sangu_maolu_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4`
+
+## Story demo: GNSS 卫星导航科普（相机分镜 + edge-tts 旁白）
+
+`demos/gnss_intro.yaml` → `demos/output/gnss_intro.mp4`：89 秒有声像素科普，讲什么是 GNSS、四大系统、卫星发信号 → 接收机测距 → 多星定位、为什么至少要 4 颗卫星，最后带一下民用用途。画面包括自转地球与卫星星座、手机地图特写和测距示意图，共 53 个镜位。旁白为 `zh-CN-YunxiNeural`。详见 [demos/gnss_README.md](demos/gnss_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4`

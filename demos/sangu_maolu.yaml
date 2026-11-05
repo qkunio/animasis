@@ -1,0 +1,292 @@
+# 三国故事 · 三顾茅庐 —— 刘备三请诸葛亮：两次未遇，第三次终于请出卧龙先生。
+# 有声成片（渲染 + edge-tts 旁白混音）:
+#   .venv/bin/python -m animasis narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4
+# 镜头表:
+#   .venv/bin/python -m animasis shots demos/sangu_maolu.yaml
+# 仅画面（无声）:
+#   .venv/bin/python -m animasis render demos/sangu_maolu.yaml -o /tmp/sangu_silent.mp4
+name: sangu_maolu
+width: 320
+height: 180
+fps: 60
+duration: 88.0
+background: cottage
+ground_y: 150
+scale: 3
+gravity: 420
+
+characters:
+  # 刘备: 黄袍、发髻        关羽: 绿袍、红脸、长髯        张飞: 黑衣、虬髯
+  - { name: liubei,   preset: hero, x: 164, hair: 1, hair_style: topknot, cloth: 7, skirt: true, sleeves: long }
+  - { name: guanyu,   preset: bob,  x: 124, hair: 1, hair_style: topknot, cloth: 15, pants: 24, skirt: true, skin: tan, beard: long }
+  - { name: zhangfei, preset: bob,  x: 84,  hair: 1, hair_style: spiky, cloth: 1, pants: 24, skin: medium, beard: short }
+  # 诸葛亮: 白袍、羽扇      书童
+  - { name: zhuge,    preset: hero, body: slim, x: 222, facing: -1, hair: 1, hair_style: topknot, cloth: 4, skirt: true, sleeves: long, belt: 10, visible: false }
+  - { name: shutong,  preset: kid,  x: 222, facing: -1, hair: 1, hair_style: topknot, cloth: 8, pants: 14, visible: false }
+
+objects:
+  - { name: fan,    kind: fan,    held_by: zhuge, w: 9, h: 11 }
+  - { name: letter, kind: letter, x: -80, y: 140, w: 11, h: 5, dynamic: false }
+
+narration:
+  voice: zh-CN-YunxiNeural
+  rate: "+5%"
+  lines:
+    - { t: 0.8,  text: "三顾茅庐。" }
+    - { t: 5.0,  text: "东汉末年，天下大乱。刘备想成就一番大业，身边却缺少一位出谋划策的军师。" }
+    - { t: 13.8, text: "有人向他推荐：隆中有一位卧龙先生，名叫诸葛亮。" }
+    - { t: 21.8, text: "刘备带着关羽、张飞，来到隆中的草庐，登门拜访。" }
+    - { t: 27.6, text: "书童说，先生一早就出门了，不知什么时候回来。刘备只好失望而归。" }
+    - { t: 37.6, text: "几天后，天降大雪。张飞抱怨：一个村夫，何必亲自去请？刘备不听，冒着风雪又来了。" }
+    - { t: 47.4, text: "可诸葛亮又不在家。刘备留下一封书信，写满了自己的诚意。" }
+    - { t: 56.6, text: "第二年开春，刘备第三次来到草庐。" }
+    - { t: 60.9, text: "诸葛亮正在午睡。刘备不让书童通报，恭恭敬敬地站在门外等候。" }
+    - { t: 67.5, text: "诸葛亮醒来，被刘备的诚意打动。" }
+    - { t: 71.3, text: "他为刘备分析天下大势，提出三分天下的计策，答应出山相助。" }
+    - { t: 78.9, text: "后来，人们用三顾茅庐，比喻真心诚意，一再邀请、拜访有才能的人。" }
+
+# ================= 分镜 / 运镜 (animasis.camera)
+# shot: wide 远景 1.0 · full 全景 1.3 · medium 中景 1.7 · close 近景 2.4 · closeup 特写 3.0 · ecu 3.6
+# move: 秒数 = 从上一镜位平滑推/拉/摇；缺省 = 硬切。transition: fade = 短暂黑场。flip = 反打（镜像视角）
+camera:
+  - { t: 0.0,  shot: wide, name: "片头标题卡" }
+  # --- 序：推荐卧龙
+  - { t: 4.5,  shot: wide, target: [124, 110], transition: fade, fade: 0.6, name: "远景·三兄弟立于山前" }
+  - { t: 9.2,  shot: medium, target: [liubei, guanyu], offset: [0, -6], move: 4.0, name: "缓推中景·刘备愁无军师" }
+  - { t: 13.8, shot: full, target: [90, 84], name: "远景·隆中山水（有人推荐卧龙）" }
+  - { t: 14.0, shot: full, target: [240, 84], move: 2.2, ease: linear, name: "横摇·远山" }
+  - { t: 16.2, shot: close, target: liubei, offset: [10, -8], move: 2.4, ease: out, name: "推近景·刘备喜出望外" }
+  # --- 一顾
+  - { t: 19.0, shot: wide, transition: fade, fade: 0.6, name: "卡片·一顾" }
+  - { t: 21.5, shot: full, target: [90, 112], transition: fade, fade: 0.6, name: "全景·兄弟走向草庐" }
+  - { t: 22.3, shot: full, target: hut, offset: [-34, -6], move: 3.5, name: "横摇·跟到草庐门前" }
+  - { t: 26.0, shot: close, target: [206, 122], name: "近景·刘备叩门「咚咚」" }
+  - { t: 27.6, shot: close, target: [shutong, liubei], offset: [0, -10], flip: true, name: "反打越肩·书童答话" }
+  - { t: 31.2, shot: full, target: [150, 112], name: "全景·失望而归" }
+  # --- 二顾
+  - { t: 34.8, shot: wide, transition: fade, fade: 0.6, name: "卡片·二顾" }
+  - { t: 37.3, shot: wide, transition: fade, fade: 0.6, name: "广角·风雪赶路" }
+  - { t: 41.0, shot: medium, target: [zhangfei, liubei], offset: [0, -8], name: "中景·张飞抱怨" }
+  - { t: 44.6, shot: full, target: liubei, offset: [28, -12], name: "全景跟拍·冒雪前行" }
+  - { t: 47.0, shot: medium, target: [liubei, shutong], offset: [0, -10], name: "中景·先生又不在" }
+  - { t: 48.6, shot: closeup, target: [208, 126], name: "特写·递书信" }
+  - { t: 50.4, shot: medium, target: liubei, offset: [14, -10], name: "中景·刘备作揖" }
+  - { t: 51.4, shot: wide, name: "远景·风雪中离去" }
+  # --- 三顾
+  - { t: 53.8, shot: wide, transition: fade, fade: 0.6, name: "卡片·三顾" }
+  - { t: 56.3, shot: medium, target: hut, offset: [0, -14], transition: fade, fade: 0.6, name: "中景·春日草庐" }
+  - { t: 56.9, shot: wide, move: 2.6, name: "拉远景·兄弟入画" }
+  - { t: 59.6, shot: medium, target: [200, 116], name: "中景·门前（书童：嘘）" }
+  - { t: 62.8, shot: closeup, target: [278, 120], name: "特写·窗内午睡 zZZ" }
+  - { t: 63.8, shot: medium, target: [zhangfei, liubei], offset: [0, -8], name: "中景·门外静候" }
+  - { t: 64.4, shot: medium, zoom: 2.0, target: [zhangfei, liubei], offset: [6, -10], move: 3.0, name: "缓推·张飞不耐" }
+  - { t: 67.5, shot: close, target: zhuge, offset: [-10, -8], name: "近景·孔明出门" }
+  - { t: 69.0, shot: close, target: [liubei, zhuge], offset: [0, -10], flip: true, name: "反打·刘备再拜" }
+  - { t: 71.3, shot: close, target: [liubei, zhuge], offset: [0, -10], name: "近景双人·隆中对" }
+  - { t: 72.2, shot: closeup, zoom: 2.8, target: [liubei, zhuge], offset: [0, -12], move: 2.4, name: "缓推·三分天下" }
+  - { t: 74.6, shot: wide, name: "远景·一同出山" }
+  - { t: 78.4, shot: wide, transition: fade, fade: 0.6, name: "成语卡" }
+
+overlays:
+  # ================= set dressing: 草庐 (per visit / season) + 篱笆
+  - { kind: hut,   id: hut, cy: 118, t: 19.0, until: 34.8, x: 242, sign: "草庐", sign_dx: 20, sign_dy: 8, open: [[27.4, 33.0]] }
+  - { kind: hut,   id: hut, cy: 118, t: 34.8, until: 53.8, x: 242, sign: "草庐", sign_dx: 20, sign_dy: 8, snow: true, open: [[47.0, 51.4]] }
+  - { kind: hut,   id: hut, cy: 118, t: 53.8, until: 78.4, x: 242, sign: "草庐", sign_dx: 20, sign_dy: 8, lamp: true, open: [[61.0, 62.8], [67.5, 70.0]] }
+  - { kind: fence, t: 19.0, until: 34.8, x0: 293, x1: 320 }
+  - { kind: fence, t: 34.8, until: 53.8, x0: 293, x1: 320, snow: true }
+  - { kind: fence, t: 53.8, until: 78.4, x0: 293, x1: 320 }
+  - { kind: snow,   t: 34.8, until: 53.8 }
+  - { kind: petals, t: 53.8, until: 78.4 }
+
+  # ================= 开场: 东汉末年 (4.5–19)
+  - { kind: tag, t: 5.0, until: 12.0, follow: liubei,   dy: -46, text: "刘备", bg: 7 }
+  - { kind: tag, t: 5.6, until: 12.0, follow: guanyu,   dy: -46, text: "关羽", bg: 30 }
+  - { kind: tag, t: 6.2, until: 12.0, follow: zhangfei, dy: -46, text: "张飞", bg: 3 }
+  - { kind: caption, t: 4.8,  until: 9.2,  text: "东汉末年，天下大乱", reveal: 12 }
+  - { kind: caption, t: 9.2,  until: 13.8, text: "刘备想成就大业，却缺一位军师", reveal: 12 }
+  - { kind: bubble,  t: 10.0, until: 13.8, follow: liubei, dx: 6, dy: -54, text: "军师…?", tail: left }
+  - { kind: caption, t: 13.8, until: 19.0, text: "有人推荐：隆中「卧龙」——诸葛亮", reveal: 12, color: 7 }
+  - { kind: bubble,  t: 14.4, until: 19.0, follow: liubei, dx: 8, dy: -56, icons: [fan], text: "卧龙", tail: left }
+
+  # ================= 一顾 (21.5–34.8): 先生出门了
+  - { kind: tag, t: 21.5, until: 34.8, x: 26, y: 6, text: "一顾", bg: 5, color: 4, border: 0 }
+  - { kind: caption, t: 21.8, until: 27.6, text: "刘备带着关羽、张飞，来到隆中草庐", reveal: 12 }
+  - { kind: text,    t: 26.6, until: 27.4, x: 212, y: 104, space: world, text: "咚咚", size: 12, bold: true, color: 7, outline: 16 }
+  - { kind: tag,     t: 27.6, until: 30.0, follow: shutong, dy: -42, text: "书童", bg: 30 }
+  - { kind: bubble,  t: 28.0, until: 31.2, follow: shutong, dx: -16, dy: -60, text: "先生出门了", tail: right }
+  - { kind: caption, t: 27.6, until: 31.2, text: "书童：先生一早就出门了，不知何时回来", reveal: 12 }
+  - { kind: caption, t: 31.2, until: 34.8, text: "刘备只好失望而归", reveal: 12 }
+
+  # ================= 二顾 (37.3–53.8): 风雪 · 留书
+  - { kind: tag, t: 37.3, until: 53.8, x: 26, y: 6, text: "二顾", bg: 5, color: 4, border: 0 }
+  - { kind: caption, t: 37.6, until: 41.0, text: "几天后，天降大雪", reveal: 12 }
+  - { kind: bubble,  t: 41.0, until: 44.6, follow: zhangfei, dx: 10, dy: -56, text: "村夫而已！", tail: left }
+  - { kind: caption, t: 41.0, until: 44.6, text: "张飞：一个村夫，何必亲自去请？", reveal: 12, color: 7 }
+  - { kind: caption, t: 44.6, until: 47.4, text: "刘备不听，冒着风雪又来了", reveal: 12 }
+  - { kind: bubble,  t: 47.6, until: 49.6, follow: shutong, dx: -16, dy: -60, text: "先生又出门了", tail: right }
+  - { kind: caption, t: 47.4, until: 49.4, text: "可诸葛亮又不在家……", reveal: 12 }
+  - { kind: caption, t: 49.4, until: 53.8, text: "刘备留下一封书信，写满诚意", reveal: 12, color: 7 }
+  - { kind: bubble,  t: 49.8, until: 51.2, follow: shutong, dx: -14, dy: -56, icons: [letter], tail: right }
+
+  # ================= 三顾 (56.3–78.4): 午睡 · 静候 · 出山
+  - { kind: tag, t: 56.3, until: 78.4, x: 26, y: 6, text: "三顾", bg: 5, color: 4, border: 0 }
+  - { kind: caption, t: 56.6, until: 60.9, text: "第二年开春，刘备第三次来到草庐", reveal: 12 }
+  - { kind: bubble,  t: 61.2, until: 62.8, follow: shutong, dx: -16, dy: -60, text: "嘘——在午睡", tail: right }
+  - { kind: caption, t: 60.9, until: 63.8, text: "诸葛亮正在草堂午睡", reveal: 12 }
+  - { kind: text,    t: 61.6, until: 67.5, x: 280, y: 112, space: world, text: "z", size: 12, bold: true, color: 4, outline: 16 }
+  - { kind: text,    t: 62.2, until: 67.5, x: 287, y: 103, space: world, text: "Z", size: 12, bold: true, color: 4, outline: 16 }
+  - { kind: text,    t: 62.8, until: 67.5, x: 296, y: 92, space: world, text: "Z", size: 16, bold: true, color: 4, outline: 16 }
+  - { kind: caption, t: 63.8, until: 67.5, text: "刘备不让通报，恭敬地站在门外等候", reveal: 12, color: 7 }
+  - { kind: bubble,  t: 64.2, until: 66.6, follow: zhangfei, dx: 10, dy: -56, text: "等到几时？！", tail: left }
+  - { kind: tag,     t: 67.8, until: 71.0, follow: zhuge, dy: -48, text: "诸葛亮", bg: 4 }
+  - { kind: caption, t: 67.5, until: 71.3, text: "诸葛亮醒来，被刘备的诚意打动", reveal: 12 }
+  - { kind: bubble,  t: 71.6, until: 75.6, follow: zhuge, dx: -18, dy: -62, text: "三分天下", tail: right }
+  - { kind: caption, t: 71.3, until: 74.6, text: "「隆中对」：分析天下大势，三分天下", reveal: 12, color: 7 }
+  - { kind: caption, t: 74.6, until: 78.4, text: "诸葛亮答应出山相助！", reveal: 12, color: 7 }
+
+  # ================= title cards
+  - kind: card
+    t: 0
+    until: 4.5
+    bg: 27
+    stripe: 7
+    items:
+      - { text: "三国故事", size: 12, color: 31 }
+      - { text: "三顾茅庐", size: 32, color: 7 }
+      - { text: "刘备三请诸葛亮", size: 12, color: 4, at: 0.7 }
+      - { icons: [fan], scale: 3, at: 1.2 }
+  - kind: card
+    t: 19.0
+    until: 21.5
+    bg: 1
+    stripe: 5
+    items:
+      - { text: "一顾", size: 32, color: 7 }
+      - { text: "第一次拜访 · 深秋", size: 12, color: 4, at: 0.4 }
+  - kind: card
+    t: 34.8
+    until: 37.3
+    bg: 1
+    stripe: 3
+    items:
+      - { text: "二顾", size: 32, color: 4 }
+      - { text: "第二次拜访 · 大雪纷飞", size: 12, color: 3, at: 0.4 }
+  - kind: card
+    t: 53.8
+    until: 56.3
+    bg: 1
+    stripe: 30
+    items:
+      - { text: "三顾", size: 32, color: 26 }
+      - { text: "第三次拜访 · 第二年开春", size: 12, color: 30, at: 0.4 }
+  - kind: card
+    t: 78.4
+    until: 88.0
+    bg: 27
+    stripe: 7
+    items:
+      - { text: "成语 · 三顾茅庐", size: 16, color: 7 }
+      - { text: "比喻真心诚意，一再邀请、", size: 13, color: 4, bold: true, at: 1.6 }
+      - { text: "拜访有才能的人", size: 13, color: 4, bold: true, at: 2.4 }
+      - { text: "—— 出自《三国志》《三国演义》", size: 12, color: 31, at: 4.2 }
+      - { text: "Animasis · 像素故事", size: 12, color: 3, at: 6.0 }
+
+timeline:
+  # ---------- 开场: 三兄弟站在路上
+  - { t: 0.0,  action: cycle, target: liubei,   name: idle, speed: 0.6 }
+  - { t: 0.0,  action: cycle, target: guanyu,   name: idle, speed: 0.5 }
+  - { t: 0.0,  action: cycle, target: zhangfei, name: idle, speed: 0.7 }
+  - { t: 9.2,  action: expression, target: liubei, name: sad }
+  - { t: 13.8, action: expression, target: liubei, name: surprise }
+  - { t: 14.6, action: expression, target: liubei, name: happy }
+  - { t: 14.6, action: pose, target: liubei, name: reach }
+  - { t: 16.4, action: pose, target: liubei, name: idle }
+  - { t: 15.0, action: expression, target: guanyu,   name: happy }
+
+  # ---------- 一顾 (reset positions while the card is up)
+  - { t: 19.0, action: move, target: liubei,   x: -20 }
+  - { t: 19.0, action: move, target: guanyu,   x: -48 }
+  - { t: 19.0, action: move, target: zhangfei, x: -76 }
+  - { t: 19.0, action: expression, target: liubei, name: neutral }
+  - { t: 19.0, action: expression, target: guanyu, name: neutral }
+  - { t: 21.5, action: walk_to, target: liubei,   x: 194, speed: 45 }
+  - { t: 21.5, action: walk_to, target: guanyu,   x: 166, speed: 45 }
+  - { t: 21.5, action: walk_to, target: zhangfei, x: 138, speed: 45 }
+  - { t: 26.5, action: pose, target: liubei, name: knock }
+  - { t: 27.3, action: pose, target: liubei, name: idle }
+  - { t: 27.5, action: show, target: shutong }
+  - { t: 29.4, action: expression, target: liubei, name: sad }
+  - { t: 30.0, action: expression, target: zhangfei, name: angry }
+  - { t: 31.4, action: walk_to, target: liubei,   x: -40, speed: 50 }
+  - { t: 31.4, action: walk_to, target: guanyu,   x: -60, speed: 50 }
+  - { t: 31.4, action: walk_to, target: zhangfei, x: -80, speed: 50 }
+  - { t: 32.6, action: hide, target: shutong }
+
+  # ---------- 二顾 风雪
+  - { t: 34.8, action: background, name: cottage_snow }
+  - { t: 34.8, action: move, target: liubei,   x: -20 }
+  - { t: 34.8, action: move, target: guanyu,   x: -48 }
+  - { t: 34.8, action: move, target: zhangfei, x: -76 }
+  - { t: 34.8, action: expression, target: liubei, name: neutral }
+  - { t: 37.3, action: walk_to, target: liubei,   x: 120, speed: 45 }
+  - { t: 37.3, action: walk_to, target: guanyu,   x: 92,  speed: 45 }
+  - { t: 37.3, action: walk_to, target: zhangfei, x: 64,  speed: 45 }
+  - { t: 41.0, action: expression, target: zhangfei, name: angry }
+  - { t: 41.4, action: face, target: liubei, dir: -1 }
+  - { t: 41.4, action: face, target: guanyu, dir: -1 }
+  - { t: 43.6, action: expression, target: liubei, name: neutral }
+  - { t: 44.6, action: walk_to, target: liubei,   x: 194, speed: 46 }
+  - { t: 44.6, action: walk_to, target: guanyu,   x: 166, speed: 46 }
+  - { t: 44.6, action: walk_to, target: zhangfei, x: 138, speed: 46 }
+  - { t: 46.4, action: pose, target: liubei, name: knock }
+  - { t: 47.0, action: pose, target: liubei, name: idle }
+  - { t: 47.0, action: show, target: shutong }
+  - { t: 47.8, action: expression, target: liubei, name: sad }
+  - { t: 48.6, action: attach, target: liubei, object: letter }
+  - { t: 48.6, action: pose, target: liubei, name: hold }
+  - { t: 49.4, action: give, target: liubei, to: shutong, object: letter }
+  - { t: 49.4, action: expression, target: liubei, name: neutral }
+  - { t: 50.4, action: pose, target: liubei, name: bow }
+  - { t: 50.4, action: pose, target: shutong, name: hold }
+  - { t: 51.3, action: hide, target: shutong }
+  - { t: 51.4, action: walk_to, target: liubei,   x: -40, speed: 50 }
+  - { t: 51.4, action: walk_to, target: guanyu,   x: -60, speed: 50 }
+  - { t: 51.4, action: walk_to, target: zhangfei, x: -80, speed: 50 }
+
+  # ---------- 三顾 开春
+  - { t: 53.8, action: background, name: cottage_spring }
+  - { t: 53.8, action: move, target: liubei,   x: -20 }
+  - { t: 53.8, action: move, target: guanyu,   x: -48 }
+  - { t: 53.8, action: move, target: zhangfei, x: -76 }
+  - { t: 53.8, action: expression, target: zhangfei, name: neutral }
+  - { t: 53.8, action: pose, target: shutong, name: idle }
+  - { t: 56.3, action: walk_to, target: liubei,   x: 194, speed: 45 }
+  - { t: 56.3, action: walk_to, target: guanyu,   x: 166, speed: 45 }
+  - { t: 56.3, action: walk_to, target: zhangfei, x: 138, speed: 45 }
+  - { t: 61.0, action: show, target: shutong }
+  - { t: 61.2, action: expression, target: liubei, name: happy }
+  - { t: 62.8, action: hide, target: shutong }
+  - { t: 63.0, action: expression, target: liubei, name: blink }
+  - { t: 63.0, action: pose, target: liubei, name: bow }
+  - { t: 63.8, action: expression, target: zhangfei, name: angry }
+  - { t: 64.8, action: face, target: guanyu, dir: -1 }
+  - { t: 66.6, action: face, target: guanyu, dir: 1 }
+  - { t: 67.5, action: expression, target: liubei, name: neutral }
+  - { t: 67.6, action: show, target: zhuge }
+  - { t: 67.6, action: pose, target: zhuge, name: hold }
+  - { t: 67.6, action: expression, target: zhuge, name: happy }
+  - { t: 67.8, action: pose, target: liubei, name: idle }
+  - { t: 68.2, action: expression, target: zhangfei, name: surprise }
+  - { t: 68.8, action: expression, target: liubei, name: happy }
+  - { t: 69.2, action: pose, target: liubei, name: bow }
+  - { t: 70.6, action: pose, target: liubei, name: idle }
+  - { t: 71.6, action: cycle, target: zhuge, name: wave, speed: 0.7 }
+  - { t: 71.6, action: expression, target: zhangfei, name: neutral }
+  - { t: 74.6, action: pose, target: zhuge, name: hold }
+  - { t: 74.6, action: expression, target: guanyu, name: happy }
+  - { t: 74.8, action: expression, target: zhangfei, name: happy }
+  - { t: 74.8, action: cycle, target: liubei, name: wave, speed: 1.2 }
+  - { t: 76.2, action: walk_to, target: zhuge,    x: -10, speed: 46 }
+  - { t: 76.2, action: walk_to, target: liubei,   x: -40, speed: 46 }
+  - { t: 76.2, action: walk_to, target: guanyu,   x: -66, speed: 46 }
+  - { t: 76.2, action: walk_to, target: zhangfei, x: -92, speed: 46 }

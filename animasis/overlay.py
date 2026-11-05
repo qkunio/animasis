@@ -88,7 +88,7 @@ def draw_text(put: Put, x: float, y: float, text: str, size: int = 12, color: in
               line_gap: int = 3) -> int:
     """Draw (multi-line) text; ``y`` is the top of the first line. Returns total height."""
     lines = str(text).split("\n")
-    cy = int(y)
+    cy = int(round(y))
     for line in lines:
         w, h, pts = text_mask(line, size, bold)
         if align == "center":
@@ -96,7 +96,7 @@ def draw_text(put: Put, x: float, y: float, text: str, size: int = 12, color: in
         elif align == "right":
             x0 = int(round(x - w))
         else:
-            x0 = int(x)
+            x0 = int(round(x))
         if outline is not None:
             ring = set()
             for (px, py) in pts:
@@ -108,7 +108,7 @@ def draw_text(put: Put, x: float, y: float, text: str, size: int = 12, color: in
         for (px, py) in pts:
             put(x0 + px, cy + py, color)
         cy += h + line_gap
-    return cy - int(y) - line_gap
+    return cy - int(round(y)) - line_gap
 
 
 # --------------------------------------------------------------------------- primitives
@@ -160,7 +160,8 @@ class Overlay:
         return self.t <= t + 1e-9 < self.until
 
 
-BACK_KINDS = {"stall", "cabinet", "rect", "icon_back"}
+BACK_KINDS = {"stall", "cabinet", "rect", "icon_back", "hut", "fence",
+              "planet", "orbit", "satellite", "range", "ring", "pin", "phone", "glyph"}
 
 
 def overlay_from_dict(d: dict[str, Any]) -> Overlay:
@@ -172,14 +173,59 @@ def overlay_from_dict(d: dict[str, Any]) -> Overlay:
     return Overlay(kind=kind, t=t, until=until, layer=layer, p=p)
 
 
+# camera hand-off for the screen pass: world point -> screen point, and mirror flag
+_XF: dict[str, Any] = {"f": None, "flip": False, "W": 320, "H": 180}
+
+
+def _space():
+    from . import space
+    return space
+
+
+def _text_value(o: Overlay, t: float) -> str:
+    """``fmt`` + ``from``/``to``/``count`` (seconds): animated number, e.g. a distance counting up."""
+    fmt = str(o.p["fmt"])
+    a, b = float(o.p.get("from", 0)), float(o.p.get("to", 0))
+    dur = float(o.p.get("count", 1.0))
+    u = 1.0 if dur <= 0 else min(1.0, max(0.0, (t - o.t - float(o.p.get("delay", 0))) / dur))
+    u = 1 - (1 - u) ** 3
+    return fmt.format(v=a + (b - a) * u)
+
+
 def _anchor(o: Overlay, chars: dict[str, Any]) -> tuple[float, float]:
     x, y = float(o.p.get("x", 160)), float(o.p.get("y", 90))
     who = o.p.get("follow")
+    world = o.p.get("space") == "world"
     if who and who in chars:
         ch = chars[who]
         x = ch.x + float(o.p.get("dx", 0)) * (ch.facing if o.p.get("mirror") else 1)
         y = ch.y + float(o.p.get("dy", -48))
+        world = o.p.get("space", "world") == "world"
+    if world and _XF["f"] is not None:
+        x, y = _XF["f"](x, y)
     return x, y
+
+
+def _offscreen(o: Overlay, chars: dict[str, Any], margin: float = 24) -> bool:
+    """Under a camera: hide labels whose speaker/anchor is hidden or out of the shot."""
+    if _XF["f"] is None:
+        return False
+    who = o.p.get("follow")
+    if who and who in chars:
+        ch = chars[who]
+        if not getattr(ch, "visible", True):
+            return True
+        # Use the label's own world point (incl. dy), not just the feet — a close-up
+        # can keep the body in frame while the tag above the head is gone.
+        ax = ch.x + float(o.p.get("dx", 0)) * (ch.facing if o.p.get("mirror") else 1)
+        ay = ch.y + float(o.p.get("dy", -48))
+        sx, sy = _XF["f"](ax, ay)
+        return not (-margin <= sx <= _XF["W"] + margin and -margin <= sy <= _XF["H"] + margin)
+    if o.p.get("space") == "world":  # pinned to a world point that the shot does not include
+        sx, sy = _XF["f"](float(o.p.get("x", 160)), float(o.p.get("y", 90)))
+        m = 12
+        return not (-m <= sx <= _XF["W"] + m and -m <= sy <= _XF["H"] + m)
+    return False
 
 
 def _draw_caption(put: Put, o: Overlay, t: float, W: int, H: int) -> None:
@@ -200,12 +246,21 @@ def _draw_tag(put: Put, o: Overlay, t: float, chars: dict[str, Any]) -> None:
     blink = float(o.p.get("blink", 0) or 0)
     if blink and int((t - o.t) * blink * 2) % 2 == 1:
         return
+    if _offscreen(o, chars):
+        return
     x, y = _anchor(o, chars)
     text = str(o.p.get("text", ""))
     size = int(o.p.get("size", 12))
     bold = bool(o.p.get("bold", True))
     w = text_width(text, size, bold)
-    x0, y0 = int(x - w / 2) - 3, int(y)
+    # Do NOT clamp to the frame: under a moving/flipped camera that stuck labels to the
+    # edge (world tags "sliding" along the border, HUD tags like y=6 shoved to y=26).
+    # Off-screen labels are hidden by _offscreen; partially-off ones clip via put().
+    if o.p.get("align") == "left":
+        x0 = int(round(x))
+    else:
+        x0 = int(round(x - w / 2)) - 3
+    y0 = int(round(y))
     x1, y1 = x0 + w + 6, y0 + size + 4
     frame_rect(put, x0, y0, x1, y1, int(o.p.get("bg", 4)), int(o.p.get("border", 16)))
     draw_text(put, x0 + 3, y0 + 1, text, size=size, color=int(o.p.get("color", 16)), outline=None, bold=bold)
@@ -216,10 +271,12 @@ def _draw_tag(put: Put, o: Overlay, t: float, chars: dict[str, Any]) -> None:
             put(dx, yy + 1, 5)
     if o.p.get("pin"):  # little string to the thing it labels
         for yy in range(y1, y1 + int(o.p["pin"])):
-            put(int(x), yy, 16)
+            put(int(round(x)), yy, 16)
 
 
 def _draw_bubble(put: Put, o: Overlay, t: float, chars: dict[str, Any]) -> None:
+    if _offscreen(o, chars):
+        return
     x, y = _anchor(o, chars)
     icons = list(o.p.get("icons", [o.p["icon"]] if "icon" in o.p else []))
     text = str(o.p.get("text", ""))
@@ -229,8 +286,11 @@ def _draw_bubble(put: Put, o: Overlay, t: float, chars: dict[str, Any]) -> None:
     inner_w = sum(w for w, _ in sizes) + gap * max(0, len(sizes) - 1) + (tw + (gap if sizes else 0) if text else 0)
     inner_h = max([h for _, h in sizes] + [12 if text else 0])
     rx, ry = inner_w / 2 + 7, inner_h / 2 + 5
+    # No edge-clamp under camera (same as tags) — track the anchor or clip/hide.
     # tail dots toward the head (below-behind)
     tx = -1 if o.p.get("tail", "left") == "left" else 1
+    if _XF["flip"]:
+        tx = -tx
     fill_ellipse(put, x + tx * 4, y + ry + 4, 2.6, 2.2, 16)
     fill_ellipse(put, x + tx * 4, y + ry + 4, 1.6, 1.3, 4)
     fill_ellipse(put, x + tx * 7, y + ry + 9, 1.8, 1.5, 16)
@@ -393,15 +453,176 @@ def _draw_cabinet(put: Put, o: Overlay, ground: int, t: float) -> None:
     put(x1 - 8, top + 27, 7); put(x1 - 5, top + 27, 9)
 
 
+def _door_open(o: Overlay, t: float) -> bool:
+    for span in o.p.get("open", []) or []:
+        if float(span[0]) <= t < float(span[1]):
+            return True
+    return False
+
+
+def _draw_hut(put: Put, o: Overlay, ground: int, t: float, mirror_text: bool = False) -> None:
+    """草庐: thatched cottage on a stone base, lattice window, plank door (``open`` spans), plaque."""
+    x = float(o.p.get("x", 240))
+    w = int(o.p.get("w", 92))
+    wall = int(o.p.get("wall", 40))
+    roof = int(o.p.get("roof", 30))
+    snow = bool(o.p.get("snow", False))
+    x0, x1 = int(x - w / 2), int(x + w / 2)
+    top = ground - wall
+    # stone footing
+    fill_rect(put, x0 - 2, ground - 4, x1 + 2, ground, 2)
+    for xx in range(x0 - 2, x1 + 2, 5):
+        put(xx, ground - 3, 1)
+        put(xx + 2, ground - 2, 3)
+    fill_rect(put, x0 - 2, ground - 5, x1 + 2, ground - 4, 16)
+    # mud wall with timber frame
+    fill_rect(put, x0, top, x1, ground - 5, 23)
+    for yy in range(top + 2, ground - 5):
+        for xx in range(x0, x1):
+            if (xx * 7 + yy * 13) % 29 == 0:
+                put(xx, yy, 14)
+    for px in (x0, x0 + w // 2 - 1, x1 - 3):
+        fill_rect(put, px, top, px + 3, ground - 5, 14)
+        fill_rect(put, px, top, px + 1, ground - 5, 24)
+    fill_rect(put, x0, top, x1, top + 2, 14)
+    # door
+    dcx = int(x + float(o.p.get("door_dx", -20)))
+    dw, dh = int(o.p.get("door_w", 16)), int(o.p.get("door_h", 30))
+    dx0, dx1, dy0 = dcx - dw // 2, dcx + dw // 2, ground - 5 - dh
+    frame_rect(put, dx0 - 2, dy0 - 2, dx1 + 2, ground - 5, 24, 16)
+    if _door_open(o, t):
+        fill_rect(put, dx0, dy0, dx1, ground - 5, 16)
+        fill_rect(put, dx0, dy0, dx0 + 3, ground - 5, 14)  # door leaf swung inward
+    else:
+        fill_rect(put, dx0, dy0, dx1, ground - 5, 14)
+        for xx in range(dx0 + 3, dx1, 4):
+            fill_rect(put, xx, dy0, xx + 1, ground - 5, 24)
+        put(dx1 - 3, dy0 + dh // 2, 7)
+        put(dx1 - 3, dy0 + dh // 2 + 1, 6)
+    # lattice window
+    wcx = int(x + float(o.p.get("window_dx", 22)))
+    wy0 = top + 8
+    frame_rect(put, wcx - 9, wy0, wcx + 9, wy0 + 15, 14, 16)
+    fill_rect(put, wcx - 7, wy0 + 2, wcx + 7, wy0 + 13, 1 if not o.p.get("lamp") else 7)
+    for xx in range(wcx - 7, wcx + 7, 3):
+        fill_rect(put, xx, wy0 + 2, xx + 1, wy0 + 13, 23)
+    for yy in (wy0 + 5, wy0 + 9):
+        fill_rect(put, wcx - 7, yy, wcx + 7, yy + 1, 23)
+    # thatched roof: trapezoid with an overhang and a ragged straw fringe
+    ov = int(o.p.get("overhang", 10))
+    rb, rt = top + 2, top + 2 - roof
+    for yy in range(rt, rb + 1):
+        k = (yy - rt) / max(1, roof)
+        half = (w / 2 - 12) + (ov + 12) * k
+        for xx in range(int(x - half), int(x + half) + 1):
+            edge = yy == rt or abs(xx - x) > half - 1
+            if edge:
+                c = 16
+            elif snow and (yy - rt) < 4 + ((xx * 3) % 3):
+                c = 4 if (xx + yy) % 5 else 3
+            else:
+                streak = (xx * 3 + (yy // 2) * 5) % 7
+                c = 31 if streak == 0 else (6 if streak in (3, 4) else 7)
+                if yy - rt > roof - 4 and streak in (1, 5):
+                    c = 23
+            put(xx, yy, c)
+    # ridge bundle + ragged fringe
+    fill_rect(put, int(x - w / 2 + 10), rt - 2, int(x + w / 2 - 10), rt, 4 if snow else 23)
+    fill_rect(put, int(x - w / 2 + 10), rt - 3, int(x + w / 2 - 10), rt - 2, 16)
+    for xx in range(x0 - ov, x1 + ov):
+        if (xx * 5) % 3 != 0:
+            put(xx, rb + 1, 6 if not snow else 3)
+        if (xx * 7) % 5 == 0:
+            put(xx, rb + 2, 6 if not snow else 3)
+    # plaque
+    sign = str(o.p.get("sign", ""))
+    if sign:
+        sw = text_width(sign, 12, True)
+        sx0 = int(x + float(o.p.get("sign_dx", 0)) - sw / 2) - 4
+        sy0 = rt + int(o.p.get("sign_dy", roof - 16))
+        frame_rect(put, sx0, sy0, sx0 + sw + 8, sy0 + 14, 24, 16)
+        tput = put
+        if mirror_text:  # pre-mirrored so a reverse-angle (flipped) shot still reads correctly
+            m = 2 * sx0 + sw + 8
+            tput = lambda px, py, c: put(m - px - 1, py, c)  # noqa: E731
+        draw_text(tput, sx0 + 4, sy0 + 1, sign, size=12, color=7, outline=None, bold=True)
+
+
+def _draw_fence(put: Put, o: Overlay, ground: int, t: float) -> None:
+    """Low bamboo fence between x0..x1."""
+    x0, x1 = int(o.p.get("x0", 0)), int(o.p.get("x1", 60))
+    hh = int(o.p.get("h", 16))
+    snow = bool(o.p.get("snow", False))
+    for xx in range(x0, x1, 6):
+        top = ground - hh - (1 if (xx // 6) % 2 else 0)
+        fill_rect(put, xx, top, xx + 2, ground, 23)
+        put(xx + 1, top, 14)
+        put(xx, top - 1, 16)
+        put(xx + 1, top - 1, 4 if snow else 16)
+        put(xx + 2, top + 1, 16)
+        for yy in range(top + 1, ground):
+            put(xx + 2, yy, 14)
+    for ry in (ground - hh + 4, ground - 5):
+        fill_rect(put, x0 - 1, ry, x1, ry + 2, 14)
+        fill_rect(put, x0 - 1, ry, x1, ry + 1, 23)
+        if snow and ry == ground - hh + 4:
+            fill_rect(put, x0 - 1, ry - 1, x1, ry, 4)
+
+
+def _draw_weather(put: Put, o: Overlay, t: float, W: int, H: int, ground: int) -> None:
+    """Falling snow (``snow``) or drifting peach petals (``petals``), deterministic per t."""
+    petals = o.kind == "petals"
+    n = int(o.p.get("n", 70 if not petals else 26))
+    speed = float(o.p.get("speed", 22 if not petals else 14))
+    for i in range(n):
+        seed = (i * 7919) % 1000 / 1000.0
+        x0 = (i * 37.3) % W
+        y = ((seed * (H + 20)) + (t - o.t + 50) * speed * (0.7 + 0.6 * seed)) % (H + 20) - 10
+        x = x0 + math.sin((t - o.t) * (1.1 + seed) + i) * (6 if petals else 3) + (t - o.t) * (8 if petals else 2)
+        x %= W
+        if y > ground + 26:
+            continue
+        xi, yi = int(x), int(y)
+        if petals:
+            c = 21 if i % 3 else 26
+            put(xi, yi, c)
+            put(xi + 1, yi, c if i % 2 else 4)
+        else:
+            c = 4 if i % 4 else 3
+            put(xi, yi, c)
+            if i % 3 == 0:
+                put(xi + 1, yi, c)
+                put(xi, yi + 1, c)
+                put(xi + 1, yi + 1, c)
+
+
 def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, width: int, height: int,
-                  ground_y: float, characters: dict[str, Any]) -> None:
-    """Draw every active overlay on ``layer`` ('back' or 'front').
+                  ground_y: float, characters: dict[str, Any],
+                  to_screen: Callable[[float, float], tuple[float, float]] | None = None,
+                  flip: bool = False) -> None:
+    """Draw every active overlay on ``layer`` ('back', 'front', or under a camera 'world_front' / 'screen').
 
     Front pass order: stall counters -> labels/bubbles/HUD/captions -> full-screen cards,
     so a card always hides the scene behind it.
+
+    With a camera the front pass is split: ``world_front`` (stall counters, drawn on the
+    stage before cropping) and ``screen`` (everything else, on the output frame; anchored
+    items are mapped through ``to_screen``).
     """
     g = int(ground_y)
     live = [o for o in overlays if o.active(t)]
+    if layer == "world_front":
+        for o in live:
+            if o.kind == "stall":
+                _draw_stall_front(put, o, g, t)
+        return
+    if layer == "screen":
+        _XF.update(f=to_screen, flip=flip, W=width, H=height)
+        try:
+            _draw_front(put, live, t, width, height, g, characters, stalls=False)
+        finally:
+            _XF.update(f=None, flip=False)
+        return
     if layer == "back":
         for o in live:
             if o.layer != "back":
@@ -411,6 +632,12 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
                 _draw_stall_back(put, o, g, t)
             elif k == "cabinet":
                 _draw_cabinet(put, o, g, t)
+            elif k == "hut":
+                _draw_hut(put, o, g, t, mirror_text=flip)
+            elif k == "fence":
+                _draw_fence(put, o, g, t)
+            elif k in _space().SPACE_KINDS:
+                _space().draw_space(put, o, t, width, height)
             elif k == "rect":
                 frame_rect(put, int(o.p["x0"]), int(o.p["y0"]), int(o.p["x1"]), int(o.p["y1"]),
                            int(o.p.get("color", 4)), int(o.p.get("border", 16)))
@@ -418,9 +645,15 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
                 x, y = _anchor(o, characters)
                 blit_icon(put, str(o.p.get("name")), x, y, scale=int(o.p.get("scale", 1)))
         return
-    for o in live:
-        if o.kind == "stall":
-            _draw_stall_front(put, o, g, t)
+    _draw_front(put, live, t, width, height, g, characters, stalls=True)
+
+
+def _draw_front(put: Put, live: list[Overlay], t: float, width: int, height: int, g: int,
+                characters: dict[str, Any], stalls: bool) -> None:
+    if stalls:
+        for o in live:
+            if o.kind == "stall":
+                _draw_stall_front(put, o, g, t)
     for o in live:
         if o.layer != "front" or o.kind == "card":
             continue
@@ -428,8 +661,11 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
         if k == "caption":
             _draw_caption(put, o, t, width, height)
         elif k == "text":
+            if _offscreen(o, characters):
+                continue
             x, y = _anchor(o, characters)
-            draw_text(put, x, y, _reveal(str(o.p.get("text", "")), o, t), size=int(o.p.get("size", 12)),
+            txt = _text_value(o, t) if "fmt" in o.p else _reveal(str(o.p.get("text", "")), o, t)
+            draw_text(put, x, y, txt, size=int(o.p.get("size", 12)),
                       color=int(o.p.get("color", 4)), outline=o.p.get("outline", 0),
                       bold=bool(o.p.get("bold", False)), align=str(o.p.get("align", "center")))
         elif k == "tag":
@@ -438,6 +674,8 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
             _draw_bubble(put, o, t, characters)
         elif k == "hud":
             _draw_hud(put, o, t)
+        elif k in ("snow", "petals"):
+            _draw_weather(put, o, t, width, height, g)
         elif k == "icon":
             x, y = _anchor(o, characters)
             blit_icon(put, str(o.p.get("name")), x, y, scale=int(o.p.get("scale", 1)))

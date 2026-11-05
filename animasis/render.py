@@ -169,11 +169,162 @@ def draw_bg_market(buf: list[list[int]], w: int, h: int, ground_y: int) -> None:
                         buf[yy + dy][xx + dx] = pal.ACCENT if lit else 25
 
 
+_COTTAGE_CACHE: dict[tuple[str, int, int, int], list[list[int]]] = {}
+
+
+def draw_bg_cottage(buf: list[list[int]], w: int, h: int, ground_y: int, season: str = "autumn") -> None:
+    """隆中 countryside: layered mountains, bamboo grove, earth path.  season: autumn | snow | spring."""
+    key = (season, w, h, ground_y)
+    if key not in _COTTAGE_CACHE:
+        _COTTAGE_CACHE[key] = _make_cottage(w, h, ground_y, season)
+    src = _COTTAGE_CACHE[key]
+    for y in range(h):
+        buf[y][:] = src[y]
+
+
+def _make_cottage(w: int, h: int, g: int, season: str) -> list[list[int]]:
+    snow = season == "snow"
+    spring = season == "spring"
+    b = [[0] * w for _ in range(h)]
+    # sky bands with a dithered seam between each
+    bands = [(0, 2), (34, 3), (80, 3)] if snow else [(0, 10), (30, 9), (88, 4 if spring else 9)]
+    for y in range(g):
+        for x in range(w):
+            c = bands[0][1]
+            for y0, col in bands:
+                if y >= y0 + 3 or (y >= y0 and (x + y) % 2 == 0):
+                    c = col
+            b[y][x] = c
+    # sun / clouds
+    if not snow:
+        for cx, cy, r in ((48, 24, 6), (60, 21, 8), (73, 25, 5), (196, 30, 6), (208, 27, 8), (220, 31, 5)):
+            for yy in range(cy - r, cy + r):
+                for xx in range(cx - r, cx + r):
+                    if 0 <= xx < w and (xx - cx) ** 2 + (yy - cy) ** 2 * 2.2 <= r * r:
+                        b[yy][xx] = 4
+        sx, sy = 280, 22
+        for yy in range(sy - 7, sy + 8):
+            for xx in range(sx - 7, sx + 8):
+                d = (xx - sx) ** 2 + (yy - sy) ** 2
+                if d <= 49:
+                    b[yy][xx] = 31 if d < 20 else 7
+    # far mountains (two ridges)
+    for x in range(w):
+        far = int(g - 62 - 16 * math.sin(x / 37.0 + 1.3) - 9 * math.sin(x / 13.0) - 6 * math.sin(x / 7.1 + 2))
+        near = int(g - 34 - 10 * math.sin(x / 29.0 + 0.4) - 5 * math.sin(x / 9.3 + 1))
+        for y in range(max(0, far), g):
+            peak = y - far
+            if snow:
+                c = 4 if peak < 4 else 3
+            else:
+                c = (3 if peak < 2 else 2) if not spring else (30 if peak < 2 else 8)
+            b[y][x] = c
+        for y in range(max(0, near), g):
+            peak = y - near
+            if snow:
+                c = 4 if peak < 3 else (3 if (x + y) % 3 else 2)
+            else:
+                c = (8 if peak < 2 else 15) if not spring else (30 if peak < 2 else (8 if (x + y) % 4 else 15))
+            b[y][x] = c
+    # bamboo grove on the left and far right
+    stalks = [6, 14, 21, 30, 38, 47, 55, 300, 309, 316]
+    for i, sx in enumerate(stalks):
+        top = g - 96 + (i * 17) % 23
+        lean = ((i * 5) % 3 - 1) * 0.04
+        for y in range(top, g):
+            x = int(sx + (g - y) * lean)
+            for dx, c in ((0, 30 if not snow else 3), (1, 8), (2, 15)):
+                if 0 <= x + dx < w:
+                    b[y][x + dx] = c
+            if (y - top) % 11 == 0 and 0 <= x + 2 < w:  # node rings
+                b[y][x] = 15
+                b[y][x + 1] = 15
+                if x + 3 < w:
+                    b[y][x + 3] = 15
+        # leaf sprays
+        for k in range(5):
+            ly = top + 4 + k * 12
+            lx = int(sx + (g - ly) * lean)
+            d = 1 if (k + i) % 2 else -1
+            for j in range(7):
+                xx, yy = lx + 1 + d * (2 + j), ly + j // 2
+                if 0 <= xx < w:
+                    b[yy][xx] = 4 if (snow and j < 3) else (15 if j % 3 == 0 else 8)
+                if 0 <= xx < w and j > 1:
+                    b[yy + 1][xx] = 15
+    # ground: earth path with a grass verge (snow cover / spring flowers)
+    for y in range(g, h):
+        for x in range(w):
+            dy = y - g
+            if snow:
+                c = 4 if (x * 3 + y * 5) % 11 else 3
+            elif dy < 3:
+                c = 30 if spring else 8
+            else:
+                c = 23 if ((x // 6 + dy // 3) % 3) else 14
+            b[y][x] = c
+    for x in range(w):
+        b[g][x] = 16 if not snow else 3
+    if spring:
+        for x in range(3, w, 13):
+            y = g + 1 + (x * 7) % 2
+            b[y][x] = 21 if (x // 13) % 2 else 7
+    elif not snow:
+        for x in range(5, w, 17):  # pebbles
+            y = g + 7 + (x * 5) % 18
+            if y < h:
+                b[y][x] = 3
+                if x + 1 < w:
+                    b[y][x + 1] = 2
+    return b
+
+
+_SPACE_CACHE: dict[tuple[str, int, int], list[list[int]]] = {}
+
+
+def draw_bg_space(buf: list[list[int]], w: int, h: int, ground_y: int, style: str = "space") -> None:
+    """Deep space starfield with a faint nebula (``space``), or a navy blueprint grid (``blueprint``)."""
+    key = (style, w, h)
+    if key not in _SPACE_CACHE:
+        g = [[0] * w for _ in range(h)]
+        if style == "blueprint":
+            for y in range(h):
+                for x in range(w):
+                    c = 25
+                    if x % 40 == 0 or y % 40 == 0:
+                        c = 10 if (x + y) % 2 == 0 else 25
+                    elif x % 10 == 0 and y % 10 == 0:
+                        c = 10
+                    g[y][x] = c
+        else:
+            for y in range(h):
+                for x in range(w):
+                    n = math.sin(x / 31.0 + y / 47.0) + math.sin(x / 19.0 - y / 23.0 + 1.7) * 0.7
+                    g[y][x] = 25 if (n > 1.45 and (x * 3 + y * 5) % 7 == 0) else (16 if (n > 1.2 and (x + y) % 5 == 0) else 0)
+            for i in range(170):
+                x, y = (i * 97 + (i * i) % 53) % w, (i * 61 + (i * i * 7) % 89) % h
+                c = (4, 3, 2, 31, 28)[i % 5]
+                g[y][x] = c
+                if i % 17 == 0:
+                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        if 0 <= x + dx < w and 0 <= y + dy < h:
+                            g[y + dy][x + dx] = 2
+        _SPACE_CACHE[key] = g
+    src = _SPACE_CACHE[key]
+    for y in range(h):
+        buf[y][:] = src[y]
+
+
 BG_DRAWERS = {
+    "space": draw_bg_space,
+    "blueprint": lambda b, w, h, g: draw_bg_space(b, w, h, g, "blueprint"),
     "indoor": draw_bg_indoor,
     "outdoor": draw_bg_outdoor,
     "room": draw_bg_room,
     "market": draw_bg_market,
+    "cottage": draw_bg_cottage,
+    "cottage_snow": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "snow"),
+    "cottage_spring": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "spring"),
 }
 
 
@@ -207,6 +358,23 @@ class FrameBuffer:
         if scale != 1:
             img = img.resize((self.width * scale, self.height * scale), Image.NEAREST)
         return img
+
+
+_CLEAR = 255  # "transparent" palette slot for screen-space overlay buffers
+
+
+def fb_to_image(fb: FrameBuffer, transparent: int | None = None) -> Image.Image:
+    """Palette buffer -> RGB (or RGBA with ``transparent`` index cleared) at 1x, fast path."""
+    flat = bytes(c for row in fb.buf for c in row)
+    img = Image.frombytes("P", (fb.width, fb.height), flat)
+    pal_bytes = []
+    for i in range(256):
+        pal_bytes += list(pal.color(i)) if i < len(pal.PALETTE) else [0, 0, 0]
+    img.putpalette(pal_bytes)
+    if transparent is None:
+        return img.convert("RGB")
+    img.info["transparency"] = transparent
+    return img.convert("RGBA")
 
 
 def composite_frame(
@@ -248,7 +416,7 @@ def composite_frame(
             draw_shadow(put, fb.get, ch, world.ground_y)
     for ch in chars:
         draw_character(put, ch)
-        if ch.held_item and ch.held_item in world.bodies:
+        if ch.visible and ch.held_item and ch.held_item in world.bodies:
             body = world.bodies[ch.held_item]
             hx, hy = resolve_hang(ch, body.hang)
             draw_prop(put, body.kind, hx, hy, r=int(body.w / 2), w=int(body.w), h=int(body.h), color=body.color)
@@ -264,7 +432,7 @@ def composite_frame(
 def export_frames(
     frames: Iterable[Image.Image],
     output: str | Path,
-    fps: int = 12,
+    fps: int = 60,
     fmt: str | None = None,
 ) -> Path:
     output = Path(output)
