@@ -33,6 +33,6 @@ def test_builder_render_gif(tmp_path: Path):
 
 def test_load_yaml():
     root = Path(__file__).resolve().parents[1]
-    sc = load_scene(root / "demos" / "indoor_pickup.yaml")
-    assert sc.name == "indoor_pickup"
-    assert "hero" in sc.characters
+    sc = load_scene(root / "demos" / "econ_opportunity_cost.yaml")
+    assert sc.name == "econ_opportunity_cost"
+    assert sc.overlays

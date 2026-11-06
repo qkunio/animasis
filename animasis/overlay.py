@@ -162,7 +162,10 @@ class Overlay:
 
 BACK_KINDS = {"stall", "cabinet", "rect", "icon_back", "hut", "fence",
               "planet", "orbit", "satellite", "range", "ring", "pin", "phone", "glyph",
-              "throne", "plaque", "banner", "lantern", "candle"}
+              "throne", "plaque", "banner", "lantern", "candle",
+              "flight_plane", "airfoil", "force",
+              "pumpjack", "barrel", "droplet", "molecule", "column", "cutbar", "product", "kinetic", "splash",
+              "horse", "camel", "tent", "campfire", "arrow", "dust", "army"}
 
 
 def overlay_from_dict(d: dict[str, Any]) -> Overlay:
@@ -176,6 +179,11 @@ def overlay_from_dict(d: dict[str, Any]) -> Overlay:
 
 # camera hand-off for the screen pass: world point -> screen point, and mirror flag
 _XF: dict[str, Any] = {"f": None, "flip": False, "W": 320, "H": 180}
+
+
+def _flight():
+    from . import flight
+    return flight
 
 
 def _palace():
@@ -218,6 +226,16 @@ def _draw_bars(put: Put, o: "Overlay", g: int, t: float, chars: dict[str, Any]) 
 def _space():
     from . import space
     return space
+
+
+def _petro():
+    from . import petro
+    return petro
+
+
+def _tang():
+    from . import tang
+    return tang
 
 
 def _text_value(o: Overlay, t: float) -> str:
@@ -655,6 +673,8 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
                 _draw_stall_front(put, o, g, t)
             elif o.kind == "bars":
                 _draw_bars(put, o, g, t, characters)
+            elif o.kind in ("war_table", "desk"):
+                _tang().draw_tang_front(put, o, t, width, height)
         return
     if layer == "screen":
         _XF.update(f=to_screen, flip=flip, W=width, H=height)
@@ -676,10 +696,16 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
                 _draw_hut(put, o, g, t, mirror_text=flip)
             elif k == "fence":
                 _draw_fence(put, o, g, t)
+            elif k in _flight().FLIGHT_KINDS:
+                _flight().draw_flight(put, o, t, width, height)
             elif k in _palace().PALACE_BACK:
                 _draw_palace_back(put, o, g, t, flip, characters)
             elif k in _space().SPACE_KINDS:
                 _space().draw_space(put, o, t, width, height)
+            elif k in _petro().PETRO_KINDS:
+                _petro().draw_petro(put, o, t, width, height)
+            elif k in _tang().TANG_KINDS:
+                _tang().draw_tang(put, o, t, width, height)
             elif k == "rect":
                 frame_rect(put, int(o.p["x0"]), int(o.p["y0"]), int(o.p["x1"]), int(o.p["y1"]),
                            int(o.p.get("color", 4)), int(o.p.get("border", 16)))
@@ -720,6 +746,8 @@ def _draw_front(put: Put, live: list[Overlay], t: float, width: int, height: int
             _draw_hud(put, o, t)
         elif k in ("snow", "petals"):
             _draw_weather(put, o, t, width, height, g)
+        elif k == "rain":
+            _tang().draw_rain(put, o, t, width, height)
         elif k == "icon":
             x, y = _anchor(o, characters)
             blit_icon(put, str(o.p.get("name")), x, y, scale=int(o.p.get("scale", 1)))

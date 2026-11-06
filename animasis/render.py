@@ -315,6 +315,115 @@ def draw_bg_space(buf: list[list[int]], w: int, h: int, ground_y: int, style: st
         buf[y][:] = src[y]
 
 
+_OIL_CACHE: dict[tuple[int, int, int], list[list[int]]] = {}
+
+
+def draw_bg_oilfield(buf: list[list[int]], w: int, h: int, ground_y: int) -> None:
+    """Dusk oil field: banded sunset, distant hills and derrick, dark oil-stained ground."""
+    key = (w, h, ground_y)
+    if key not in _OIL_CACHE:
+        g = [[0] * w for _ in range(h)]
+        for y in range(h):
+            for x in range(w):
+                if y < ground_y:
+                    if y < 26:
+                        c = 25
+                    elif y < 50:
+                        c = 10
+                    elif y < 74:
+                        c = 9
+                    elif y < 96:
+                        c = 6
+                    elif y < 116:
+                        c = 7
+                    else:
+                        c = 31
+                    if y in (26, 50, 74, 96, 116) and (x + y) % 3:
+                        c = 25 if y < 50 else (10 if y < 74 else (9 if y < 96 else 6))
+                    g[y][x] = c
+                else:
+                    c = 24 if (x // 7 + y) % 5 else 16
+                    if (x * 13 + y * 7) % 97 == 0:
+                        c = 2
+                    if y > ground_y + 6 and (x * 5 + y * 3) % 61 == 0:
+                        c = 25
+                    g[y][x] = c
+        # stars
+        for i in range(40):
+            x, y = (i * 83 + 11) % w, (i * 37 + 5) % 24
+            g[y][x] = (4, 3, 2, 31)[i % 4]
+        # sun + haze
+        sx, sy, sr = int(w * 0.78), 90, 15
+        for yy in range(sy - sr - 6, sy + sr + 7):
+            for xx in range(sx - sr - 6, sx + sr + 7):
+                if 0 <= xx < w and 0 <= yy < h:
+                    d = math.hypot(xx - sx, yy - sy)
+                    if d <= sr:
+                        g[yy][xx] = 31 if d < sr - 4 else 7
+                    elif d <= sr + 6 and (xx + yy) % 2:
+                        g[yy][xx] = 6
+        # distant hills
+        for x in range(w):
+            hy = ground_y - 20 - int(7 * math.sin(x / 33.0) + 4 * math.sin(x / 13.0 + 1.2))
+            for y in range(hy, ground_y):
+                if g[y][x] != 31:
+                    g[y][x] = 16
+            hy2 = ground_y - 9 - int(4 * math.sin(x / 21.0 + 0.6))
+            for y in range(hy2, ground_y):
+                if g[y][x] != 31:
+                    g[y][x] = 24
+        # distant derrick on the horizon
+        derx = 306
+        for k in range(14):
+            yy = ground_y - 8 - k * 3
+            half = int((14 - k) * 0.8)
+            for xx in range(derx - half, derx + half + 1):
+                if 0 <= xx < w and 0 <= yy < h and (xx + yy) % 3:
+                    g[yy][xx] = 16
+        _OIL_CACHE[key] = g
+    src = _OIL_CACHE[key]
+    for y in range(h):
+        buf[y][:] = src[y]
+
+
+_SHELF_CACHE: dict[tuple[int, int, int], list[list[int]]] = {}
+
+
+def draw_bg_shelf(buf: list[list[int]], w: int, h: int, ground_y: int) -> None:
+    """Dark display wall with two wooden shelves for the product wall."""
+    key = (w, h, ground_y)
+    if key not in _SHELF_CACHE:
+        g = [[0] * w for _ in range(h)]
+        for y in range(h):
+            for x in range(w):
+                c = 25
+                if x % 32 == 0:
+                    c = 10 if (x // 32) % 2 else 25
+                elif (x * 11 + y * 7) % 113 == 0:
+                    c = 10
+                if y >= ground_y:
+                    c = 24 if (x // 6 + y) % 4 else 16
+                g[y][x] = c
+        for sy in (82, 134):
+            for x in range(6, w - 6):
+                for yy in range(sy, sy + 4):
+                    c = 14 if yy < sy + 3 else 24
+                    if yy == sy:
+                        c = 23
+                    g[yy][x] = c
+            for yy in range(sy + 4, sy + 6):
+                for x in range(6, w - 6):
+                    g[yy][x] = 16
+            for bx in (10, w - 14):
+                for yy in range(sy, min(h, sy + 14)):
+                    for xx in range(bx, bx + 4):
+                        g[yy][xx] = 14 if xx < bx + 2 else 24
+        _SHELF_CACHE[key] = g
+    src = _SHELF_CACHE[key]
+    for y in range(h):
+        buf[y][:] = src[y]
+
+
 BG_DRAWERS = {
     "space": draw_bg_space,
     "blueprint": lambda b, w, h, g: draw_bg_space(b, w, h, g, "blueprint"),
@@ -322,13 +431,17 @@ BG_DRAWERS = {
     "outdoor": draw_bg_outdoor,
     "room": draw_bg_room,
     "market": draw_bg_market,
+    "oilfield": draw_bg_oilfield,
+    "shelf": draw_bg_shelf,
     "cottage": draw_bg_cottage,
     "cottage_snow": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "snow"),
     "cottage_spring": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "spring"),
 }
 from .palace import BG as _PALACE_BG  # noqa: E402
+from .tang import BG as _TANG_BG  # noqa: E402
 
 BG_DRAWERS.update(_PALACE_BG)
+BG_DRAWERS.update(_TANG_BG)
 
 
 class FrameBuffer:

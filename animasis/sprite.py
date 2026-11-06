@@ -494,6 +494,42 @@ def draw_sprite(ch: Character, hat: int | None = None) -> Canvas:
                 cv.paint({(n, top_y - 1): 6, (n - f, top_y - 1): 7, (n, top_y - 2): 31}, "head")
             if hs == "crown":
                 cv.paint({(n, top_y - 3): 7, (n, top_y - 4): 4}, "head")
+        elif hs == "futou":
+            top_y = min(y for _, y in dome)
+            # soft black cap with two trailing tails
+            if view in ("front", "back"):
+                for side in (-1, 1):
+                    for k in range(4):
+                        cv.paint({(n + side * (6 + k // 2), m - 3 + (k % 2)): hr[1]}, "head")
+                        if k < 2:
+                            cv.paint({(n + side * (6 + k // 2), m - 2 + (k % 2)): hr[2]}, "head")
+            else:
+                for k in range(5):
+                    cv.paint({(n - f * (6 + k), m - 4 + (k % 2) - (k // 3)): hr[1]}, "head")
+                    if k < 3:
+                        cv.paint({(n - f * (6 + k), m - 3 + (k % 2) - (k // 3)): hr[2]}, "head")
+            cv.paint({(n, top_y - 1): 7, (n, top_y - 2): 6}, "head")
+        elif hs == "helmet":
+            top_y = min(y for _, y in dome)
+            # neck guard, cheek guards, gold brow band and red plume
+            if view in ("front", "back"):
+                for side in (-1, 1):
+                    for k in range(3):
+                        cv.paint({(n + side * (4 + k), m - 3 + k): hr[2]}, "head")
+                        cv.paint({(n + side * (3 + k), m - 2 + k): hr[1]}, "head")
+                cv.paint({(n + k, m - 4): 7 for k in range(-4, 5)}, "head")
+            else:
+                for k in range(4):
+                    cv.paint({(n - f * (3 + k), m - 3 + k): hr[2]}, "head")
+                    cv.paint({(n - f * (2 + k), m - 2 + k): hr[1]}, "head")
+                for k in range(-f * 4, f * 7, f):
+                    cv.paint({(n + k, m - 4): 7}, "head")
+                cv.paint({(n + f * 5, m - 1): hr[2], (n + f * 5, m): hr[1]}, "head")
+            cv.paint({(n, top_y - 1): 7, (n, top_y - 2): 5, (n, top_y - 3): 26}, "head")
+            if f < 0:
+                cv.paint({(n + 1, top_y - 4): 5}, "head")
+            else:
+                cv.paint({(n - 1, top_y - 4): 5}, "head")
     if view in ("front", "back"):
         _limb(cv, rig, "l", "arm", look, back=True)
         _limb(cv, rig, "r", "arm", look, back=False)

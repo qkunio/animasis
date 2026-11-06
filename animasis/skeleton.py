@@ -400,7 +400,7 @@ class Look:
     skirt: bool = False
     belt: int | None = None
     hat: int | None = None
-    hat_style: str | None = None   # None (cap) | qing (清代暖帽: 红缨 + 顶珠) | crown (帝冠: 金顶)
+    hat_style: str | None = None   # None (cap) | futou (唐幞头) | helmet (唐甲胄头盔) | qing (清代暖帽) | crown (帝冠)
     blush: bool = True
     lashes: bool = False
     beard: str | None = None       # None | short | long  (drawn in the hair colour)

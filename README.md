@@ -15,7 +15,7 @@ pip install -e .
 # needs ffmpeg on PATH for MP4
 
 # Render one scene
-animasis render demos/indoor_pickup.yaml -o demos/output/indoor_pickup.mp4
+animasis render demos/econ_opportunity_cost.yaml -o demos/output/econ_opportunity_cost.mp4
 
 # Render all demos
 python -m animasis.demos
@@ -114,11 +114,21 @@ Cycles | 循环: `idle`, `walk`, `wave`, `jump`, `pickup`, `sit`
 
 | File | One-liner |
 |------|-----------|
-| `demos/indoor_pickup.yaml` | Indoor: walk to a bouncing ball, pick it up, wave. / 室内捡球并挥手 |
-| `demos/two_person_handoff.yaml` | Two people wave, approach, hand over a gift. / 两人互动递物 |
-| `demos/outdoor_jump.yaml` | Outdoor run–jump with ball bounce physics. / 室外跳跃与弹跳物理 |
+| `demos/econ_opportunity_cost.yaml` | 经济学科普「机会成本」 |
+| `demos/sangu_maolu.yaml` | 历史故事「三顾茅庐」，带中文旁白与相机分镜 |
+| `demos/jiuzi_duodi.yaml` | 清史短片「九子夺嫡」，带多角度体位与中文旁白 |
+| `demos/gnss_intro.yaml` | GNSS 卫星导航科普，带中文旁白与相机分镜 |
+| `demos/petroleum.yaml` | 石油科普：原油分馏与石油化工 |
 
 Outputs land in `demos/output/*.mp4`.
+
+### 短片开头与结尾规范
+
+以 GNSS（`demos/gnss_intro.yaml`）的前后格式为准：
+
+- 一进入画面就直入主题，用有吸引力的内容引入。
+- 不要标题栏或开场标题卡。
+- 结尾只保留本片标题和 `@像素万物局` 两行字。
 
 ---
 
@@ -164,4 +174,8 @@ MIT
 
 ## Story demo: GNSS 卫星导航科普（相机分镜 + edge-tts 旁白）
 
-`demos/gnss_intro.yaml` → `demos/output/gnss_intro.mp4`：89 秒有声像素科普，讲什么是 GNSS、四大系统、卫星发信号 → 接收机测距 → 多星定位、为什么至少要 4 颗卫星，最后带一下民用用途。画面包括自转地球与卫星星座、手机地图特写和测距示意图，共 53 个镜位。旁白为 `zh-CN-YunxiNeural`。详见 [demos/gnss_README.md](demos/gnss_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4`
+`demos/gnss_intro.yaml` → `demos/output/gnss_intro.mp4`：82 秒有声像素科普，没有标题卡，结尾只有“全球导航定位系统（GNSS） / @像素万物局”两行字。讲什么是 GNSS、四大系统、卫星发信号 → 接收机测距 → 多星定位、为什么至少要 4 颗卫星，最后带一下民用用途。画面包括自转地球与卫星星座、手机地图特写和测距示意图，共 52 个镜位。旁白为 `zh-CN-YunxiNeural`。详见 [demos/gnss_README.md](demos/gnss_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4`
+
+## Story demo: 石油科普「一桶石油，能变出多少东西？」（原油分馏 + 石油化工）
+
+`demos/petroleum.yaml` → `demos/output/petroleum.mp4`：95 秒有声像素科普，冷开场用油滴坠落 + 逐字大字抓人，字幕与旁白逐句对齐，结尾只有“一桶石油，半个现代生活 / @像素万物局”两行字。讲原油是上千种碳氢化合物的混合物、分馏塔如何按沸点分出 6 大馏分、一桶 159 升原油大致能产出多少汽油/柴油/航煤，以及石脑油 → 乙烯 → 聚乙烯 → 塑料瓶的裂解聚合链条，最后用 12 个产品组成一面“石油产品墙”。共 45 个镜位，旁白为 `zh-CN-YunxiNeural`。详见 [demos/petroleum_README.md](demos/petroleum_README.md)。重新渲染：`python -m animasis narrate demos/petroleum.yaml -o demos/output/petroleum.mp4`

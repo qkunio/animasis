@@ -1,0 +1,213 @@
+# 石油科普 · 一桶石油，能变出多少东西？
+# 有声成片：
+#   python -m animasis narrate demos/petroleum.yaml -o demos/output/petroleum.mp4
+# 镜头表：
+#   python -m animasis shots demos/petroleum.yaml --markdown
+# 段落：冷开场 | A 油田与原油 | B 碳氢化合物 | C 分馏塔（6 大馏分）| D 一桶的产出 |
+#       E 裂解→乙烯→聚乙烯 | F 产品墙 | G 结尾 | 两行字结尾卡
+name: petroleum
+width: 320
+height: 180
+fps: 30
+duration: 95.0
+background: oilfield
+ground_y: 150
+scale: 3
+gravity: 420
+characters:
+- {name: xiaoke, preset: hero, x: -16, hat: 7, cloth: 10, pants: 25, hair: 24, hair_style: short, expression: neutral, visible: false}
+narration:
+  voice: zh-CN-YunxiNeural
+  rate: +5%
+  lines:
+  - {t: 0.8, text: 一桶石油，究竟能变出多少东西？}
+  - {t: 5.2, text: 一桶原油，黑乎乎、黏糊糊，看起来平平无奇。}
+  - {t: 11.0, text: 可它其实是上千种碳氢化合物的混合物，沸点各不相同。}
+  - {t: 17.2, text: 送进分馏塔，加热到约 400 摄氏度，油气一路往上。}
+  - {t: 23.2, text: 越往上越冷：沸点高的先凝，沸点低的继续爬。}
+  - {t: 28.8, text: 塔顶是石油气，往下是汽油、煤油、柴油，塔底是重油——沥青就来自它。}
+  - {t: 37.2, text: 一桶 159 升。以美国炼厂为例：约 46% 汽油，30% 柴油，11% 航空煤油。}
+  - {t: 47.2, text: 但分馏只是第一步。真正的魔法，是把馏分拆开再重组。}
+  - {t: 53.4, text: 石脑油裂解成乙烯，乙烯再聚合成聚乙烯——塑料瓶就是这么来的。}
+  - {t: 61.4, text: 同样的碳和氢，还能变成涤纶衣服、橡胶轮胎、油漆、洗涤剂、阿司匹林和口红。}
+  - {t: 70.6, text: 从燃料到塑料、化纤、橡胶、药品、化妆品，再到沥青路，石油能变出上千种产品。}
+  - {t: 80.8, text: 一桶石油里装的不只是能量，还有半个现代生活。}
+  - {t: 86.6, text: 下一次加油时，别忘了看看周围——你正站在石油里。}
+camera:
+- {t: 0.0, shot: close, zoom: 2.4, target: [160, 30], move: 0.15, name: 冷开场·油滴}
+- {t: 0.15, shot: close, zoom: 2.3, target: [160, 60], move: 0.5, ease: in, name: 跟拍·油滴下落}
+- {t: 0.65, shot: close, zoom: 2.2, target: [160, 92], move: 0.1, name: 近景·溅开}
+- {t: 0.75, shot: full, zoom: 1.45, target: [160, 88], move: 0.45, ease: out, name: 拉远·大字}
+- {t: 1.6, shot: full, zoom: 1.4, target: [160, 92], move: 1.0, name: 缓推·问题}
+- {t: 2.7, shot: full, zoom: 1.35, target: [160, 82], move: 1.4, name: 缓推·问题}
+- {t: 4.2, shot: full, zoom: 1.25, target: [160, 78], move: 1.5, name: 缓推·悬念}
+- {t: 5.0, shot: wide, transition: fade, fade: 0.25, name: 转场·油田与一桶原油}
+- {t: 6.4, shot: close, zoom: 2.0, target: [96, 122], move: 1.2, name: 近景·油桶}
+- {t: 8.4, shot: medium, target: xiaoke, offset: [0, -6], move: 1.0, name: 中景·小科}
+- {t: 9.6, shot: wide, move: 1.2, name: 拉远·油田全景}
+- {t: 11.0, shot: wide, transition: fade, fade: 0.5, name: 远景·一滴原油}
+- {t: 11.6, shot: close, zoom: 2.2, target: [64, 94], move: 1.4, name: 推近·油滴}
+- {t: 13.4, shot: medium, zoom: 1.7, target: [205, 88], move: 1.8, name: 横摇·分子群}
+- {t: 15.4, shot: wide, move: 1.0, name: 拉远·混合物}
+- {t: 17.0, shot: wide, transition: fade, fade: 0.5, name: 远景·分馏塔}
+- {t: 17.5, shot: medium, zoom: 1.8, target: [88, 138], move: 1.5, name: 中景·加热炉}
+- {t: 20.0, shot: medium, zoom: 1.5, target: [112, 118], move: 2.6, ease: linear, name: 沿塔身上摇}
+- {t: 24.0, shot: full, zoom: 1.3, target: [130, 95], move: 2.0, name: 全景·塔内上升}
+- {t: 28.5, shot: full, zoom: 1.25, target: [140, 90], move: 1.0, name: 全景·各层馏分}
+- {t: 33.0, shot: medium, zoom: 1.3, target: [145, 122], move: 1.5, name: 下摇·重油与沥青}
+- {t: 35.5, shot: wide, zoom: 1.15, target: [150, 92], move: 1.0, name: 拉远·六大馏分}
+- {t: 37.0, shot: wide, transition: fade, fade: 0.5, name: 远景·一桶原油的产出}
+- {t: 37.8, shot: close, zoom: 1.25, target: [160, 110], move: 1.2, name: 近景·产量条形图}
+- {t: 40.6, shot: full, zoom: 1.2, target: [160, 108], move: 1.0, name: 全景·四大去向}
+- {t: 44.0, shot: wide, move: 1.0, name: 拉远·比例仅供参考}
+- {t: 47.0, shot: wide, transition: fade, fade: 0.5, name: 远景·分馏之后}
+- {t: 47.6, shot: close, zoom: 2.0, target: [62, 66], move: 1.0, name: 近景·长链烃}
+- {t: 49.6, shot: medium, zoom: 1.7, target: [150, 74], move: 1.8, name: 横摇·乙烯}
+- {t: 52.8, shot: medium, zoom: 1.7, target: [205, 76], move: 2.0, name: 横摇·聚乙烯}
+- {t: 56.0, shot: close, zoom: 2.2, target: [282, 126], move: 1.2, name: 近景·塑料瓶}
+- {t: 58.4, shot: wide, zoom: 1.15, target: [170, 90], move: 1.2, name: 拉远·从油到塑料}
+- {t: 61.0, shot: wide, transition: fade, fade: 0.5, name: 远景·产品墙}
+- {t: 61.4, shot: close, zoom: 2.0, target: [84, 70], move: 1.0, name: 近景·涤纶衣服}
+- {t: 63.0, shot: close, zoom: 2.0, target: [156, 70], move: 1.6, name: 横摇·轮胎与油漆}
+- {t: 64.8, shot: close, zoom: 2.0, target: [228, 70], move: 1.2, name: 近景·洗涤剂}
+- {t: 66.2, shot: close, zoom: 2.0, target: [60, 122], move: 1.6, name: 下摇·阿司匹林与口红}
+- {t: 68.4, shot: medium, zoom: 1.7, target: [190, 122], move: 2.0, name: 横摇·沥青与口罩}
+- {t: 70.6, shot: wide, zoom: 1.1, target: [160, 100], move: 0.8, name: 拉远·整面产品墙}
+- {t: 74.0, shot: full, zoom: 1.1, target: [160, 100], move: 2.0, name: 缓推·上千种产品}
+- {t: 77.5, shot: wide, move: 1.2, name: 拉远·不只是燃料}
+- {t: 80.0, shot: closeup, zoom: 2.6, target: [100, 118], transition: fade, fade: 0.4, name: 特写·油桶}
+- {t: 80.8, shot: wide, move: 3.5, ease: out, name: 拉远·油田落日}
+- {t: 85.0, shot: wide, move: 0.8, name: 缓推·半个现代生活}
+- {t: 89.0, shot: full, zoom: 1.15, target: [160, 105], move: 3.0, name: 缓推·一桶石油}
+overlays:
+- {kind: droplet, t: 0.0, until: 0.72, x: 160, y: 96, y0: -8, fall: 0.62, r: 22, color: 1, edge: 3}
+- {kind: splash, t: 0.65, until: 1.35, x: 160, y: 104, n: 20, power: 70}
+- {kind: text, t: 0.8, until: 5.0, x: 160, y: 44, text: 一桶石油, size: 28, color: 7, outline: 16, bold: true, reveal: 9}
+- {kind: text, t: 1.45, until: 5.0, x: 160, y: 84, text: 究竟能变出多少东西？, size: 18, color: 4, outline: 16, bold: true, reveal: 9}
+- {kind: pumpjack, t: 5.0, until: 11.0, x: 250, y: 150, scale: 1.5, period: 3.4}
+- {kind: barrel, t: 5.0, until: 11.0, x: 96, y: 150, scale: 1.2}
+- {kind: tag, t: 5.8, until: 11.0, x: 96, y: 104, space: world, text: 原油, bg: 25, color: 4}
+- {kind: tag, t: 8.4, until: 11.0, x: 250, y: 84, space: world, text: 抽油机, bg: 2, color: 4}
+- {kind: droplet, t: 11.0, until: 17.0, x: 64, y: 94, r: 26, color: 1, edge: 3}
+- {kind: molecule, t: 11.4, until: 17.0, x: 150, y: 58, n: 3, scale: 1.4, grow: 0.8}
+- {kind: molecule, t: 11.8, until: 17.0, x: 205, y: 74, n: 5, scale: 1.3, grow: 0.9}
+- {kind: molecule, t: 12.2, until: 17.0, x: 258, y: 56, n: 7, scale: 1.2, grow: 1.0}
+- {kind: molecule, t: 12.6, until: 17.0, x: 188, y: 112, style: ring, scale: 1.5}
+- {kind: molecule, t: 13.0, until: 17.0, x: 258, y: 120, n: 9, scale: 1.1, grow: 1.0}
+- {kind: text, t: 11.8, until: 17.0, x: 150, y: 80, space: world, text: C4H10, size: 10, color: 31, outline: 16}
+- {kind: text, t: 12.2, until: 17.0, x: 205, y: 92, space: world, text: C8H18, size: 10, color: 31, outline: 16}
+- {kind: text, t: 12.6, until: 17.0, x: 188, y: 130, space: world, text: 苯环, size: 10, color: 3, outline: 16}
+- {kind: text, t: 13.2, until: 17.0, x: 258, y: 128, space: world, text: C20H42, size: 10, color: 31, outline: 16}
+- kind: column
+  t: 17.0
+  until: 37.0
+  x: 100
+  y: 150
+  w: 42
+  h: 112
+  label_x: 156
+  cuts:
+  - {top: true, text: 石油气 <40°C, color: 7, t: 29.0}
+  - {at: 0.78, text: 汽油 40–180°C, color: 30, t: 29.7}
+  - {at: 0.6, text: 煤油 180–250°C, color: 9, t: 30.4}
+  - {at: 0.42, text: 柴油 250–350°C, color: 6, t: 31.1}
+  - {at: 0.24, text: 重油 >350°C, color: 27, t: 31.8}
+  - {bottom: true, text: 沥青 · 渣油深加工, color: 2, t: 32.5}
+- {kind: barrel, t: 37.0, until: 47.0, x: 54, y: 150, scale: 2.0}
+- kind: cutbar
+  t: 37.0
+  until: 47.0
+  x: 84
+  y: 100
+  w: 196
+  h: 20
+  grow: 0.7
+  stagger: 0.9
+  show_labels: false
+  segments:
+  - {label: 汽油, pct: 46, color: 30}
+  - {label: 柴油, pct: 30, color: 6}
+  - {label: 航空煤油, pct: 11, color: 9}
+  - {label: 其他, pct: 13, color: 11}
+- {kind: text, t: 37.2, until: 47.0, x: 84, y: 56, space: world, text: 一桶原油 = 159 升, size: 14, color: 7, outline: 16, bold: true, align: left}
+- {kind: text, t: 37.6, until: 47.0, x: 84, y: 74, space: world, text: 约 45 加仑成品油, size: 9, color: 3, outline: 16, align: left}
+- {kind: text, t: 37.6, until: 47.0, x: 84, y: 88, space: world, text: 以美国炼厂 2023 年数据为例 · 体积占比, size: 8, color: 3, outline: 16, align: left}
+- {kind: tag, t: 41.4, until: 47.0, x: 116, y: 124, space: world, text: 汽油 46%, bg: 30, color: 4}
+- {kind: tag, t: 41.4, until: 47.0, x: 222, y: 124, space: world, text: 柴油 30%, bg: 6, color: 4}
+- {kind: tag, t: 42.2, until: 47.0, x: 116, y: 138, space: world, text: 航空煤油 11%, bg: 9, color: 4}
+- {kind: tag, t: 42.2, until: 47.0, x: 222, y: 138, space: world, text: 其他 13%, bg: 11, color: 4}
+- {kind: molecule, t: 47.0, until: 52.8, x: 60, y: 64, n: 9, scale: 1.2, grow: 1.0}
+- {kind: tag, t: 47.6, until: 51.6, x: 60, y: 86, space: world, text: 石脑油 长链烃, bg: 25, color: 4}
+- {kind: force, t: 47.8, until: 52.8, x: 96, y: 64, dir: right, length: 22, color: 7, grow: 0.5}
+- {kind: text, t: 48.0, until: 52.8, x: 126, y: 46, space: world, text: 裂解 850°C, size: 10, color: 6, outline: 16, bold: true}
+- {kind: molecule, t: 49.4, until: 56.2, x: 150, y: 58, n: 2, scale: 1.6, double: true}
+- {kind: molecule, t: 49.8, until: 56.2, x: 150, y: 86, n: 2, scale: 1.6, double: true}
+- {kind: tag, t: 50.0, until: 55.8, x: 150, y: 104, space: world, text: 乙烯 C2H4, bg: 30, color: 4}
+- {kind: force, t: 50.8, until: 56.2, x: 174, y: 74, dir: right, length: 22, color: 7, grow: 0.5}
+- {kind: text, t: 51.2, until: 56.2, x: 205, y: 48, space: world, text: 聚合, size: 10, color: 30, outline: 16, bold: true}
+- {kind: molecule, t: 52.6, until: 60.0, x: 255, y: 72, n: 8, scale: 1.1, poly: true, grow: 1.5}
+- {kind: tag, t: 53.4, until: 60.0, x: 255, y: 96, space: world, text: 聚乙烯, bg: 30, color: 4}
+- {kind: product, t: 54.2, until: 61.0, x: 282, y: 128, name: bottle, label: 塑料瓶, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 36, y: 66, name: bottle, label: 塑料瓶, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 84, y: 66, name: shirt, label: 涤纶衣服, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 132, y: 66, name: tire, label: 橡胶轮胎, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 180, y: 66, name: phonecase, label: 手机壳, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 228, y: 66, name: paint, label: 油漆, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 276, y: 66, name: detergent, label: 洗涤剂, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 36, y: 118, name: pill, label: 阿司匹林, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 84, y: 118, name: lipstick, label: 口红, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 132, y: 118, name: road, label: 沥青路, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 180, y: 118, name: mask, label: 口罩, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 228, y: 118, name: cable, label: 电缆, scale: 2}
+- {kind: product, t: 61.0, until: 80.0, x: 276, y: 118, name: film, label: 保鲜膜, scale: 2}
+- {kind: text, t: 61.0, until: 62.0, x: 160, y: 24, space: world, text: 石油化工产品, size: 11, color: 7, outline: 16, bold: true}
+- {kind: pumpjack, t: 80.0, until: 95.0, x: 250, y: 150, scale: 1.5, period: 3.4}
+- {kind: barrel, t: 80.0, until: 95.0, x: 100, y: 150, scale: 1.4}
+- {kind: caption, t: 5.2, until: 10.420000000000002, text: 一桶原油，黑乎乎、黏糊糊，看起来平平无奇。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 11.0, until: 14.8984, text: 可它其实是上千种碳氢化合物的混合物，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 14.9384, until: 16.43, text: 沸点各不相同。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 17.2, until: 20.9, text: 送进分馏塔，加热到约 400 摄氏度，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 20.939999999999998, until: 22.44, text: 油气一路往上。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 23.2, until: 28.060000000000002, text: 越往上越冷：沸点高的先凝，沸点低的继续爬。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 28.8, until: 33.2784375, text: 塔顶是石油气，往下是汽油、煤油、柴油，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 33.3184375, until: 36.370000000000005, text: 塔底是重油—沥青就来自它。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 37.2, until: 40.86833333333334, text: 一桶 159 升。以美国炼厂为例：, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 40.90833333333334, until: 44.08222222222223, text: 约 46% 汽油，30% 柴油，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 44.12222222222223, until: 46.06, text: 11% 航空煤油。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 47.2, until: 50.544000000000004, text: 但分馏只是第一步。真正的魔法，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 50.584, until: 52.800000000000004, text: 是把馏分拆开再重组。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 53.4, until: 57.04206896551724, text: 石脑油裂解成乙烯，乙烯再聚合成聚乙烯—, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 57.08206896551724, until: 58.98, text: 塑料瓶就是这么来的。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 61.4, until: 66.10833333333332, text: 同样的碳和氢，还能变成涤纶衣服、橡胶轮胎、, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 66.14833333333333, until: 69.49999999999999, text: 油漆、洗涤剂、阿司匹林和口红。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 70.6, until: 75.35999999999999, text: 从燃料到塑料、化纤、橡胶、药品、化妆品，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 75.39999999999999, until: 79.43999999999998, text: 再到沥青路，石油能变出上千种产品。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 80.8, until: 85.53999999999999, text: 一桶石油里装的不只是能量，还有半个现代生活。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 86.6, until: 89.57956521739129, text: 下一次加油时，别忘了看看周围—, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 89.6195652173913, until: 91.18999999999998, text: 你正站在石油里。, size: 12, color: 4, reveal: 0}
+- kind: card
+  t: 91.3
+  until: 95.0
+  bg: 25
+  items:
+  - {text: 一桶石油，半个现代生活, size: 20, color: 7}
+  - {text: '@像素万物局', size: 14, color: 31, at: 0.6}
+timeline:
+- {t: 0.0, action: background, name: blueprint}
+- {t: 5.0, action: background, name: oilfield}
+- {t: 5.0, action: show, target: xiaoke}
+- {t: 5.0, action: walk_to, target: xiaoke, x: 158, speed: 55}
+- {t: 8.4, action: face, target: xiaoke, dir: -1}
+- {t: 8.8, action: pose, target: xiaoke, name: idle}
+- {t: 8.8, action: expression, target: xiaoke, name: happy}
+- {t: 9.6, action: cycle, target: xiaoke, name: wave, speed: 1.3}
+- {t: 10.5, action: pose, target: xiaoke, name: idle}
+- {t: 11.0, action: hide, target: xiaoke}
+- {t: 11.0, action: background, name: blueprint}
+- {t: 61.0, action: background, name: shelf}
+- {t: 80.0, action: background, name: oilfield}
+- {t: 80.0, action: show, target: xiaoke}
+- {t: 80.0, action: move, target: xiaoke, x: 164}
+- {t: 80.0, action: pose, target: xiaoke, name: idle}
+- {t: 80.0, action: expression, target: xiaoke, name: happy}
+- {t: 80.0, action: face, target: xiaoke, dir: 1}
