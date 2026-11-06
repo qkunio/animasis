@@ -28,4 +28,4 @@ where = ["."]
 include = ["animasis*"]
 
 [tool.setuptools.package-data]
-animasis = ["py.typed"]
+animasis = ["py.typed", "assets/*.m4a"]

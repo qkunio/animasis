@@ -10,7 +10,10 @@ Scene YAML::
 
 Each line is synthesized once (cached by voice/rate/text under ``audio_dir``),
 placed at its ``t`` with ffmpeg ``adelay``, mixed to one narration track,
-padded with silence to the video length and muxed as AAC.
+and padded with silence to the video length. The packaged default BGM loops
+at a constant base level beside the narration; set ``bgm: false`` to disable it,
+``bgm`` to another audio path, or ``bgm_volume`` to adjust its base level.
+The final mix is muxed as AAC.
 
     python -m animasis.narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4
 """
@@ -30,6 +33,8 @@ from typing import Any
 import yaml
 
 DEFAULT_VOICE = "zh-CN-YunxiNeural"
+DEFAULT_BGM = Path(__file__).parent / "assets" / "default_bgm.m4a"
+DEFAULT_BGM_VOLUME = 0.16
 
 
 def probe_duration(path: str | Path) -> float:
@@ -44,6 +49,8 @@ def load_narration(scene_path: str | Path) -> dict[str, Any]:
     nar.setdefault("voice", DEFAULT_VOICE)
     nar.setdefault("rate", "+0%")
     nar.setdefault("volume", "+0%")
+    nar.setdefault("bgm", str(DEFAULT_BGM))
+    nar.setdefault("bgm_volume", DEFAULT_BGM_VOLUME)
     nar["lines"] = [dict(l) for l in nar.get("lines", [])]
     nar["duration"] = float(data.get("duration", 0))
     nar["name"] = str(data.get("name", Path(scene_path).stem))
@@ -96,6 +103,27 @@ def mix_track(lines: list[dict[str, Any]], duration: float, out_wav: str | Path)
     return Path(out_wav)
 
 
+def mix_bgm(narration_wav: str | Path, bgm_path: str | Path, duration: float, out_wav: str | Path,
+            volume: float = DEFAULT_BGM_VOLUME) -> Path:
+    """Mix a constant-level looping music bed with narration, with edge fades and a safety limiter."""
+    bgm_path = Path(bgm_path)
+    if not bgm_path.is_file():
+        raise FileNotFoundError(f"BGM not found: {bgm_path}")
+    fade_out = max(0.0, duration - 0.8)
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(narration_wav),
+           "-stream_loop", "-1", "-i", str(bgm_path)]
+    parts = [
+        f"[0:a]aresample=24000,aformat=channel_layouts=mono,apad,atrim=0:{duration:.3f}[voice]",
+        f"[1:a]aresample=24000,aformat=channel_layouts=mono,volume={volume:.4f},"
+        f"atrim=0:{duration:.3f},afade=t=in:st=0:d=0.4,afade=t=out:st={fade_out:.3f}:d=0.8[bgm]",
+        f"[voice][bgm]amix=inputs=2:normalize=0:dropout_transition=0,"
+        f"alimiter=limit=0.95,atrim=0:{duration:.3f}[out]",
+    ]
+    cmd += ["-filter_complex", ";".join(parts), "-map", "[out]", "-ac", "1", "-ar", "24000", str(out_wav)]
+    subprocess.run(cmd, check=True)
+    return Path(out_wav)
+
+
 def mux(video: str | Path, audio: str | Path, out: str | Path) -> Path:
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(video), "-i", str(audio),
                     "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k",
@@ -117,6 +145,12 @@ def narrate_scene(scene_path: str | Path, output: str | Path, video: str | Path 
         for w in check_timing(lines, dur):
             print("narration warning:", w, file=sys.stderr)
         wav = mix_track(lines, dur, audio_dir.parent / f"{nar['name']}_narration.wav")
+        if nar["bgm"]:
+            bgm_path = Path(nar["bgm"])
+            if not bgm_path.is_absolute():
+                bgm_path = scene_path.parent / bgm_path
+            wav = mix_bgm(wav, bgm_path, dur, audio_dir.parent / f"{nar['name']}_narration_bgm.wav",
+                          float(nar["bgm_volume"]))
         output.parent.mkdir(parents=True, exist_ok=True)
         mux(video, wav, output)
     for l in lines:

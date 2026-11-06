@@ -2,271 +2,258 @@
 # 有声成片（渲染 + edge-tts 旁白混音）:
 #   .venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4
 # 镜头表:   .venv/bin/python -m animasis shots demos/gnss_intro.yaml --markdown
-# 段落: 片头 | A 手机地图 | B 什么是GNSS(星座) | C 四大系统 | D 卫星发信号(原子钟) | E 接收机测距 |
+# 段落: A 手机地图 | B 什么是GNSS(星座) | C 四大系统 | D 卫星发信号(原子钟) | E 接收机测距 |
 #       F 多星定位(一圆→两交点→锁定) | G 第四颗星校时 + 四个未知数 | H 民用 | I 结尾地球 | 结尾卡
-# (geometry: receiver R=(170, 124), satellites A=(58, 86) B=(274, 66) C=(220, 16) D=(292, 22), mirror point R'=(161, 28))
+# (geometry: receiver R=(160, 110), satellites A=(100, 82) B=(220, 82) C=(130, 65) D=(205, 70), mirror point R'=(160, 54))
 name: gnss_intro
 width: 320
 height: 180
 fps: 60
-duration: 89.0
+duration: 82.4
 background: market
 ground_y: 150
 scale: 3
 gravity: 420
 characters:
-- {name: xiaoming, preset: hero, x: 40, hair: 24, hair_style: short, cloth: 6, pants: 25, expression: neutral}
+- {name: xiaoming, preset: hero, x: 150, hair: 24, hair_style: short, cloth: 6, pants: 25, expression: neutral}
 objects:
 - {name: phone, kind: phone, held_by: xiaoming, w: 5, h: 7}
 narration:
   voice: zh-CN-YunxiNeural
   rate: +5%
   lines:
-  - {t: 0.8, text: GNSS，全球卫星导航系统。}
-  - {t: 5.6, text: 打开手机地图，小蓝点立刻知道你在哪儿。它靠的，是天上的卫星。}
-  - {t: 13.0, text: GNSS 是全球卫星导航系统的统称：几十颗卫星，在两万多公里的高空绕着地球飞行。}
-  - {t: 21.0, text: 它有四大成员：美国的 GPS、中国的北斗、俄罗斯的格洛纳斯，还有欧洲的伽利略。}
-  - {t: 29.0, text: 每颗卫星都带着极其精准的原子钟，不停地广播：我是谁，现在几点。}
-  - {t: 36.2, text: 手机里的接收机收到信号，用收到的时间减去发出的时间，再乘以光速，就得到了到这颗卫星的距离。}
-  - {t: 44.8, text: 只知道一颗卫星的距离，你可能在一个大圆上的任何地方。}
-  - {t: 50.4, text: 加上第二颗，范围缩小到两个交点；第三颗，就能锁定位置。}
-  - {t: 57.2, text: 可手机的时钟不够精准，还需要第四颗卫星来校正时间。}
-  - {t: 62.9, text: 经度、纬度、高度，再加上时间，四个未知数，所以至少要四颗卫星。}
-  - {t: 70.8, text: 如今，开车导航、外卖骑手、共享单车、测绘和授时，都离不开 GNSS。}
-  - {t: 79.0, text: 看不见的卫星，正时时刻刻告诉你：你在这里。}
+  - {t: 0.1, text: 打开手机地图，小蓝点立刻知道你在哪儿。它靠的，是天上的卫星。}
+  - {t: 7.4, text: GNSS 是全球卫星导航系统的统称：几十颗卫星，在两万多公里的高空绕着地球飞行。}
+  - {t: 15.4, text: 它有四大成员：美国的 GPS、中国的北斗、俄罗斯的格洛纳斯，还有欧洲的伽利略。}
+  - {t: 23.4, text: 每颗卫星都带着极其精准的原子钟，不停地广播：我是谁，现在几点。}
+  - {t: 30.6, text: 手机里的接收机收到信号，用收到的时间减去发出的时间，再乘以光速，就得到了到这颗卫星的距离。}
+  - {t: 39.2, text: 只知道一颗卫星的距离，你可能在一个大圆上的任何地方。}
+  - {t: 44.8, text: 加上第二颗，范围缩小到两个交点；第三颗，就能锁定位置。}
+  - {t: 51.6, text: 可手机的时钟不够精准，还需要第四颗卫星来校正时间。}
+  - {t: 57.3, text: 经度、纬度、高度，再加上时间，四个未知数，所以至少要四颗卫星。}
+  - {t: 65.2, text: 如今，开车导航、外卖骑手、共享单车、测绘和授时，都离不开 GNSS。}
+  - {t: 73.4, text: 看不见的卫星，正时时刻刻告诉你：你在这里。}
 camera:
-- {t: 0.0, shot: wide, name: 片头标题卡}
-- {t: 5.2, shot: wide, transition: fade, fade: 0.6, name: 远景·街头，小明边走边看手机}
-- {t: 6.8, shot: medium, target: xiaoming, offset: [10, -8], name: 中景跟拍·小明}
-- {t: 8.4, shot: close, zoom: 1.5, target: [160, 86], name: 特写·手机地图（定位中→已定位）}
-- {t: 8.6, shot: close, zoom: 1.9, target: [160, 96], move: 1.8, name: 缓推·小蓝点}
-- {t: 10.6, shot: medium, target: xiaoming, offset: [0, -10], name: 中景·小明抬头}
-- {t: 11.0, shot: close, zoom: 2.2, target: skysat, offset: [-24, 24], move: 1.4, name: 上摇·天上的卫星}
-- {t: 12.6, shot: wide, transition: fade, fade: 0.6, name: 远景·地球与卫星星座}
-- {t: 12.9, shot: full, zoom: 1.35, target: [160, 96], move: 3.0, ease: linear, name: 缓推·星座}
-- {t: 16.0, shot: close, target: c1, name: 近景跟拍·一颗导航卫星}
-- {t: 18.4, shot: wide, move: 2.0, name: 拉远景·几十颗卫星}
-- {t: 20.6, shot: wide, transition: fade, fade: 0.6, name: 远景·四颗卫星一字排开}
-- {t: 22.4, shot: close, target: g1, offset: [0, 10], move: 0.6, name: 近景·GPS}
-- {t: 23.8, shot: close, target: g2, offset: [0, 10], move: 0.5, name: 横摇·北斗}
-- {t: 25.1, shot: close, target: g3, offset: [0, 10], move: 0.5, name: 横摇·GLONASS}
-- {t: 26.5, shot: close, target: g4, offset: [0, 10], move: 0.5, name: 横摇·Galileo}
-- {t: 27.8, shot: wide, move: 0.8, name: 拉远景·GNSS 家族}
-- {t: 28.6, shot: closeup, zoom: 2.6, target: [236, 66], transition: fade, fade: 0.5, name: 特写·原子钟}
-- {t: 30.6, shot: medium, target: bs, offset: [40, 20], move: 1.0, name: 摇到卫星·广播「我是 G07」}
-- {t: 33.0, shot: wide, move: 1.2, name: 拉远景·信号波射向地球}
-- {t: 35.9, shot: medium, zoom: 2.0, target: [80, 52], transition: fade, fade: 0.5, name: 中景·卫星发出信号}
-- {t: 36.4, shot: medium, zoom: 2.0, target: [214, 104], move: 1.8, name: 沿信号横摇到接收机}
-- {t: 38.4, shot: close, zoom: 2.6, target: [226, 104], name: 近景·手机记下 t收}
-- {t: 39.6, shot: wide, name: 远景·测距示意全图}
-- {t: 41.8, shot: medium, zoom: 1.8, target: [180, 46], move: 0.8, name: 推近·算出距离}
-- {t: 44.4, shot: medium, zoom: 2.0, target: sA, transition: fade, fade: 0.5, name: 中景·卫星A}
-- {t: 45.2, shot: wide, move: 1.6, name: 拉远景·距离圆展开}
-- {t: 47.4, shot: full, target: [110, 110], name: '全景·圆上处处是「?」'}
-- {t: 47.6, shot: full, target: [210, 100], move: 2.6, ease: linear, name: 横摇·沿圆周}
-- {t: 50.4, shot: wide, name: 远景·卫星B加入}
-- {t: 52.0, shot: medium, zoom: 1.5, target: [165, 78], name: 中景·两个交点}
-- {t: 54.8, shot: close, zoom: 2.6, target: [170, 108], move: 0.8, name: 推近景·第三颗锁定位置}
-- {t: 57.0, shot: closeup, zoom: 2.6, target: [196, 116], name: 特写·手机时钟有误差}
-- {t: 58.4, shot: wide, move: 0.8, name: 拉远景·圆环变模糊}
-- {t: 59.5, shot: medium, zoom: 2.0, target: sD, offset: [-30, 24], name: 中景·第四颗卫星D}
-- {t: 60.6, shot: full, zoom: 1.5, target: [176, 96], move: 1.2, name: 推·圆环收紧，重新锁定}
-- {t: 62.4, shot: wide, transition: fade, fade: 0.5, name: 远景·四星四线}
-- {t: 62.9, shot: close, target: u1, offset: [0, 14], move: 0.4, name: 近景·经度}
-- {t: 63.7, shot: close, target: u2, offset: [0, 14], move: 0.4, name: 横摇·纬度}
-- {t: 64.5, shot: close, target: u3, offset: [0, 14], move: 0.4, name: 横摇·高度}
-- {t: 65.4, shot: close, target: u4, offset: [0, 14], move: 0.4, name: 横摇·时间}
-- {t: 66.0, shot: wide, move: 1.0, name: 拉远景·四个未知数}
-- {t: 68.0, shot: medium, zoom: 1.6, target: [160, 98], move: 1.6, name: 推·至少四颗卫星}
-- {t: 70.4, shot: wide, transition: fade, fade: 0.5, name: 远景·城市街道}
-- {t: 71.4, shot: close, target: [44, 128], name: 近景·开车导航}
-- {t: 72.6, shot: close, target: [106, 124], name: 近景·外卖骑手}
-- {t: 73.8, shot: close, target: [166, 128], name: 近景·共享单车}
-- {t: 75.0, shot: close, target: [226, 124], name: 近景·测绘}
-- {t: 75.8, shot: close, target: [286, 124], name: 近景·授时}
-- {t: 76.7, shot: wide, move: 1.2, name: 拉远景·都离不开 GNSS}
-- {t: 78.6, shot: closeup, zoom: 2.8, target: [150, 80], transition: fade, fade: 0.5, name: 特写·地球上的你}
-- {t: 79.2, shot: wide, move: 4.0, ease: out, name: 拉远景·地球与卫星}
-- {t: 83.8, shot: wide, transition: fade, fade: 0.6, name: 结尾卡}
+- {t: 0.0, shot: medium, target: xiaoming, offset: [0, -8], name: 开场·小明已经在看手机}
+- {t: 1.0, shot: close, zoom: 1.6, target: [160, 86], move: 0.3, name: 特写·手机地图}
+- {t: 1.4, shot: close, zoom: 1.9, target: [160, 96], move: 1.2, name: 缓推·小蓝点}
+- {t: 3.2, shot: close, zoom: 1.7, target: [160, 90], move: 1.0, name: 近景·已定位}
+- {t: 4.4, shot: medium, target: xiaoming, offset: [0, -10], name: 中景·小明抬头}
+- {t: 5.2, shot: close, zoom: 2.2, target: skysat, offset: [-24, 24], move: 0.8, name: 上摇·天上的卫星}
+- {t: 7.0, shot: wide, transition: fade, fade: 0.6, name: 远景·地球与卫星星座}
+- {t: 7.300000000000001, shot: full, zoom: 1.35, target: [160, 96], move: 3.0, ease: linear, name: 缓推·星座}
+- {t: 10.4, shot: close, target: c1, name: 近景跟拍·一颗导航卫星}
+- {t: 12.799999999999999, shot: wide, move: 2.0, name: 拉远景·几十颗卫星}
+- {t: 15.000000000000002, shot: wide, transition: fade, fade: 0.6, name: 远景·四颗卫星一字排开}
+- {t: 16.799999999999997, shot: close, target: g1, offset: [0, 10], move: 0.6, name: 近景·GPS}
+- {t: 18.200000000000003, shot: close, target: g2, offset: [0, 10], move: 0.5, name: 横摇·北斗}
+- {t: 19.5, shot: close, target: g3, offset: [0, 10], move: 0.5, name: 横摇·GLONASS}
+- {t: 20.9, shot: close, target: g4, offset: [0, 10], move: 0.5, name: 横摇·Galileo}
+- {t: 22.200000000000003, shot: wide, move: 0.8, name: 拉远景·GNSS 家族}
+- {t: 23.0, shot: closeup, zoom: 2.6, target: [236, 66], transition: fade, fade: 0.5, name: 特写·原子钟}
+- {t: 25.0, shot: medium, target: bs, offset: [40, 20], move: 1.0, name: 摇到卫星·广播「我是 G07」}
+- {t: 27.4, shot: wide, move: 1.2, name: 拉远景·信号波射向地球}
+- {t: 30.299999999999997, shot: medium, zoom: 2.0, target: [80, 52], transition: fade, fade: 0.5, name: 中景·卫星发出信号}
+- {t: 30.799999999999997, shot: medium, zoom: 2.0, target: [214, 104], move: 1.8, name: 沿信号横摇到接收机}
+- {t: 32.8, shot: close, zoom: 2.6, target: [226, 104], name: 近景·手机记下 t收}
+- {t: 34.0, shot: wide, name: 远景·测距示意全图}
+- {t: 36.199999999999996, shot: medium, zoom: 1.8, target: [180, 46], move: 0.8, name: 推近·算出距离}
+- {t: 38.8, shot: medium, zoom: 2.0, target: sA, transition: fade, fade: 0.5, name: 中景·卫星A}
+- {t: 39.6, shot: wide, move: 0.5, name: 拉远景·距离圆展开}
+- {t: 41.8, shot: full, zoom: 1.15, target: [160, 92], name: '全景·圆上处处是「?」'}
+- {t: 42.0, shot: full, zoom: 1.15, target: [160, 92], move: 2.6, ease: linear, name: 缓推·整个圆}
+- {t: 44.8, shot: wide, name: 远景·卫星B加入}
+- {t: 46.4, shot: full, zoom: 1.15, target: [160, 92], name: 全景·两个交点}
+- {t: 49.199999999999996, shot: full, zoom: 1.15, target: [160, 92], move: 0.8, name: 全景·第三颗锁定位置}
+- {t: 51.4, shot: full, zoom: 1.15, target: [160, 92], name: 全景·手机时钟有误差}
+- {t: 52.8, shot: wide, move: 0.8, name: 拉远景·圆环变模糊}
+- {t: 53.9, shot: medium, zoom: 2.0, target: sD, offset: [-30, 24], name: 中景·第四颗卫星D}
+- {t: 55.0, shot: full, zoom: 1.15, target: [160, 92], move: 1.2, name: 全景·圆环收紧，重新锁定}
+- {t: 56.8, shot: wide, transition: fade, fade: 0.5, name: 远景·四星四线}
+- {t: 57.3, shot: close, target: u1, offset: [0, 14], move: 0.4, name: 近景·经度}
+- {t: 58.1, shot: close, target: u2, offset: [0, 14], move: 0.4, name: 横摇·纬度}
+- {t: 58.9, shot: close, target: u3, offset: [0, 14], move: 0.4, name: 横摇·高度}
+- {t: 59.800000000000004, shot: close, target: u4, offset: [0, 14], move: 0.4, name: 横摇·时间}
+- {t: 60.4, shot: wide, move: 1.0, name: 拉远景·四个未知数}
+- {t: 62.4, shot: medium, zoom: 1.6, target: [160, 98], move: 1.6, name: 推·至少四颗卫星}
+- {t: 64.80000000000001, shot: wide, transition: fade, fade: 0.5, name: 远景·城市街道}
+- {t: 65.80000000000001, shot: close, target: [44, 128], name: 近景·开车导航}
+- {t: 67.0, shot: close, target: [106, 124], name: 近景·外卖骑手}
+- {t: 68.2, shot: close, target: [166, 128], name: 近景·共享单车}
+- {t: 69.4, shot: close, target: [226, 124], name: 近景·测绘}
+- {t: 70.2, shot: close, target: [286, 124], name: 近景·授时}
+- {t: 71.10000000000001, shot: wide, move: 1.2, name: 拉远景·都离不开 GNSS}
+- {t: 73.0, shot: closeup, zoom: 2.8, target: [150, 80], transition: fade, fade: 0.5, name: 特写·地球上的你}
+- {t: 73.60000000000001, shot: wide, move: 4.0, ease: out, name: 拉远景·地球与卫星}
+- {t: 78.60000000000001, shot: wide, transition: fade, fade: 0.5, name: 结尾卡}
 overlays:
-- {kind: satellite, id: skysat, t: 5.2, until: 12.6, x: 280, y: 30, bob: 1, signal: [10.8, 12.6], aim: [150, 150], reach: 80}
-- {kind: phone, t: 8.4, until: 10.6, x: 160, y: 86, w: 56, h: 100, lock: 9.6, sats_from: [8.6, 0.25]}
-- {kind: caption, t: 5.4, until: 8.4, text: 打开手机地图……, reveal: 12}
-- {kind: caption, t: 8.4, until: 10.6, text: 小蓝点立刻知道你在哪儿, reveal: 12, color: 7}
-- {kind: text, t: 8.6, until: 9.6, x: 160, y: 24, text: 定位中…, size: 12, color: 3, outline: 16}
-- {kind: text, t: 9.6, until: 10.6, x: 160, y: 24, text: 已定位 ✓, size: 12, color: 30, outline: 16, bold: true}
-- {kind: caption, t: 10.6, until: 12.6, text: 它靠的——是天上的卫星, reveal: 12, color: 7}
-- {kind: tag, t: 11.4, until: 12.6, x: 280, y: 44, space: world, text: 卫星, bg: 7}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 100, 24], half: back, occlude: [160, 96, 44]}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 76, 56], half: back, occlude: [160, 96, 44]}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 128, 12], half: back, occlude: [160, 96, 44]}
-- {kind: planet, t: 12.6, until: 20.6, x: 160, y: 96, r: 44, spin: 0.15}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 100, 24], half: front, color: 3}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 76, 56], half: front, color: 3}
-- {kind: orbit, t: 12.6, until: 20.6, orbit: [160, 96, 128, 12], half: front, color: 3}
-- {kind: satellite, id: c1, t: 12.6, until: 20.6, orbit: [160, 96, 100, 24], period: 18, phase: 0, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c2, t: 12.6, until: 20.6, orbit: [160, 96, 100, 24], period: 18, phase: 120, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c3, t: 12.6, until: 20.6, orbit: [160, 96, 100, 24], period: 18, phase: 240, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c4, t: 12.6, until: 20.6, orbit: [160, 96, 76, 56], period: 15, phase: 40, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c5, t: 12.6, until: 20.6, orbit: [160, 96, 76, 56], period: 15, phase: 160, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c6, t: 12.6, until: 20.6, orbit: [160, 96, 76, 56], period: 15, phase: 280, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c7, t: 12.6, until: 20.6, orbit: [160, 96, 128, 12], period: 22, phase: 80, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c8, t: 12.6, until: 20.6, orbit: [160, 96, 128, 12], period: 22, phase: 200, occlude: [160, 96, 44], body: 7}
-- {kind: satellite, id: c9, t: 12.6, until: 20.6, orbit: [160, 96, 128, 12], period: 22, phase: 320, occlude: [160, 96, 44], body: 7}
-- {kind: caption, t: 13.0, until: 16.6, text: GNSS：全球卫星导航系统, reveal: 12, color: 7}
-- {kind: caption, t: 16.6, until: 20.6, text: 几十颗卫星，在两万多公里高空绕地飞行, reveal: 12}
-- {kind: tag, t: 13.4, until: 16.0, x: 160, y: 150, space: world, text: 地球, bg: 8}
-- {kind: text, t: 16.0, until: 18.6, x: 236, y: 8, text: '轨道高度 ≈ 20,000 km', size: 12, color: 31, outline: 16, bold: true}
-- {kind: planet, t: 20.6, until: 28.6, x: 160, y: 330, r: 200, spin: 0.05}
-- {kind: satellite, id: g1, t: 20.6, until: 28.6, x: 48, y: 66, bob: 2, body: 9, signal: [22.6, 28.6], reach: 40, aim: [48, 140]}
-- {kind: tag, t: 22.6, until: 28.6, x: 48, y: 84, space: world, text: GPS · 美国, bg: 9, color: 16}
-- {kind: satellite, id: g2, t: 20.6, until: 28.6, x: 124, y: 66, bob: 2, body: 5, signal: [23.9, 28.6], reach: 40, aim: [124, 140]}
-- {kind: tag, t: 23.9, until: 28.6, x: 124, y: 98, space: world, text: 北斗 BDS · 中国, bg: 7, color: 16}
-- {kind: satellite, id: g3, t: 20.6, until: 28.6, x: 200, y: 66, bob: 2, body: 4, signal: [25.2, 28.6], reach: 40, aim: [200, 140]}
-- {kind: tag, t: 25.2, until: 28.6, x: 200, y: 84, space: world, text: GLONASS · 俄罗斯, bg: 3, color: 16}
-- {kind: satellite, id: g4, t: 20.6, until: 28.6, x: 274, y: 66, bob: 2, body: 10, signal: [26.6, 28.6], reach: 40, aim: [274, 140]}
-- {kind: tag, t: 26.6, until: 28.6, x: 274, y: 98, space: world, text: Galileo · 欧盟, bg: 10, color: 4}
-- {kind: caption, t: 21.0, until: 22.6, text: GNSS 家族的四大成员, reveal: 12}
-- {kind: caption, t: 22.6, until: 28.6, text: GPS · 北斗 · GLONASS · Galileo, reveal: 10, color: 7}
-- {kind: text, t: 28.0, until: 28.6, x: 160, y: 22, space: world, text: GNSS, size: 16, bold: true, color: 7, outline: 16}
-- {kind: planet, t: 28.6, until: 35.9, x: 160, y: 380, r: 240, spin: 0.05}
-- {kind: satellite, id: bs, t: 28.6, until: 35.9, x: 86, y: 62, scale: 3, bob: 1.5, signal: [30.6, 35.9], reach: 110, spread: 40, aim: [160, 180], wave_speed: 36}
-- {kind: glyph, t: 28.6, until: 35.9, name: clock, x: 236, y: 82, scale: 1}
-- {kind: tag, t: 28.8, until: 35.9, x: 236, y: 86, space: world, text: 原子钟, bg: 7}
-- {kind: text, t: 29.6, until: 35.9, x: 236, y: 42, space: world, fmt: '12:00:{v:012.9f}', from: 0.0, to: 7.3, count: 7.3, size: 12, color: 31, outline: 16}
-- {kind: tag, t: 31.4, until: 35.9, x: 150, y: 94, space: world, text: 我是 G07, bg: 4}
-- {kind: tag, t: 32.6, until: 35.9, x: 150, y: 112, space: world, text: '现在 12:00:03', bg: 31}
-- {kind: caption, t: 29.0, until: 32.4, text: 每颗卫星都带着极其精准的原子钟, reveal: 12}
-- {kind: caption, t: 32.4, until: 35.9, text: 不停广播：我是谁 · 现在几点, reveal: 12, color: 7}
-- {kind: satellite, id: rs, t: 35.9, until: 44.4, x: 66, y: 40, scale: 2, bob: 1}
-- {kind: phone, t: 35.9, until: 44.4, x: 232, y: 124, w: 22, h: 38, lock: 38.0}
-- {kind: range, t: 36.4, until: 44.4, x0: 72, y0: 52, x1: 224, y1: 110, draw: 1.6, pulse: 60}
-- {kind: tag, t: 36.6, until: 44.4, x: 66, y: 60, space: world, text: 't发 = 12:00:00.000', bg: 31, size: 12}
-- {kind: tag, t: 38.2, until: 44.4, x: 224, y: 84, space: world, text: 't收 = 12:00:00.067', bg: 30, size: 12}
-- {kind: text, t: 39.6, until: 44.4, x: 180, y: 14, space: world, text: 距离 = (t收 − t发) × 光速, size: 12, bold: true, color: 4, outline: 16}
-- {kind: text, t: 41.0, until: 44.4, x: 180, y: 32, space: world, text: '= 0.067 s × 300,000 km/s', size: 12, color: 31, outline: 16}
-- {kind: text, t: 42.0, until: 44.4, x: 180, y: 50, space: world, fmt: '≈ {v:,.0f} km', from: 0, to: 20100, count: 1.4, size: 16, bold: true, color: 7, outline: 16}
-- {kind: caption, t: 36.2, until: 38.4, text: 手机里的接收机收到信号, reveal: 12}
-- {kind: caption, t: 38.4, until: 41.8, text: 收到时间 − 发出时间，再 × 光速, reveal: 12, color: 7}
-- {kind: caption, t: 41.8, until: 44.4, text: = 到这颗卫星的距离, reveal: 12, color: 7}
-- {kind: satellite, id: sA, t: 44.4, until: 62.4, x: 58, y: 86, bob: 1}
-- {kind: tag, t: 44.6, until: 62.4, x: 72, y: 64, space: world, text: 卫星A, bg: 31}
-- {kind: satellite, id: sB, t: 50.4, until: 62.4, x: 274, y: 66, bob: 1}
-- {kind: tag, t: 50.6, until: 62.4, x: 260, y: 44, space: world, text: 卫星B, bg: 30}
-- {kind: satellite, id: sC, t: 53.6, until: 62.4, x: 220, y: 16, bob: 1}
-- {kind: tag, t: 53.800000000000004, until: 62.4, x: 234, y: -6, space: world, text: 卫星C, bg: 28}
-- {kind: ring, t: 45.0, until: 57.0, x: 58, y: 86, r: 118.3, grow: 1.6, color: 31, start: 0}
-- {kind: ring, t: 50.6, until: 57.0, x: 274, y: 66, r: 119.1, grow: 1.3, color: 30, start: 180}
-- {kind: ring, t: 53.8, until: 57.0, x: 220, y: 16, r: 119.0, grow: 1.1, color: 28, start: 90}
-- {kind: ring, t: 57.0, until: 62.4, x: 58, y: 86, r: 118.3, grow: 0, color: 31, fuzz: 3, sharpen: [60.6, 1.2]}
-- {kind: ring, t: 57.0, until: 62.4, x: 274, y: 66, r: 119.1, grow: 0, color: 30, fuzz: 3, sharpen: [60.6, 1.2]}
-- {kind: ring, t: 57.0, until: 62.4, x: 220, y: 16, r: 119.0, grow: 0, color: 28, fuzz: 3, sharpen: [60.6, 1.2]}
-- {kind: satellite, id: sD, t: 59.4, until: 62.4, x: 292, y: 22, bob: 1, body: 5}
-- {kind: tag, t: 59.6, until: 62.4, x: 298, y: 34, space: world, text: 卫星D, bg: 5, color: 4}
-- {kind: ring, t: 59.6, until: 62.4, x: 292, y: 22, r: 159.0, grow: 1.0, color: 5, start: 180}
-- {kind: pin, t: 55.0, until: 57.0, x: 170, y: 124, size: 1}
-- {kind: pin, t: 61.4, until: 62.4, x: 170, y: 124, size: 1, drop: 0.3}
-- {kind: tag, t: 55.5, until: 57.0, x: 170, y: 128, space: world, text: 你在这里, bg: 5, color: 4}
-- {kind: glyph, t: 57.0, until: 59.4, name: clock, x: 196, y: 130, scale: 1}
-- {kind: tag, t: 57.2, until: 59.6, x: 196, y: 132, space: world, text: 手机时钟 ±0.001 s, bg: 5, color: 4}
-- {kind: text, t: 58.0, until: 60.6, x: 170, y: 72, space: world, text: 误差 ≈ 300 km！, size: 12, bold: true, color: 5, outline: 16}
-- {kind: tag, t: 61.4, until: 62.4, x: 170, y: 128, space: world, text: 钟差已校正 ✓, bg: 30}
-- {kind: caption, t: 44.8, until: 50.4, text: 一颗卫星：你在这个圆上的某处, reveal: 12}
-- {kind: caption, t: 50.4, until: 53.7, text: 两颗卫星：缩小到两个交点, reveal: 12}
-- {kind: caption, t: 53.7, until: 57.0, text: 三颗卫星：锁定位置！, reveal: 12, color: 7}
-- {kind: caption, t: 57.2, until: 59.4, text: 可手机的时钟不够准……, reveal: 12}
-- {kind: caption, t: 59.4, until: 62.4, text: 第四颗卫星：校正时间, reveal: 12, color: 7}
-- {kind: text, t: 46.6, until: 50.4, x: 169, y: 119, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
-- {kind: text, t: 47.85, until: 50.4, x: 169, y: 39, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
-- {kind: text, t: 51.9, until: 55.0, x: 170, y: 116, space: world, text: '?', size: 16, bold: true, color: 7, outline: 16}
-- {kind: text, t: 51.9, until: 54.8, x: 161, y: 20, space: world, text: '?', size: 16, bold: true, color: 7, outline: 16}
-- {kind: text, t: 54.8, until: 56.0, x: 161, y: 20, space: world, text: ×, size: 16, bold: true, color: 5, outline: 16}
-- {kind: planet, t: 62.4, until: 70.4, x: 160, y: 390, r: 240, spin: 0.05}
-- {kind: satellite, id: u1, t: 62.4, until: 70.4, x: 46, y: 34, bob: 1.5, body: 9}
-- {kind: range, t: 62.7, until: 70.4, x0: 46, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 9}
-- {kind: tag, t: 63.0, until: 70.4, x: 46, y: 50, space: world, text: 经度 x, bg: 9, color: 16}
-- {kind: satellite, id: u2, t: 62.4, until: 70.4, x: 122, y: 34, bob: 1.5, body: 5}
-- {kind: range, t: 63.5, until: 70.4, x0: 122, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 21}
-- {kind: tag, t: 63.8, until: 70.4, x: 122, y: 50, space: world, text: 纬度 y, bg: 5, color: 4}
-- {kind: satellite, id: u3, t: 62.4, until: 70.4, x: 198, y: 34, bob: 1.5, body: 4}
-- {kind: range, t: 64.3, until: 70.4, x0: 198, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 3}
-- {kind: tag, t: 64.6, until: 70.4, x: 198, y: 50, space: world, text: 高度 z, bg: 3, color: 16}
-- {kind: satellite, id: u4, t: 62.4, until: 70.4, x: 274, y: 34, bob: 1.5, body: 10}
-- {kind: range, t: 65.2, until: 70.4, x0: 274, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 10}
-- {kind: tag, t: 65.5, until: 70.4, x: 274, y: 50, space: world, text: 时间 t, bg: 10, color: 4}
-- {kind: phone, t: 62.4, until: 70.4, x: 160, y: 140, w: 20, h: 34, lock: 62.4, sats: 4}
-- {kind: text, t: 66.0, until: 70.4, x: 160, y: 80, space: world, text: 4 个未知数, size: 16, bold: true, color: 4, outline: 16}
-- {kind: text, t: 67.2, until: 70.4, x: 160, y: 98, space: world, text: → 至少 4 颗卫星, size: 16, bold: true, color: 7, outline: 16}
-- {kind: caption, t: 62.9, until: 66.0, text: 经度 · 纬度 · 高度 · 时间, reveal: 12}
-- {kind: caption, t: 66.0, until: 70.4, text: 四个未知数 = 至少四颗卫星, reveal: 12, color: 7}
-- {kind: glyph, t: 70.4, until: 78.6, name: car, x: 44, y: 150, scale: 1}
-- {kind: tag, t: 71.4, until: 78.6, x: 44, y: 110, space: world, text: 开车导航, bg: 7}
-- {kind: glyph, t: 70.4, until: 78.6, name: scooter, x: 106, y: 150, scale: 1}
-- {kind: tag, t: 72.6, until: 78.6, x: 106, y: 110, space: world, text: 外卖骑手, bg: 7}
-- {kind: glyph, t: 70.4, until: 78.6, name: bike, x: 166, y: 150, scale: 1}
-- {kind: tag, t: 73.8, until: 78.6, x: 166, y: 110, space: world, text: 共享单车, bg: 7}
-- {kind: glyph, t: 70.4, until: 78.6, name: tripod, x: 226, y: 150, scale: 1}
-- {kind: tag, t: 75.0, until: 78.6, x: 226, y: 110, space: world, text: 测绘, bg: 7}
-- {kind: glyph, t: 70.4, until: 78.6, name: clock, x: 286, y: 150, scale: 1}
-- {kind: tag, t: 75.8, until: 78.6, x: 286, y: 110, space: world, text: 授时, bg: 7}
-- {kind: satellite, t: 70.4, until: 78.6, x: 160, y: 22, bob: 1, signal: [70.4, 78.6], reach: 80, spread: 60, aim: [160, 150]}
-- {kind: caption, t: 70.8, until: 76.7, text: 导航 · 外卖 · 共享单车 · 测绘 · 授时, reveal: 10}
-- {kind: caption, t: 76.7, until: 78.6, text: 都离不开 GNSS, reveal: 12, color: 7}
-- {kind: orbit, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], half: back, occlude: [160, 96, 52]}
-- {kind: planet, t: 78.6, until: 83.8, x: 160, y: 96, r: 52, spin: 0.15}
-- {kind: orbit, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], half: front, color: 3}
-- {kind: satellite, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], period: 16, phase: 0, occlude: [160, 96, 52]}
-- {kind: satellite, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], period: 16, phase: 90, occlude: [160, 96, 52]}
-- {kind: satellite, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], period: 16, phase: 180, occlude: [160, 96, 52]}
-- {kind: satellite, t: 78.6, until: 83.8, orbit: [160, 96, 110, 30], period: 16, phase: 270, occlude: [160, 96, 52]}
-- {kind: pin, t: 79.0, until: 83.8, x: 150, y: 84, size: 1}
-- {kind: tag, t: 79.6, until: 83.8, x: 150, y: 88, space: world, text: 你在这里, bg: 5, color: 4}
-- {kind: caption, t: 79.0, until: 83.8, text: 看不见的卫星，时时刻刻告诉你：你在这里, reveal: 12, color: 7}
-- {kind: tag, t: 12.6, until: 15.8, x: 6, y: 6, text: 什么是 GNSS, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 20.6, until: 23.8, x: 6, y: 6, text: 四大系统, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 28.6, until: 31.8, x: 6, y: 6, text: ① 卫星发信号, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 35.9, until: 39.1, x: 6, y: 6, text: ② 接收机测距, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 44.4, until: 47.6, x: 6, y: 6, text: ③ 多星定位, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 62.4, until: 65.6, x: 6, y: 6, text: ④ 为什么至少 4 颗, bg: 10, color: 4, border: 0, align: left}
-- {kind: tag, t: 70.4, until: 73.60000000000001, x: 6, y: 6, text: 民用, bg: 10, color: 4, border: 0, align: left}
+- {kind: satellite, id: skysat, t: 5.2, until: 7.0, x: 280, y: 30, bob: 1, signal: [5.6, 7.0], aim: [150, 150], reach: 70}
+- {kind: phone, t: 1.2, until: 4.4, x: 160, y: 86, w: 56, h: 100, lock: 2.2, sats_from: [1.4, 0.25]}
+- {kind: text, t: 1.4, until: 2.4, x: 160, y: 24, text: 定位中…, size: 12, color: 3, outline: 16}
+- {kind: text, t: 2.4, until: 4.2, x: 160, y: 24, text: 已定位, size: 12, color: 30, outline: 16, bold: true}
+- {kind: tag, t: 5.6, until: 7.0, x: 280, y: 44, space: world, text: 卫星, bg: 7}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 100, 24], half: back, occlude: [160, 96, 44]}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 76, 56], half: back, occlude: [160, 96, 44]}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 128, 12], half: back, occlude: [160, 96, 44]}
+- {kind: planet, t: 7.0, until: 15.000000000000002, x: 160, y: 96, r: 44, spin: 0.15}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 100, 24], half: front, color: 3}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 76, 56], half: front, color: 3}
+- {kind: orbit, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 128, 12], half: front, color: 3}
+- {kind: satellite, id: c1, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 100, 24], period: 18, phase: 0, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c2, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 100, 24], period: 18, phase: 120, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c3, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 100, 24], period: 18, phase: 240, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c4, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 76, 56], period: 15, phase: 40, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c5, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 76, 56], period: 15, phase: 160, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c6, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 76, 56], period: 15, phase: 280, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c7, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 128, 12], period: 22, phase: 80, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c8, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 128, 12], period: 22, phase: 200, occlude: [160, 96, 44], body: 7}
+- {kind: satellite, id: c9, t: 7.0, until: 15.000000000000002, orbit: [160, 96, 128, 12], period: 22, phase: 320, occlude: [160, 96, 44], body: 7}
+- {kind: tag, t: 7.800000000000001, until: 10.4, x: 160, y: 150, space: world, text: 地球, bg: 8}
+- {kind: text, t: 10.4, until: 13.000000000000002, x: 236, y: 8, text: '轨道高度 ≈ 20,000 km', size: 12, color: 31, outline: 16, bold: true}
+- {kind: planet, t: 15.000000000000002, until: 23.0, x: 160, y: 330, r: 200, spin: 0.05}
+- {kind: satellite, id: g1, t: 15.000000000000002, until: 23.0, x: 48, y: 66, bob: 2, body: 9, signal: [22.6, 28.6], reach: 40, aim: [48, 140]}
+- {kind: tag, t: 17.0, until: 23.0, x: 48, y: 84, space: world, text: GPS · 美国, bg: 9, color: 16}
+- {kind: satellite, id: g2, t: 15.000000000000002, until: 23.0, x: 124, y: 66, bob: 2, body: 5, signal: [23.9, 28.6], reach: 40, aim: [124, 140]}
+- {kind: tag, t: 18.299999999999997, until: 23.0, x: 124, y: 98, space: world, text: 北斗 BDS · 中国, bg: 7, color: 16}
+- {kind: satellite, id: g3, t: 15.000000000000002, until: 23.0, x: 200, y: 66, bob: 2, body: 4, signal: [25.2, 28.6], reach: 40, aim: [200, 140]}
+- {kind: tag, t: 19.6, until: 23.0, x: 200, y: 84, space: world, text: GLONASS · 俄罗斯, bg: 3, color: 16}
+- {kind: satellite, id: g4, t: 15.000000000000002, until: 23.0, x: 274, y: 66, bob: 2, body: 10, signal: [26.6, 28.6], reach: 40, aim: [274, 140]}
+- {kind: tag, t: 21.0, until: 23.0, x: 274, y: 98, space: world, text: Galileo · 欧盟, bg: 10, color: 4}
+- {kind: text, t: 22.4, until: 23.0, x: 160, y: 22, space: world, text: GNSS, size: 16, bold: true, color: 7, outline: 16}
+- {kind: planet, t: 23.0, until: 30.299999999999997, x: 160, y: 380, r: 240, spin: 0.05}
+- {kind: satellite, id: bs, t: 23.0, until: 30.299999999999997, x: 86, y: 62, scale: 3, bob: 1.5, signal: [30.6, 35.9], reach: 110, spread: 40, aim: [160, 180], wave_speed: 36}
+- {kind: glyph, t: 23.0, until: 30.299999999999997, name: clock, x: 236, y: 82, scale: 1}
+- {kind: tag, t: 23.200000000000003, until: 30.299999999999997, x: 236, y: 86, space: world, text: 原子钟, bg: 7}
+- {kind: text, t: 24.0, until: 30.299999999999997, x: 236, y: 42, space: world, fmt: '12:00:{v:012.9f}', from: 0.0, to: 7.3, count: 7.3, size: 12, color: 31, outline: 16}
+- {kind: tag, t: 25.799999999999997, until: 30.299999999999997, x: 150, y: 94, space: world, text: 我是 G07, bg: 4}
+- {kind: tag, t: 27.0, until: 30.299999999999997, x: 150, y: 112, space: world, text: '现在 12:00:03', bg: 31}
+- {kind: satellite, id: rs, t: 30.299999999999997, until: 38.8, x: 66, y: 40, scale: 2, bob: 1}
+- {kind: phone, t: 30.299999999999997, until: 38.8, x: 232, y: 124, w: 22, h: 38, lock: 38.0}
+- {kind: range, t: 30.799999999999997, until: 38.8, x0: 72, y0: 52, x1: 224, y1: 110, draw: 1.6, pulse: 60}
+- {kind: tag, t: 31.0, until: 38.8, x: 66, y: 60, space: world, text: 't发 = 12:00:00.000', bg: 31, size: 12}
+- {kind: tag, t: 32.6, until: 38.8, x: 224, y: 84, space: world, text: 't收 = 12:00:00.067', bg: 30, size: 12}
+- {kind: text, t: 34.0, until: 38.8, x: 180, y: 14, space: world, text: 距离 = (t收 − t发) × 光速, size: 12, bold: true, color: 4, outline: 16}
+- {kind: text, t: 35.4, until: 38.8, x: 180, y: 32, space: world, text: '= 0.067 s × 300,000 km/s', size: 12, color: 31, outline: 16}
+- {kind: text, t: 36.4, until: 38.8, x: 180, y: 50, space: world, fmt: '≈ {v:,.0f} km', from: 0, to: 20100, count: 1.4, size: 16, bold: true, color: 7, outline: 16}
+- {kind: satellite, id: sA, t: 38.8, until: 56.8, x: 100, y: 82, bob: 1}
+- {kind: tag, t: 39.0, until: 56.8, x: 114, y: 60, space: world, text: 卫星A, bg: 31}
+- {kind: satellite, id: sB, t: 44.8, until: 56.8, x: 220, y: 82, bob: 1}
+- {kind: tag, t: 45.0, until: 56.8, x: 206, y: 60, space: world, text: 卫星B, bg: 30}
+- {kind: satellite, id: sC, t: 48.0, until: 56.8, x: 130, y: 65, bob: 1}
+- {kind: tag, t: 48.2, until: 56.8, x: 144, y: 43, space: world, text: 卫星C, bg: 28}
+- {kind: ring, t: 40.199999999999996, until: 51.4, x: 100, y: 82, r: 66.2, grow: 1.6, color: 31, start: 0}
+- {kind: ring, t: 45.0, until: 51.4, x: 220, y: 82, r: 66.2, grow: 1.3, color: 30, start: 180}
+- {kind: ring, t: 48.199999999999996, until: 51.4, x: 130, y: 65, r: 54.1, grow: 1.1, color: 28, start: 90}
+- {kind: ring, t: 51.4, until: 56.8, x: 100, y: 82, r: 66.2, grow: 0, color: 31, fuzz: 3, sharpen: [60.6, 1.2]}
+- {kind: ring, t: 51.4, until: 56.8, x: 220, y: 82, r: 66.2, grow: 0, color: 30, fuzz: 3, sharpen: [60.6, 1.2]}
+- {kind: ring, t: 51.4, until: 56.8, x: 130, y: 65, r: 54.1, grow: 0, color: 28, fuzz: 3, sharpen: [60.6, 1.2]}
+- {kind: satellite, id: sD, t: 53.8, until: 56.8, x: 205, y: 70, bob: 1, body: 5}
+- {kind: tag, t: 54.0, until: 56.8, x: 211, y: 82, space: world, text: 卫星D, bg: 5, color: 4}
+- {kind: ring, t: 54.6, until: 56.8, x: 205, y: 70, r: 60.2, grow: 1.0, color: 5, start: 180}
+- {kind: pin, t: 49.4, until: 51.4, x: 160, y: 110, size: 1}
+- {kind: pin, t: 55.8, until: 56.8, x: 160, y: 110, size: 1, drop: 0.3}
+- {kind: tag, t: 49.9, until: 51.4, x: 160, y: 114, space: world, text: 你在这里, bg: 5, color: 4}
+- {kind: glyph, t: 51.4, until: 53.8, name: clock, x: 186, y: 116, scale: 1}
+- {kind: tag, t: 51.6, until: 54.0, x: 186, y: 118, space: world, text: 手机时钟 ±0.001 s, bg: 5, color: 4}
+- {kind: text, t: 52.4, until: 55.0, x: 160, y: 58, space: world, text: 误差 ≈ 300 km！, size: 12, bold: true, color: 5, outline: 16}
+- {kind: tag, t: 55.8, until: 56.8, x: 160, y: 114, space: world, text: 钟差已校正, bg: 30}
+- {kind: text, t: 41.0, until: 44.8, x: 162, y: 98, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 41.25, until: 44.8, x: 133, y: 132, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 41.5, until: 44.8, x: 89, y: 140, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 41.75, until: 44.8, x: 49, y: 118, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 42.0, until: 44.8, x: 133, y: 18, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 42.25, until: 44.8, x: 162, y: 52, space: world, text: '?', size: 12, bold: true, color: 31, outline: 16}
+- {kind: text, t: 46.3, until: 49.4, x: 160, y: 102, space: world, text: '?', size: 16, bold: true, color: 7, outline: 16}
+- {kind: text, t: 46.3, until: 49.199999999999996, x: 160, y: 46, space: world, text: '?', size: 16, bold: true, color: 7, outline: 16}
+- {kind: text, t: 49.199999999999996, until: 50.4, x: 160, y: 46, space: world, text: ×, size: 16, bold: true, color: 5, outline: 16}
+- {kind: planet, t: 56.8, until: 64.80000000000001, x: 160, y: 390, r: 240, spin: 0.05}
+- {kind: satellite, id: u1, t: 56.8, until: 64.80000000000001, x: 46, y: 34, bob: 1.5, body: 9}
+- {kind: range, t: 57.1, until: 64.80000000000001, x0: 46, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 9}
+- {kind: tag, t: 57.4, until: 64.80000000000001, x: 46, y: 50, space: world, text: 经度 x, bg: 9, color: 16}
+- {kind: satellite, id: u2, t: 56.8, until: 64.80000000000001, x: 122, y: 34, bob: 1.5, body: 5}
+- {kind: range, t: 57.9, until: 64.80000000000001, x0: 122, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 21}
+- {kind: tag, t: 58.199999999999996, until: 64.80000000000001, x: 122, y: 50, space: world, text: 纬度 y, bg: 5, color: 4}
+- {kind: satellite, id: u3, t: 56.8, until: 64.80000000000001, x: 198, y: 34, bob: 1.5, body: 4}
+- {kind: range, t: 58.699999999999996, until: 64.80000000000001, x0: 198, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 3}
+- {kind: tag, t: 58.99999999999999, until: 64.80000000000001, x: 198, y: 50, space: world, text: 高度 z, bg: 3, color: 16}
+- {kind: satellite, id: u4, t: 56.8, until: 64.80000000000001, x: 274, y: 34, bob: 1.5, body: 10}
+- {kind: range, t: 59.6, until: 64.80000000000001, x0: 274, y0: 44, x1: 160, y1: 122, draw: 0.6, pulse: 70, color: 10}
+- {kind: tag, t: 59.9, until: 64.80000000000001, x: 274, y: 50, space: world, text: 时间 t, bg: 10, color: 4}
+- {kind: phone, t: 56.8, until: 64.80000000000001, x: 160, y: 140, w: 20, h: 34, lock: 62.4, sats: 4}
+- {kind: text, t: 60.4, until: 64.80000000000001, x: 160, y: 80, space: world, text: 4 个未知数, size: 16, bold: true, color: 4, outline: 16}
+- {kind: text, t: 61.6, until: 64.80000000000001, x: 160, y: 98, space: world, text: → 至少 4 颗卫星, size: 16, bold: true, color: 7, outline: 16}
+- {kind: glyph, t: 64.80000000000001, until: 73.0, name: car, x: 44, y: 150, scale: 1}
+- {kind: tag, t: 65.80000000000001, until: 73.0, x: 44, y: 110, space: world, text: 开车导航, bg: 7}
+- {kind: glyph, t: 64.80000000000001, until: 73.0, name: scooter, x: 106, y: 150, scale: 1}
+- {kind: tag, t: 67.0, until: 73.0, x: 106, y: 110, space: world, text: 外卖骑手, bg: 7}
+- {kind: glyph, t: 64.80000000000001, until: 73.0, name: bike, x: 166, y: 150, scale: 1}
+- {kind: tag, t: 68.2, until: 73.0, x: 166, y: 110, space: world, text: 共享单车, bg: 7}
+- {kind: glyph, t: 64.80000000000001, until: 73.0, name: tripod, x: 226, y: 150, scale: 1}
+- {kind: tag, t: 69.4, until: 73.0, x: 226, y: 110, space: world, text: 测绘, bg: 7}
+- {kind: glyph, t: 64.80000000000001, until: 73.0, name: clock, x: 286, y: 150, scale: 1}
+- {kind: tag, t: 70.2, until: 73.0, x: 286, y: 110, space: world, text: 授时, bg: 7}
+- {kind: satellite, t: 64.80000000000001, until: 73.0, x: 160, y: 22, bob: 1, signal: [70.4, 78.6], reach: 80, spread: 60, aim: [160, 150]}
+- {kind: orbit, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], half: back, occlude: [160, 96, 52]}
+- {kind: planet, t: 73.0, until: 78.60000000000001, x: 160, y: 96, r: 52, spin: 0.15}
+- {kind: orbit, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], half: front, color: 3}
+- {kind: satellite, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], period: 16, phase: 0, occlude: [160, 96, 52]}
+- {kind: satellite, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], period: 16, phase: 90, occlude: [160, 96, 52]}
+- {kind: satellite, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], period: 16, phase: 180, occlude: [160, 96, 52]}
+- {kind: satellite, t: 73.0, until: 78.60000000000001, orbit: [160, 96, 110, 30], period: 16, phase: 270, occlude: [160, 96, 52]}
+- {kind: pin, t: 73.4, until: 78.60000000000001, x: 150, y: 84, size: 1}
+- {kind: tag, t: 74.0, until: 78.60000000000001, x: 150, y: 88, space: world, text: 你在这里, bg: 5, color: 4}
+- {kind: tag, t: 7.0, until: 10.200000000000001, x: 6, y: 6, text: 什么是 GNSS, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 15.000000000000002, until: 18.200000000000003, x: 6, y: 6, text: 四大系统, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 23.0, until: 26.200000000000003, x: 6, y: 6, text: ① 卫星发信号, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 30.299999999999997, until: 33.5, x: 6, y: 6, text: ② 接收机测距, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 38.8, until: 42.0, x: 6, y: 6, text: ③ 多星定位, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 56.8, until: 59.99999999999999, x: 6, y: 6, text: ④ 为什么至少 4 颗, bg: 10, color: 4, border: 0, align: left}
+- {kind: tag, t: 64.80000000000001, until: 68.00000000000001, x: 6, y: 6, text: 民用, bg: 10, color: 4, border: 0, align: left}
 - kind: card
-  t: 0
-  until: 5.2
+  t: 78.60000000000001
+  until: 82.4
   bg: 25
-  stripe: 7
   items:
-  - {text: 科普 · 卫星导航, size: 12, color: 31}
-  - {text: GNSS, size: 32, color: 7}
-  - {text: 全球卫星导航系统, size: 16, color: 4, at: 0.6}
-  - {text: Global Navigation Satellite System, size: 12, color: 3, at: 1.2}
-- kind: card
-  t: 83.8
-  until: 89.0
-  bg: 25
-  stripe: 7
-  items:
-  - {text: GNSS 三步定位, size: 16, color: 7}
-  - {text: 卫星广播时间 → 接收机测距, size: 13, color: 4, bold: true, at: 0.6}
-  - {text: ≥ 4 颗星 → 经纬度 · 高度 · 时间, size: 13, color: 4, bold: true, at: 1.4}
-  - {text: GPS · 北斗 · GLONASS · Galileo, size: 12, color: 31, at: 2.4}
-  - {text: Animasis · 像素科普, size: 12, color: 3, at: 3.4}
+  - {text: 全球导航定位系统（GNSS）, size: 22, color: 7}
+  - {text: '@像素万物局', size: 14, color: 31, at: 0.6}
+- {kind: caption, t: 0.1, until: 4.252666666666666, text: 打开手机地图，小蓝点立刻知道你在哪儿。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 4.292666666666666, until: 6.68, text: 它靠的，是天上的卫星。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 7.4, until: 10.550769230769232, text: GNSS 是全球卫星导航系统的统称：, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 10.590769230769231, until: 14.680000000000001, text: 几十颗卫星，在两万多公里的高空绕着地球飞行。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 15.4, until: 19.223157894736843, text: 它有四大成员：美国的 GPS、中国的北斗、, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 19.263157894736842, until: 22.700000000000003, text: 俄罗斯的格洛纳斯，还有欧洲的伽利略。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 23.4, until: 28.079354838709676, text: 每颗卫星都带着极其精准的原子钟，不停地广播：, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 28.119354838709675, until: 30.009999999999998, text: 我是谁，现在几点。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 30.6, until: 32.67733333333334, text: 手机里的接收机收到信号，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 32.717333333333336, until: 36.20622222222222, text: 用收到的时间减去发出的时间，再乘以光速，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 36.24622222222222, until: 38.5, text: 就得到了到这颗卫星的距离。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 39.2, until: 41.36423076923077, text: 只知道一颗卫星的距离，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 41.40423076923077, until: 44.370000000000005, text: 你可能在一个大圆上的任何地方。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 44.8, until: 49.34518518518518, text: 加上第二颗，范围缩小到两个交点；第三颗，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 49.38518518518518, until: 50.949999999999996, text: 就能锁定位置。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 51.6, until: 53.821600000000004, text: 可手机的时钟不够精准，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 53.8616, until: 56.7, text: 还需要第四颗卫星来校正时间。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 57.3, until: 62.089999999999996, text: 经度、纬度、高度，再加上时间，四个未知数，, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 62.129999999999995, until: 64.38999999999999, text: 所以至少要四颗卫星。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 65.2, until: 69.28363636363636, text: 如今，开车导航、外卖骑手、共享单车、, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 69.32363636363637, until: 72.72, text: 测绘和授时，都离不开 GNSS。, size: 12, color: 4, reveal: 0}
+- {kind: caption, t: 73.4, until: 77.94, text: 看不见的卫星，正时时刻刻告诉你：你在这里。, size: 12, color: 4, reveal: 0}
 timeline:
 - {t: 0.0, action: background, name: market}
-- {t: 5.2, action: walk_to, target: xiaoming, x: 150, speed: 34}
-- {t: 8.0, action: pose, target: xiaoming, name: phone}
-- {t: 8.4, action: hide, target: xiaoming}
-- {t: 10.6, action: show, target: xiaoming}
-- {t: 10.6, action: pose, target: xiaoming, name: idle}
-- {t: 10.6, action: expression, target: xiaoming, name: surprise}
-- {t: 11.4, action: expression, target: xiaoming, name: happy}
-- {t: 12.6, action: hide, target: xiaoming}
-- {t: 12.6, action: background, name: space}
-- {t: 35.9, action: background, name: blueprint}
-- {t: 62.4, action: background, name: space}
-- {t: 70.4, action: background, name: market}
-- {t: 70.4, action: move, target: xiaoming, x: -20}
-- {t: 70.4, action: show, target: xiaoming}
-- {t: 70.4, action: expression, target: xiaoming, name: happy}
-- {t: 76.6, action: walk_to, target: xiaoming, x: 340, speed: 60}
-- {t: 78.6, action: hide, target: xiaoming}
-- {t: 78.6, action: background, name: space}
+- {t: 0.0, action: pose, target: xiaoming, name: phone}
+- {t: 1.2, action: hide, target: xiaoming}
+- {t: 4.4, action: show, target: xiaoming}
+- {t: 4.4, action: pose, target: xiaoming, name: idle}
+- {t: 4.4, action: expression, target: xiaoming, name: surprise}
+- {t: 5.0, action: expression, target: xiaoming, name: happy}
+- {t: 7.0, action: hide, target: xiaoming}
+- {t: 7.0, action: background, name: space}
+- {t: 30.299999999999997, action: background, name: blueprint}
+- {t: 56.8, action: background, name: space}
+- {t: 64.80000000000001, action: background, name: market}
+- {t: 64.80000000000001, action: move, target: xiaoming, x: -20}
+- {t: 64.80000000000001, action: show, target: xiaoming}
+- {t: 64.80000000000001, action: expression, target: xiaoming, name: happy}
+- {t: 71.0, action: walk_to, target: xiaoming, x: 340, speed: 60}
+- {t: 73.0, action: hide, target: xiaoming}
+- {t: 73.0, action: background, name: space}
