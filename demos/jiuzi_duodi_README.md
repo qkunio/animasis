@@ -80,6 +80,22 @@ done
 
 在这台机器上，整片渲染加配音大约需要 2 分钟。
 
+## 封面与发布
+
+竖版封面为 `demos/covers/jiuzi_duodi.png`（720×960）。安装发布依赖并登录后，可直接发布本片：
+
+```bash
+animasis publish douyin upload-video \
+  --account creator \
+  --file demos/output/jiuzi_duodi.mp4 \
+  --title "106秒看懂九子夺嫡" \
+  --desc "从两废太子到雍正继位，用像素动画梳理康熙晚年九子夺嫡的始末。" \
+  --tags "vibe知识大赏,九子夺嫡,历史,像素动画,雍正" \
+  --thumbnail demos/covers/jiuzi_duodi.png
+```
+
+完整安装、登录、运行目录和其他平台说明见根目录 `README.md` 的「Publish | 从成片到多平台发布」。
+
 ## 音频文件
 
 - 逐句 mp3：`demos/audio/jiuzi_duodi/01_*.mp3 … 15_*.mp3`

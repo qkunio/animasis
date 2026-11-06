@@ -12,3 +12,4 @@ demos/output/*
 .DS_Store
 demos/audio/
 demos/frames/_debug_twist/
+.animasis/

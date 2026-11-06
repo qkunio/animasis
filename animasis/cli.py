@@ -38,7 +38,15 @@ def main(argv: list[str] | None = None) -> int:
     p_demos = sub.add_parser("demos", help="Render bundled demo scenes")
     p_demos.add_argument("-o", "--output-dir", type=str, default=None)
 
+    p_publish = sub.add_parser("publish", help="Publish videos, notes, and articles through SAU")
+    p_publish.add_argument("sau_args", nargs=argparse.REMAINDER)
+
     args = parser.parse_args(argv)
+
+    if args.cmd == "publish":
+        from .publishing import main as publish_main
+
+        return publish_main(args.sau_args)
 
     if args.cmd == "poses":
         from .poses import CYCLES, list_poses

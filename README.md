@@ -1,7 +1,7 @@
 # Animasis
 
-**EN** · Pixel animation toolkit for AI agents — skeleton, poses, light physics, YAML/JSON DSL, MP4/GIF export.  
-**中文** · 面向 AI agent 的像素动画开发环境：骨架绑定、姿态库、轻量物理、场景 DSL、渲染导出。
+**EN** · Pixel animation toolkit for AI agents — skeleton, poses, light physics, YAML/JSON DSL, MP4/GIF export, and social publishing.
+**中文** · 面向 AI agent 的像素动画全流程环境：骨架绑定、姿态库、轻量物理、场景 DSL、渲染配音、封面与多平台发布。
 
 ---
 
@@ -22,7 +22,7 @@ python -m animasis.demos
 # or: animasis demos
 ```
 
-Requirements | 依赖: Python 3.11+, Pillow, PyYAML, ffmpeg (system). Optional: numpy.
+Requirements | 依赖: Python 3.11+, Pillow, PyYAML, ffmpeg (system). Optional: numpy；自动发布使用 `.[publish]` 额外依赖与 Patchright Chromium。
 
 ---
 
@@ -47,6 +47,7 @@ skeleton → pose → physics → composite → export
 | Render | `render.py` | Fixed 33-color palette (light/base/shade ramps), NN scale, export |
 | DSL | `scene.py`, `builder.py` | YAML/JSON scenes + Python fluent builder |
 | CLI | `cli.py` | `animasis render scene.yaml -o out.mp4` |
+| Publishing | `publishing/`, `publishing/_sau/` | `animasis publish` / `sau`：账号登录、视频/图文发布、定时发布 |
 
 ---
 
@@ -153,14 +154,59 @@ animasis render scene.yaml -o out.mp4
 animasis render scene.json -o out.gif --scale 4
 animasis poses
 animasis demos -o demos/output
+animasis publish douyin --help
+sau --help
 python -m animasis.demos
 ```
 
 ---
 
+## Publish | 从成片到多平台发布
+
+Animasis 内置 [social-auto-upload](https://github.com/dreammis/social-auto-upload)（SAU）主线运行时，将 `render` / `narrate` 生成的视频直接发布到抖音、快手、小红书、Bilibili、视频号、YouTube 等平台。抖音上传包含 [PR #305](https://github.com/dreammis/social-auto-upload/pull/305) 的 `bypass_csp=True` 修复，解决上传 Worker 被 CSP 拦截的问题。
+
+### 1. 安装发布依赖
+
+```bash
+pip install -e ".[publish]"
+patchright install chromium
+```
+
+发布功能与 SAU 一样支持 Python 3.11–3.12；仅渲染动画时仍使用项目的 Python 3.11+ 要求。
+
+### 2. 生成成片并登录
+
+```bash
+animasis narrate demos/jiuzi_duodi.yaml -o demos/output/jiuzi_duodi.mp4
+animasis publish douyin login --account creator --headed
+animasis publish douyin check --account creator
+```
+
+登录二维码由 SAU 生成并展示。`--account` 是本地账号别名，不要求与平台昵称相同。`sau douyin ...` 与 `animasis publish douyin ...` 等价，可按习惯选择。
+
+### 3. 发布视频、封面和话题
+
+```bash
+animasis publish douyin upload-video \
+  --account creator \
+  --file demos/output/jiuzi_duodi.mp4 \
+  --title "106秒看懂九子夺嫡" \
+  --desc "从两废太子到雍正继位，用像素动画梳理康熙晚年九子夺嫡的始末。" \
+  --tags "vibe知识大赏,九子夺嫡,历史,像素动画,雍正" \
+  --thumbnail demos/covers/jiuzi_duodi.png
+```
+
+不传 `--schedule` 时立即提交发布；平台受理后可能仍处于审核中。其他平台的登录、发布和定时参数通过 `animasis publish <platform> --help` 查看。
+
+Cookie、日志和短信验证码默认保存在当前项目的 `.animasis/sau/`，该目录已加入 `.gitignore`，不要提交账号文件。可用 `ANIMASIS_SAU_HOME` 指定其他运行目录。发布过程中如需短信验证码，可写入 `.animasis/sau/verify_code.txt`，验证后程序会自动清理。
+
+SAU 源码位于 `animasis/publishing/_sau/`，基于上游 `3847fff` 并包含上述 CSP 修复；其 MIT 许可证保留在同目录的 `LICENSE` 中。
+
+---
+
 ## License
 
-MIT
+MIT。内置 SAU 的独立许可证见 `animasis/publishing/_sau/LICENSE`。
 
 ---
 

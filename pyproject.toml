@@ -4,28 +4,47 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "animasis"
-version = "0.1.0"
-description = "Pixel animation toolkit for AI agents — skeleton, poses, physics, DSL, MP4/GIF export"
+version = "0.2.0"
+description = "Pixel animation toolkit for AI agents — skeleton, poses, physics, DSL, MP4/GIF export, social publishing"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Animasis" }]
-keywords = ["pixel", "animation", "skeleton", "agent", "dsl"]
+keywords = ["pixel", "animation", "skeleton", "agent", "dsl", "publishing"]
 dependencies = [
   "Pillow>=10.0",
   "PyYAML>=6.0",
 ]
-optional-dependencies = { numpy = ["numpy>=1.24"] }
+optional-dependencies = { numpy = ["numpy>=1.24"], publish = [
+  "loguru==0.7.3",
+  "opencv-python>=4.13.0.92",
+  "patchright==1.58.2",
+  "qrcode==8.2",
+  "requests==2.32.3",
+  "segno>=1.6.6",
+  "tinycss2>=1.4.0,<2",
+] }
 
 [project.scripts]
 animasis = "animasis.cli:main"
+sau = "animasis.publishing:main"
 
 [project.urls]
-Homepage = "https://github.com/animasis/animasis"
+Homepage = "https://github.com/qkunio/animasis"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["animasis*"]
 
 [tool.setuptools.package-data]
-animasis = ["py.typed", "assets/*.m4a"]
+animasis = [
+  "py.typed",
+  "assets/*.m4a",
+  "publishing/_sau/LICENSE",
+  "publishing/_sau/utils/stealth.min.js",
+  "publishing/_sau/utils/article_renderer/*.mjs",
+  "publishing/_sau/utils/article_renderer/*.json",
+  "publishing/_sau/utils/article_renderer/*.md",
+  "publishing/_sau/utils/article_renderer/*-LICENSE",
+  "publishing/_sau/uploader/*/*.ini",
+]

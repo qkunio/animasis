@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .builder import SceneBuilder
 from .scene import Scene, load_scene, render_scene
