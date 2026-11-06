@@ -130,6 +130,21 @@ POSES: dict[str, dict[str, float]] = {
     "hold": _pose(
         upper_arm_r=20, lower_arm_r=70,
     ),
+    # seated emperor / throne (正体位 front view foreshortens the thighs)
+    "sit": _pose(
+        torso=2, head=0,
+        upper_leg_r=78, lower_leg_r=-98, foot_r=8,
+        upper_leg_l=78, lower_leg_l=-98, foot_l=8,
+        upper_arm_r=18, lower_arm_r=48, hand_r=6,
+        upper_arm_l=18, lower_arm_l=48, hand_l=6,
+    ),
+    "sit_wave": _pose(
+        torso=2, head=2,
+        upper_leg_r=78, lower_leg_r=-98, foot_r=8,
+        upper_leg_l=78, lower_leg_l=-98, foot_l=8,
+        upper_arm_r=95, lower_arm_r=55, hand_r=8,
+        upper_arm_l=18, lower_arm_l=48, hand_l=6,
+    ),
 }
 
 
@@ -139,6 +154,7 @@ CYCLES: dict[str, list[str]] = {
     "wave": ["wave", "wave_b"],
     "jump": ["crouch", "jump", "land", "idle"],
     "pickup": ["idle", "pickup", "idle"],
+    "sit": ["sit", "sit"],
 }
 
 

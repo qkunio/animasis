@@ -2,13 +2,19 @@
 
 Conventions (all angles in radians, stored in ``Skeleton.angles``):
 
-* The rig is authored in *body space* facing right; ``facing=-1`` mirrors it.
+* The rig is authored in *body space* facing right; ``facing=-1`` mirrors it
+  for side / 3/4 views.
+* ``view`` (on ``Character`` / passed into ``solve``) selects the body angle:
+  ``side`` / ``three_quarter`` (default 3/4 silhouette), ``front`` (正体位,
+  facing the camera), or ``back``.
 * ``torso`` – lean, positive = lean forward.  ``head`` – extra tilt.
 * Limb angles are measured from *straight down*; positive swings the limb
-  forward (towards ``facing``).  Child angles (``lower_*``, ``hand_*``) are
-  relative to their parent, so an elbow of +30° bends the forearm forward and a
-  knee of −40° bends the shin backward.
-* ``*_r`` limbs are the *near* (front) arm / leg, ``*_l`` the far (back) ones.
+  forward (towards ``facing``) in side view, or outward from the midline in
+  front / back view.  Child angles (``lower_*``, ``hand_*``) are relative to
+  their parent.
+* ``*_r`` limbs are the *near* (screen-right / front) arm / leg in side view;
+  in front view ``*_r`` is the character's right (screen-left when facing us is
+  NOT assumed — we keep r = screen-right for drawing consistency).
 * ``foot_*`` – 0 = sole flat, positive = toe pointing down.
 
 ``Character.y`` is the ground line under the feet: the rig is solved hip-first
@@ -81,6 +87,35 @@ BODY_TYPES: dict[str, dict[str, float]] = {
 }
 
 
+# Body facing / camera angle.  ``side`` and ``three_quarter`` share the classic
+# 3/4 silhouette; ``front`` is 正体位 (face the camera); ``back`` hides the face.
+VIEWS = ("side", "three_quarter", "front", "back")
+VIEW_ALIASES: dict[str, str] = {
+    "side": "side", "侧": "side", "侧面": "side",
+    "three_quarter": "three_quarter", "3/4": "three_quarter", "quarter": "three_quarter",
+    "¾": "three_quarter",
+    "front": "front", "正": "front", "正面": "front", "正体": "front", "正体位": "front",
+    "forward": "front", "zheng": "front",
+    "back": "back", "背": "back", "背面": "back", "behind": "back",
+}
+
+
+def normalize_view(view: str | None) -> str:
+    """Map YAML / agent aliases onto a canonical view name (default ``side``)."""
+    if view is None or view == "":
+        return "side"
+    key = str(view).strip().lower()
+    # allow raw Chinese without lowercasing away CJK
+    raw = str(view).strip()
+    if raw in VIEW_ALIASES:
+        return VIEW_ALIASES[raw]
+    if key in VIEW_ALIASES:
+        return VIEW_ALIASES[key]
+    if key in VIEWS:
+        return key
+    raise KeyError(f"Unknown view {view!r}. Use one of {list(VIEWS)} or aliases {sorted(VIEW_ALIASES)}")
+
+
 @dataclass
 class Bone:
     name: str
@@ -115,6 +150,7 @@ class Rig:
     head_tilt: float
     props: dict[str, float]
     foot_angles: dict[str, float]
+    view: str = "side"
 
     def joints(self) -> dict[str, tuple[Vec, Vec]]:
         p = self.points
@@ -192,8 +228,26 @@ class Skeleton:
                 self.angles[k] = a + d * t
 
     # ------------------------------------------------------------------ solve
-    def solve(self, origin: Vec, facing: int = 1) -> Rig:
-        """Solve the rig; ``origin`` = (x, ground line under the feet)."""
+    def solve(self, origin: Vec, facing: int = 1, view: str = "side") -> Rig:
+        """Solve the rig; ``origin`` = (x, ground line under the feet).
+
+        ``view`` selects body angle: ``side`` / ``three_quarter`` (default 3/4),
+        ``front`` (正体位), or ``back``.
+        """
+        view = normalize_view(view)
+        if view in ("front", "back"):
+            return self._solve_front(origin, facing, view)
+        return self._solve_side(origin, facing, view)
+
+    def _ground(self, pts: dict[str, Vec], origin: Vec, f: int = 1) -> dict[str, Vec]:
+        lowest = max(pts["heel_r"][1], pts["toe_r"][1], pts["heel_l"][1], pts["toe_l"][1])
+        ox = origin[0]
+        gy = round(origin[1]) - 1.0
+        shift = gy - lowest
+        return {k: (ox + v[0] * f, v[1] + shift) for k, v in pts.items()}
+
+    def _solve_side(self, origin: Vec, facing: int = 1, view: str = "side") -> Rig:
+        """Classic 3/4 side silhouette (also used for ``three_quarter``)."""
         pr = self.props
         A = self.angles
         f = 1 if facing >= 0 else -1
@@ -208,13 +262,7 @@ class Skeleton:
         head_top = _add(head_c, head_up, pr["head_ry"] + 1.0)
         sh_base = _add(hip, up, pr["torso_len"] - pr["shoulder_drop"])
         pts: dict[str, Vec] = {"hip": hip, "neck": neck, "head_c": head_c, "head_top": head_top}
-        # shoulder socket sits on the torso's top corner: the arm's outer edge is
-        # flush with the torso side, so the deltoid cap reads as one silhouette
         corner = pr["hw_top"] - pr["arm_r"]
-        # 3/4 side view: the arm socket sits just in front of the torso centre
-        # line (the rounded deltoid caps stay on the torso corners), so the near
-        # arm swings out past the chest *and* past the back instead of lying
-        # flat on the belly.
         inset = 1.0 * self.scale
         for side, sgn in (("r", 1.0), ("l", -1.0)):
             pts[f"shcap_{side}"] = _add(sh_base, fwd, sgn * corner)
@@ -240,22 +288,97 @@ class Skeleton:
             pts[f"hipj_{side}"], pts[f"knee_{side}"], pts[f"ankle_{side}"] = hj, kn, an
             pts[f"heel_{side}"], pts[f"toe_{side}"] = heel, toe
             foot_angles[side] = fa
-        # ground: the lowest shoe centre-line sits half a pixel above the ground line
-        lowest = max(pts["heel_r"][1], pts["toe_r"][1], pts["heel_l"][1], pts["toe_l"][1])
-        ox = origin[0]
-        # shoes are 2px capsules centred on an integer row boundary Y, covering
-        # rows Y-1 and Y; we want the bottom row to be ground-1  =>  Y = ground-1
-        gy = round(origin[1]) - 1.0
-        shift = gy - lowest
-        world = {k: (ox + v[0] * f, v[1] + shift) for k, v in pts.items()}
+        world = self._ground(pts, origin, f)
         return Rig(points=world, facing=f, lean=lean, head_tilt=A.get("head", 0.0),
-                   props=pr, foot_angles=foot_angles)
+                   props=pr, foot_angles=foot_angles, view=view)
 
-    def world_joints(self, origin: Vec, facing: int = 1) -> dict[str, tuple[Vec, Vec]]:
-        return self.solve(origin, facing).joints()
+    def _solve_front(self, origin: Vec, facing: int = 1, view: str = "front") -> Rig:
+        """Front / back facing: shoulders spread on X, face the camera (or away).
 
-    def attach_point(self, bone_name: str, t: float, origin: Vec, facing: int = 1) -> Vec:
-        joints = self.world_joints(origin, facing)
+        Limb angles still mean "from straight down"; positive swings the limb
+        *outward* from the body midline (screen-right for ``*_r``, screen-left
+        for ``*_l``).  A ``sit``-like pose (large upper_leg + bent knee) is
+        foreshortened so the knees sit apart in front of the hips.
+        """
+        pr = self.props
+        A = self.angles
+        f = 1  # front/back are not mirrored by facing; facing still stored for props
+        lean = A.get("torso", 0.0)
+        # keep a tiny lean as vertical squash so "bow" still reads
+        up = (math.sin(lean) * 0.15, -math.cos(lean))
+        hip: Vec = (0.0, 0.0)
+        neck = _add(hip, up, pr["torso_len"])
+        head_a = lean * 0.3 + A.get("head", 0.0) * 0.5
+        head_up = (math.sin(head_a) * 0.2, -math.cos(head_a))
+        head_c = _add(neck, head_up, pr["head_ry"] - 0.6)
+        head_top = _add(head_c, head_up, pr["head_ry"] + 1.0)
+        sh_base = _add(hip, up, pr["torso_len"] - pr["shoulder_drop"])
+        pts: dict[str, Vec] = {"hip": hip, "neck": neck, "head_c": head_c, "head_top": head_top}
+        # Wider front torso: shoulders at the true half-width
+        corner = pr["hw_top"] * 1.15
+        sit_like = (
+            abs(A.get("upper_leg_r", 0.0)) > math.radians(40)
+            and abs(A.get("lower_leg_r", 0.0)) > math.radians(40)
+        )
+        for side, sgn in (("r", 1.0), ("l", -1.0)):
+            pts[f"shcap_{side}"] = (sh_base[0] + sgn * corner, sh_base[1])
+            sh = (sh_base[0] + sgn * (corner - pr["arm_r"] * 0.2), sh_base[1] + 0.3 * self.scale)
+            # outward from midline: positive angle → away from body
+            a1 = A.get(f"upper_arm_{side}", 0.0)
+            out = sgn * math.sin(a1)
+            down = math.cos(a1)
+            el = (sh[0] + out * pr["upper_arm"], sh[1] + down * pr["upper_arm"])
+            a2 = a1 + A.get(f"lower_arm_{side}", 0.0)
+            out2 = sgn * math.sin(a2)
+            down2 = math.cos(a2)
+            wr = (el[0] + out2 * pr["lower_arm"], el[1] + down2 * pr["lower_arm"])
+            a3 = a2 + A.get(f"hand_{side}", 0.0)
+            hd = (wr[0] + sgn * math.sin(a3) * pr["hand"], wr[1] + math.cos(a3) * pr["hand"])
+            pts[f"shoulder_{side}"], pts[f"elbow_{side}"] = sh, el
+            pts[f"wrist_{side}"], pts[f"hand_{side}"] = wr, hd
+        foot_angles: dict[str, float] = {}
+        for side, sgn in (("r", 1.0), ("l", -1.0)):
+            hj = (hip[0] + sgn * pr["hip_dx"] * 0.85, hip[1])
+            a1 = A.get(f"upper_leg_{side}", 0.0)
+            a2_rel = A.get(f"lower_leg_{side}", 0.0)
+            fa = A.get(f"foot_{side}", 0.0)
+            if sit_like:
+                # Foreshortened sit: thigh goes "toward camera" (short drop + knee out),
+                # shin drops to the ground; feet under / slightly inward of knees.
+                thigh_drop = pr["upper_leg"] * 0.42
+                knee_out = pr["hip_dx"] * 1.6 + abs(math.sin(a1)) * pr["upper_leg"] * 0.35
+                kn = (hj[0] + sgn * knee_out, hj[1] + thigh_drop)
+                shin = pr["lower_leg"] * 0.95
+                an = (kn[0] - sgn * pr["hip_dx"] * 0.55, kn[1] + shin)
+                heel = (an[0] - sgn * 0.4 * self.scale, an[1] + 0.9 * self.scale)
+                toe = (an[0] + sgn * pr["foot_len"] * 0.55, an[1] + 0.9 * self.scale)
+            else:
+                out = sgn * math.sin(a1)
+                down = math.cos(a1)
+                kn = (hj[0] + out * pr["upper_leg"], hj[1] + down * pr["upper_leg"])
+                a2 = a1 + a2_rel
+                an = (kn[0] + sgn * math.sin(a2) * pr["lower_leg"],
+                      kn[1] + math.cos(a2) * pr["lower_leg"])
+                heel = (an[0] - sgn * 0.6 * self.scale, an[1] + 0.9 * self.scale)
+                toe = (an[0] + sgn * pr["foot_len"] * 0.7, an[1] + 0.9 * self.scale)
+            pts[f"hipj_{side}"], pts[f"knee_{side}"], pts[f"ankle_{side}"] = hj, kn, an
+            pts[f"heel_{side}"], pts[f"toe_{side}"] = heel, toe
+            foot_angles[side] = fa
+        world = self._ground(pts, origin, f=1)
+        store_facing = 1 if facing >= 0 else -1
+        # wider front torso props (sprite uses hw_* for body mask)
+        pr_front = dict(pr)
+        pr_front["hw_top"] = pr["hw_top"] * 1.25
+        pr_front["hw_bot"] = pr["hw_bot"] * 1.2
+        return Rig(points=world, facing=store_facing, lean=lean, head_tilt=A.get("head", 0.0),
+                   props=pr_front, foot_angles=foot_angles, view=view)
+
+    def world_joints(self, origin: Vec, facing: int = 1, view: str = "side") -> dict[str, tuple[Vec, Vec]]:
+        return self.solve(origin, facing, view).joints()
+
+    def attach_point(self, bone_name: str, t: float, origin: Vec, facing: int = 1,
+                     view: str = "side") -> Vec:
+        joints = self.world_joints(origin, facing, view)
         if bone_name not in joints:
             return origin
         a, b = joints[bone_name]
@@ -269,7 +392,7 @@ class Look:
 
     skin: int = pal.SKIN
     hair: int = pal.HAIR
-    hair_style: str = "short"      # short | spiky | long | bob | ponytail | buzz | topknot
+    hair_style: str = "short"      # short | spiky | long | bob | ponytail | buzz | topknot | queue
     shirt: int = pal.CLOTH_A
     pants: int = pal.CLOTH_B
     shoes: int = pal.SHOE
@@ -277,6 +400,7 @@ class Look:
     skirt: bool = False
     belt: int | None = None
     hat: int | None = None
+    hat_style: str | None = None   # None (cap) | qing (清代暖帽: 红缨 + 顶珠) | crown (帝冠: 金顶)
     blush: bool = True
     lashes: bool = False
     beard: str | None = None       # None | short | long  (drawn in the hair colour)
@@ -307,7 +431,8 @@ class Character:
     skeleton: Skeleton
     x: float = 0.0
     y: float = 0.0
-    facing: int = 1  # 1 right, -1 left
+    facing: int = 1  # 1 right, -1 left (mirrors side / 3/4 views)
+    view: str = "side"  # side | three_quarter | front | back  (body angle / 体位)
     expression: str = "neutral"
     hair_color: int = pal.HAIR
     held_item: str | None = None
@@ -327,6 +452,7 @@ class Character:
         hair: int | None = None,
         expression: str = "neutral",
         facing: int = 1,
+        view: str = "side",
         preset: str | None = None,
         hair_style: str | None = None,
         body: str | None = None,
@@ -337,10 +463,12 @@ class Character:
         hat: int | None = None,
         belt: int | None = None,
         beard: str | None = None,
+        hat_style: str | None = None,
     ) -> "Character":
         spec: dict[str, Any] = dict(PRESETS.get(preset or "", {}))
         overrides = dict(shirt=cloth, pants=pants, hair=hair, hair_style=hair_style, body=body,
-                         skin=skin, shoes=shoes, sleeves=sleeves, skirt=skirt, hat=hat, belt=belt, beard=beard)
+                         skin=skin, shoes=shoes, sleeves=sleeves, skirt=skirt, hat=hat, belt=belt, beard=beard,
+                         hat_style=hat_style)
         for k, v in overrides.items():
             if v is not None:
                 spec[k] = v
@@ -354,6 +482,7 @@ class Character:
             x=x,
             y=y,
             facing=facing,
+            view=normalize_view(view),
             expression=expression,
             hair_color=look.hair,
             look=look,
@@ -364,7 +493,10 @@ class Character:
         return (self.x, self.y)
 
     def rig(self) -> Rig:
-        return self.skeleton.solve(self.origin, self.facing)
+        return self.skeleton.solve(self.origin, self.facing, self.view)
 
     def joints(self) -> dict[str, tuple[Vec, Vec]]:
         return self.rig().joints()
+
+    def set_view(self, view: str) -> None:
+        self.view = normalize_view(view)

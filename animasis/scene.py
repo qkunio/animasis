@@ -121,6 +121,7 @@ def scene_from_dict(data: dict[str, Any]) -> Scene:
             hair=_as_color(c.get("hair"), None),
             expression=str(c.get("expression", "neutral")),
             facing=int(c.get("facing", 1)),
+            view=str(c.get("view", c.get("body_view", "side"))),
             preset=c.get("preset"),
             hair_style=c.get("hair_style"),
             body=c.get("body"),
@@ -131,6 +132,7 @@ def scene_from_dict(data: dict[str, Any]) -> Scene:
             hat=_as_color(c.get("hat"), None) if c.get("hat") else None,
             belt=_as_color(c.get("belt"), None),
             beard=c.get("beard"),
+            hat_style=c.get("hat_style"),
         )
         if c.get("visible") is False:
             ch.visible = False
@@ -201,7 +203,13 @@ def _apply_event(scene: Scene, ev: TimelineEvent) -> None:
     elif a == "expression" and who in scene.characters:
         scene.characters[who].expression = str(p.get("name", "neutral"))
     elif a == "face" and who in scene.characters:
-        scene.characters[who].facing = int(p.get("dir", p.get("facing", 1)))
+        ch = scene.characters[who]
+        if "dir" in p or "facing" in p:
+            ch.facing = int(p.get("dir", p.get("facing", ch.facing)))
+        if "view" in p:
+            ch.set_view(str(p["view"]))
+    elif a == "view" and who in scene.characters:
+        scene.characters[who].set_view(str(p.get("name", p.get("view", "side"))))
     elif a == "move" and who in scene.characters:
         ch = scene.characters[who]
         if "x" in p:
@@ -391,5 +399,11 @@ def iter_frames(scene: Scene):
 
 
 def render_scene(scene: Scene, output: str | Path) -> Path:
+    from .render import stream_mp4
+
+    out = Path(output)
+    if out.suffix.lower() in (".mp4", ".mov", ".webm", "") and stream_mp4.available():
+        # long 60 fps films: pipe frames straight into ffmpeg instead of holding them all in RAM
+        return stream_mp4((img for _, img in iter_frames(scene)), out, fps=scene.fps)
     frames = [img for _, img in iter_frames(scene)]
     return export_frames(frames, output, fps=scene.fps)

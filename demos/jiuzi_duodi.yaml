@@ -1,0 +1,681 @@
+# 清史故事 · 九子夺嫡 —— 康熙晚年，众皇子争夺储位，最终四阿哥胤禛继位为雍正帝。
+# 有声成片（渲染 + edge-tts 旁白混音）:
+#   .venv/bin/python -m animasis narrate demos/jiuzi_duodi.yaml -o demos/output/jiuzi_duodi.mp4
+# 镜头表:
+#   .venv/bin/python -m animasis shots demos/jiuzi_duodi.yaml --markdown
+# 仅画面（无声）:
+#   .venv/bin/python -m animasis render demos/jiuzi_duodi.yaml -o /tmp/jiuzi_silent.mp4
+#
+# 段落: 片头 | A 康熙与诸皇子(乾清宫) | B 康熙十四年立太子(闪回) | C 一废太子(康熙四十七年) |
+#       D 胤禔魇镇被揭发·圈禁 | E 大臣推举胤禩 | F 复立→再废(四十八年 / 五十一年) |
+#       G 八爷党 vs 四阿哥(宫院) | H 十四阿哥抚远大将军(西北) | 卡片 康熙六十一年冬 |
+#       I 畅春园·隆科多宣遗命 | J 雍正即位 + 「十改于」传说卡 | K 八、九圈禁 · 十四守陵 |
+#       L 秘密立储·正大光明匾 | 结尾大事记卡
+# 史实取向: 只用通行史书的大事与年号; 台词气泡为示意, 非史料原话。
+name: jiuzi_duodi
+width: 320
+height: 180
+fps: 60
+duration: 106.0
+background: palace_hall
+ground_y: 150
+scale: 3
+gravity: 420
+
+characters:
+  # 康熙: 明黄龙袍、金顶帝冠、花白长髯 (晚年)            少年康熙: 闪回用
+  - { name: kangxi,       preset: hero, x: 160, y: 141, view: front, pose: sit, hair: 3, hair_style: queue, cloth: 7, pants: 7, skirt: true, sleeves: long, beard: long, hat: 1, hat_style: crown }
+  - { name: kangxi_young, preset: hero, x: 160, facing: -1, hair: 1, hair_style: queue, cloth: 7, pants: 7, skirt: true, sleeves: long, hat: 1, hat_style: crown, visible: false }
+  # ---- 九子 (清宫暖帽 + 辫发; 每人一种袍色便于辨认)
+  - { name: da,     preset: bob,  x: 28,  hair: 1, hair_style: queue, cloth: 2,  pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }    # 大阿哥 胤禔
+  - { name: er,     preset: hero, x: 50,  hair: 1, hair_style: queue, cloth: 6,  pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }    # 二阿哥 胤礽 (杏黄)
+  - { name: san,    preset: hero, body: slim, x: 72, hair: 1, hair_style: queue, cloth: 9, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }  # 三阿哥 胤祉
+  - { name: si,     preset: hero, x: 94,  hair: 1, hair_style: queue, cloth: 25, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }    # 四阿哥 胤禛 (石青)
+  - { name: ba,     preset: hero, body: slim, x: 116, hair: 1, hair_style: queue, cloth: 11, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }  # 八阿哥 胤禩
+  - { name: jiu,    preset: hero, x: 204, facing: -1, hair: 1, hair_style: queue, cloth: 29, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }  # 九阿哥 胤禟
+  - { name: shi,    preset: bob,  x: 226, facing: -1, hair: 1, hair_style: queue, cloth: 32, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }  # 十阿哥 胤䄉
+  - { name: shisan, preset: hero, x: 248, facing: -1, hair: 1, hair_style: queue, cloth: 15, pants: 24, skirt: true, sleeves: long, hat: 1, hat_style: qing }  # 十三阿哥 胤祥
+  - { name: shisi,  preset: hero, x: 270, facing: -1, hair: 1, hair_style: queue, cloth: 5,  pants: 24, skirt: true, sleeves: long, belt: 7, hat: 1, hat_style: qing }  # 十四阿哥 胤禵
+  # ---- 配角
+  - { name: er_kid,    preset: kid, scale: 0.8, x: 128, hair: 1, hair_style: queue, cloth: 6, pants: 24, visible: false }   # 年幼的胤礽
+  - { name: dachen1,   preset: bob,  x: 92,  hair: 1, hair_style: queue, cloth: 1, pants: 24, skirt: true, sleeves: long, beard: short, hat: 24, hat_style: qing, visible: false }
+  - { name: dachen2,   preset: hero, x: 72,  hair: 1, hair_style: queue, cloth: 10, pants: 24, skirt: true, sleeves: long, beard: long, hat: 24, hat_style: qing, visible: false }
+  - { name: longkeduo, preset: bob,  x: 160, facing: -1, hair: 1, hair_style: queue, cloth: 14, pants: 24, skirt: true, sleeves: long, beard: short, hat: 1, hat_style: qing, visible: false }
+  - { name: yongzheng, preset: hero, x: 160, facing: -1, hair: 1, hair_style: queue, cloth: 7, pants: 7, skirt: true, sleeves: long, beard: short, hat: 1, hat_style: crown, visible: false }
+  - { name: bing1, preset: bob,  x: -40, hair: 1, hair_style: queue, cloth: 10, pants: 24, belt: 7, hat: 24, hat_style: qing, visible: false }
+  - { name: bing2, preset: hero, x: -70, hair: 1, hair_style: queue, cloth: 10, pants: 24, belt: 7, hat: 24, hat_style: qing, visible: false }
+  - { name: stash, preset: kid, x: -200, visible: false }   # 隐藏道具用的“后台”
+
+objects:
+  - { name: edict,  kind: edict,  held_by: kangxi_young, w: 11, h: 7 }      # 立太子诏
+  - { name: seal,   kind: seal,   held_by: er, w: 7, h: 7, bounce: 0.6 }     # 太子印 (废黜时掉落弹跳)
+  - { name: doll,   kind: doll,   held_by: da, w: 7, h: 9 }                  # 巫蛊人偶
+  - { name: beads,  kind: beads,  held_by: si, w: 9, h: 9 }                  # 念珠
+  - { name: flag,   kind: flag,   held_by: stash, w: 9, h: 14 }              # 大将军令旗
+  - { name: yizhao, kind: edict,  held_by: longkeduo, w: 11, h: 7 }          # 遗诏
+  - { name: casket, kind: casket, held_by: stash, w: 11, h: 8 }              # 锦匣
+
+narration:
+  voice: zh-CN-YunxiNeural
+  rate: "+5%"
+  lines:
+    - { t: 0.8,   text: "九子夺嫡。" }
+    - { t: 5.0,   text: "康熙皇帝在位六十一年，是中国历史上在位最久的皇帝。他儿子众多，皇位却只有一个。" }
+    - { t: 13.5,  text: "康熙十四年，年幼的二阿哥胤礽被立为皇太子。" }
+    - { t: 18.8,  text: "可太子长大后骄纵失德、结党营私。康熙四十七年，太子被废。" }
+    - { t: 26.5,  text: "大阿哥胤禔趁机诅咒太子，被三阿哥胤祉揭发，遭到终身圈禁。" }
+    - { t: 32.8,  text: "八阿哥胤禩人缘极好，大臣纷纷推举他，反倒招来康熙猜忌。" }
+    - { t: 39.6,  text: "次年胤礽复立，三年后再度被废。康熙从此不再公开立储。" }
+    - { t: 46.6,  text: "八阿哥联合九阿哥胤禟、十阿哥胤䄉、十四阿哥胤禵，人称八爷党。" }
+    - { t: 53.5,  text: "四阿哥胤禛却吃斋念佛，自称天下第一闲人，暗中与十三阿哥胤祥交好。" }
+    - { t: 61.4,  text: "十四阿哥被任命为抚远大将军，出征西北，声望大涨。" }
+    - { t: 70.2,  text: "康熙六十一年冬，康熙病逝于畅春园。隆科多宣布遗命：皇四子胤禛继位。" }
+    - { t: 78.4,  text: "这就是雍正皇帝。民间传说他把十改成了于，篡改遗诏，但并无实据。" }
+    - { t: 86.5,  text: "雍正即位后，八阿哥、九阿哥被圈禁而死，十四阿哥被派去看守皇陵。" }
+    - { t: 93.8,  text: "雍正还创立了秘密立储，把继承人的名字藏在乾清宫正大光明匾后。" }
+    - { t: 101.0, text: "九子夺嫡，就此落幕。" }
+
+# ================= 分镜 / 运镜 (animasis.camera)
+# shot: wide 远景 1.0 · full 全景 1.3 · medium 中景 1.7 · close 近景 2.4 · closeup 特写 3.0
+# move: 秒数 = 从上一镜位平滑推/拉/摇; 缺省 = 硬切. transition: fade = 短暂黑场. flip = 反打
+camera:
+  - { t: 0.0,   shot: wide, name: "片头标题卡" }
+  # --- A 乾清宫: 康熙与诸皇子
+  - { t: 4.6,   shot: wide, transition: fade, fade: 0.6, name: "远景·乾清宫，康熙正体位坐于御座" }
+  - { t: 6.2,   shot: medium, target: kangxi, offset: [0, -14], move: 2.2, name: "缓推中景·康熙帝" }
+  - { t: 8.6,   shot: close, target: [52, 116], name: "近景·皇子们（左列）" }
+  - { t: 8.8,   shot: close, target: [262, 116], move: 3.2, ease: linear, name: "横摇·九位皇子一一亮相" }
+  - { t: 12.0,  shot: wide, move: 0.9, name: "拉远景·皇位只有一个" }
+  # --- B 闪回: 康熙十四年立太子
+  - { t: 13.1,  shot: medium, target: [er_kid, kangxi_young], offset: [0, -12], transition: fade, fade: 0.6, name: "中景·闪回 康熙十四年" }
+  - { t: 15.0,  shot: close, target: [er_kid, kangxi_young], offset: [0, -8], move: 1.4, name: "缓推近景·授诏立储" }
+  - { t: 16.8,  shot: close, target: er_kid, offset: [0, -12], name: "近景·小太子作揖" }
+  # --- C 一废太子
+  - { t: 18.4,  shot: full, target: [er, kangxi], offset: [0, -10], transition: fade, fade: 0.6, name: "全景·太子长大" }
+  - { t: 19.6,  shot: medium, target: er, offset: [6, -12], move: 1.6, name: "推中景·太子骄纵" }
+  - { t: 22.4,  shot: close, target: kangxi, offset: [-4, -12], flip: true, name: "反打近景·康熙震怒" }
+  - { t: 23.0,  shot: medium, target: [er, kangxi], offset: [0, -10], name: "中景·一废太子" }
+  - { t: 23.5,  shot: closeup, target: [172, 138], name: "特写·太子印落地弹跳" }
+  - { t: 24.8,  shot: medium, target: er, offset: [8, -10], name: "中景·废太子跪地" }
+  # --- D 胤禔魇镇 → 圈禁
+  - { t: 26.1,  shot: medium, target: [da, san], offset: [0, -12], name: "中景·大阿哥与三阿哥" }
+  - { t: 26.6,  shot: close, target: da, offset: [6, -12], move: 1.2, name: "推近景·巫蛊人偶" }
+  - { t: 28.6,  shot: close, target: san, offset: [-6, -12], flip: true, name: "反打·三阿哥揭发" }
+  - { t: 30.0,  shot: medium, target: [da, san], offset: [0, -12], name: "中景·圈禁之笼落下" }
+  # --- E 大臣推举八阿哥
+  - { t: 32.5,  shot: medium, target: [dachen2, ba], offset: [0, -12], name: "中景·大臣推举胤禩" }
+  - { t: 35.8,  shot: close, target: kangxi, offset: [-4, -12], name: "近景·康熙猜忌" }
+  - { t: 37.2,  shot: full, target: [dachen2, kangxi], offset: [0, -10], name: "全景·君臣对峙" }
+  # --- F 复立 → 再废
+  - { t: 39.4,  shot: medium, target: [er, kangxi], offset: [0, -10], name: "中景·胤礽复立" }
+  - { t: 42.6,  shot: close, target: er, offset: [6, -12], name: "近景·再废" }
+  - { t: 43.4,  shot: full, target: [er, kangxi], offset: [0, -10], name: "全景·太子被圈禁" }
+  - { t: 44.4,  shot: medium, target: [160, 116], move: 1.4, name: "缓推·空悬的储位" }
+  # --- G 宫院: 八爷党 vs 四阿哥
+  - { t: 46.1,  shot: wide, transition: fade, fade: 0.6, name: "远景·紫禁城宫院" }
+  - { t: 46.9,  shot: medium, target: [shi, shisi], offset: [0, -14], move: 1.6, name: "推中景·八爷党" }
+  - { t: 50.0,  shot: close, target: [ba, jiu], offset: [0, -12], name: "近景·八阿哥振臂" }
+  - { t: 53.2,  shot: close, target: si, offset: [-4, -12], name: "近景·四阿哥念佛" }
+  - { t: 56.6,  shot: medium, target: [si, shisan], offset: [0, -12], move: 1.0, name: "中景·十三阿哥到来" }
+  - { t: 59.4,  shot: wide, move: 1.0, name: "拉远景·两派暗斗" }
+  # --- H 西北: 抚远大将军
+  - { t: 61.0,  shot: wide, transition: fade, fade: 0.6, name: "远景·西北边塞" }
+  - { t: 62.2,  shot: full, target: shisi, offset: [22, -12], name: "全景跟拍·大军出征" }
+  - { t: 65.2,  shot: medium, target: shisi, offset: [0, -14], name: "中景·十四阿哥振旗" }
+  # --- 卡片
+  - { t: 67.2,  shot: wide, transition: fade, fade: 0.6, name: "卡片·康熙六十一年冬" }
+  # --- I 畅春园
+  - { t: 69.9,  shot: wide, transition: fade, fade: 0.6, name: "远景·畅春园寝宫，烛火" }
+  - { t: 70.6,  shot: medium, target: kangxi, offset: [0, -12], move: 2.0, name: "缓推·病重的康熙" }
+  - { t: 72.9,  shot: wide, transition: fade, fade: 1.0, name: "黑场·驾崩" }
+  - { t: 73.6,  shot: medium, target: longkeduo, offset: [0, -14], name: "中景·隆科多宣遗命" }
+  - { t: 74.8,  shot: close, target: si, offset: [4, -12], name: "近景·四阿哥" }
+  - { t: 75.8,  shot: close, target: [ba, jiu], offset: [0, -12], name: "近景·八、九阿哥愕然" }
+  - { t: 76.8,  shot: full, target: [160, 112], name: "全景·众人" }
+  # --- J 雍正即位 + 传说卡
+  - { t: 77.9,  shot: wide, transition: fade, fade: 0.6, name: "远景·雍正登基，群臣行礼" }
+  - { t: 78.6,  shot: medium, target: yongzheng, offset: [0, -16], move: 2.0, name: "缓推·雍正帝" }
+  - { t: 81.2,  shot: wide, transition: fade, fade: 0.5, name: "卡片·十改于 传说" }
+  # --- K 圈禁 · 守陵
+  - { t: 86.0,  shot: full, target: [ba, jiu], offset: [0, -10], transition: fade, fade: 0.6, name: "全景·黄昏宫院" }
+  - { t: 87.0,  shot: medium, target: [ba, jiu], offset: [0, -12], move: 0.8, name: "推中景·八、九被圈禁" }
+  - { t: 89.6,  shot: full, target: shisi, offset: [24, -10], name: "全景跟拍·十四去守陵" }
+  # --- L 秘密立储
+  - { t: 93.4,  shot: medium, target: yongzheng, offset: [0, -16], transition: fade, fade: 0.6, name: "中景·雍正手捧锦匣" }
+  - { t: 95.0,  shot: close, target: [160, 52], move: 1.8, name: "上摇·正大光明匾" }
+  - { t: 97.6,  shot: closeup, target: [152, 34], move: 1.2, name: "特写·匾后锦匣" }
+  - { t: 100.4, shot: wide, transition: fade, fade: 0.6, name: "结尾大事记卡" }
+
+overlays:
+  # ================= set dressing
+  - { kind: throne, x: 160, t: 4.6,  until: 46.1 }
+  - { kind: lantern, x: 56,  y: 44, t: 4.6, until: 46.1 }
+  - { kind: lantern, x: 264, y: 44, t: 4.6, until: 46.1 }
+  - { kind: banner, x: 18, t: 46.1, until: 61.0, h: 72, w: 44, fh: 18, text: "八爷党", color: 11 }
+  - { kind: banner, x: 300, t: 61.0, until: 67.2, h: 78, w: 30, fh: 20, text: "帅", left: true }
+  - { kind: candle, x: 124, t: 69.9, until: 77.9 }
+  - { kind: candle, x: 196, t: 69.9, until: 77.9 }
+  - { kind: lantern, x: 160, y: 40, t: 69.9, until: 77.9 }
+  - { kind: throne, x: 160, t: 77.9, until: 81.2 }
+  - { kind: throne, x: 160, t: 93.4, until: 100.4 }
+  - { kind: icon_back, name: casket, x: 160, y: 22, scale: 2, t: 96.4, until: 100.4 }
+  - { kind: plaque, x: 160, y: 30, text: "正大光明", t: 93.4, until: 100.4, glow: true }
+
+  # ================= A 康熙与诸皇子 (4.6–13.1)
+  - { kind: tag, t: 5.2, until: 8.6, follow: kangxi, dy: -50, text: "康熙帝 玄烨", bg: 7 }
+  - { kind: caption, t: 5.0, until: 8.6, text: "康熙在位六十一年，中国在位最久的皇帝", reveal: 12 }
+  - { kind: caption, t: 8.6, until: 13.1, text: "他儿子众多——皇位却只有一个", reveal: 12, color: 7 }
+  - { kind: tag, t: 8.6,  until: 12.0, follow: da,     dy: -48, text: "大阿哥 胤禔", bg: 3 }
+  - { kind: tag, t: 8.8,  until: 12.0, follow: er,     dy: -64, text: "二阿哥 胤礽", bg: 6 }
+  - { kind: tag, t: 9.0,  until: 12.0, follow: san,    dy: -48, text: "三阿哥 胤祉", bg: 9 }
+  - { kind: tag, t: 9.3,  until: 12.0, follow: si,     dy: -64, text: "四阿哥 胤禛", bg: 3 }
+  - { kind: tag, t: 9.6,  until: 12.0, follow: ba,     dy: -48, text: "八阿哥 胤禩", bg: 28 }
+  - { kind: tag, t: 10.4, until: 12.0, follow: jiu,    dy: -48, text: "九阿哥 胤禟", bg: 28 }
+  - { kind: tag, t: 10.7, until: 12.0, follow: shi,    dy: -64, text: "十阿哥 胤䄉", bg: 6 }
+  - { kind: tag, t: 11.0, until: 12.0, follow: shisan, dy: -48, text: "十三阿哥 胤祥", bg: 30 }
+  - { kind: tag, t: 11.3, until: 12.0, follow: shisi,  dy: -64, text: "十四阿哥 胤禵", bg: 26 }
+  - { kind: bubble, t: 12.1, until: 13.1, follow: si,  dx: 0, dy: -52, text: "?" }
+  - { kind: bubble, t: 12.2, until: 13.1, follow: ba,  dx: 0, dy: -52, text: "?" }
+  - { kind: bubble, t: 12.3, until: 13.1, follow: er,  dx: 0, dy: -52, text: "?" }
+  - { kind: bubble, t: 12.4, until: 13.1, follow: shisi, dx: 0, dy: -52, text: "?" }
+  - { kind: tag, t: 12.2, until: 13.1, x: 160, y: 72, space: world, text: "皇位", bg: 7, pin: 8 }
+
+  # ================= B 闪回 · 康熙十四年 (13.1–18.4)
+  - { kind: tag, t: 13.3, until: 18.4, x: 6, y: 6, align: left, text: "闪回 · 康熙十四年", bg: 27, color: 4, border: 0 }
+  - { kind: caption, t: 13.5, until: 18.4, text: "年幼的二阿哥胤礽，被立为皇太子", reveal: 12 }
+  - { kind: tag, t: 13.6, until: 15.2, follow: kangxi_young, dy: -50, text: "康熙", bg: 7 }
+  - { kind: tag, t: 15.6, until: 18.4, follow: er_kid, dy: -44, text: "皇太子 胤礽", bg: 6 }
+  - { kind: bubble, t: 14.0, until: 15.2, follow: kangxi_young, dx: -6, dy: -58, icons: [edict], tail: right }
+
+  # ================= C 一废太子 (18.4–26.1)
+  - { kind: caption, t: 18.8, until: 22.4, text: "太子长大后骄纵失德、结党营私", reveal: 12 }
+  - { kind: tag, t: 18.8, until: 22.4, follow: er, dy: -50, text: "太子 胤礽", bg: 6 }
+  - { kind: bubble, t: 19.8, until: 22.2, follow: er, dx: 6, dy: -64, text: "储君在此！", tail: left }
+  - { kind: tag, t: 22.4, until: 26.1, x: 6, y: 6, align: left, text: "康熙四十七年 · 一废太子", bg: 5, color: 4, border: 0 }
+  - { kind: caption, t: 22.4, until: 26.1, text: "康熙四十七年，太子被废", reveal: 12, color: 26 }
+  - { kind: bubble, t: 22.5, until: 23.4, follow: kangxi, dx: 8, dy: -60, text: "废！", tail: left, color: 5 }
+  - { kind: text, t: 23.0, until: 26.1, follow: er, dy: -62, text: "废", size: 16, bold: true, color: 5, outline: 16 }
+
+  # ================= D 胤禔魇镇 → 圈禁 (26.1–32.5)
+  - { kind: caption, t: 26.5, until: 29.4, text: "大阿哥胤禔趁机诅咒太子……", reveal: 12 }
+  - { kind: tag, t: 26.2, until: 28.6, follow: da, dy: -48, text: "大阿哥 胤禔", bg: 3 }
+  - { kind: bubble, t: 26.9, until: 28.5, follow: da, dx: 8, dy: -62, icons: [doll], text: "魇镇", tail: left }
+  - { kind: tag, t: 28.6, until: 30.0, follow: san, dy: -48, text: "三阿哥 胤祉", bg: 9 }
+  - { kind: bubble, t: 28.8, until: 30.4, follow: san, dx: -8, dy: -62, text: "他用巫术！", tail: right }
+  - { kind: caption, t: 29.4, until: 32.5, text: "被三阿哥胤祉揭发，遭终身圈禁", reveal: 12, color: 7 }
+  - { kind: bars, t: 30.0, until: 32.5, follow: da }
+  - { kind: tag, t: 30.4, until: 32.5, follow: da, dy: -62, text: "终身圈禁", bg: 5, color: 4 }
+
+  # ================= E 大臣推举胤禩 (32.5–39.4)
+  - { kind: caption, t: 32.8, until: 36.0, text: "八阿哥胤禩人缘极好，大臣纷纷推举他", reveal: 12 }
+  - { kind: tag, t: 32.8, until: 35.8, follow: ba, dy: -48, text: "八阿哥 胤禩", bg: 28 }
+  - { kind: tag, t: 33.0, until: 35.8, follow: dachen2, dy: -46, text: "大臣", bg: 3 }
+  - { kind: bubble, t: 33.4, until: 35.6, follow: dachen1, dx: 6, dy: -58, text: "请立八阿哥！", tail: left }
+  - { kind: caption, t: 36.0, until: 39.4, text: "……反倒招来康熙猜忌", reveal: 12, color: 7 }
+  - { kind: bubble, t: 36.2, until: 37.2, follow: kangxi, dx: -8, dy: -60, text: "哼……", tail: right }
+  - { kind: bubble, t: 37.6, until: 39.4, follow: kangxi, dx: -8, dy: -60, text: "?!", tail: right, color: 5 }
+
+  # ================= F 复立 → 再废 (39.4–46.1)
+  - { kind: tag, t: 39.6, until: 42.6, x: 6, y: 6, align: left, text: "康熙四十八年 · 复立", bg: 8, color: 4, border: 0 }
+  - { kind: caption, t: 39.6, until: 42.6, text: "次年，胤礽复立为太子", reveal: 12 }
+  - { kind: tag, t: 40.0, until: 42.6, follow: er, dy: -50, text: "太子 胤礽", bg: 6 }
+  - { kind: tag, t: 42.6, until: 46.1, x: 6, y: 6, align: left, text: "康熙五十一年 · 再废", bg: 5, color: 4, border: 0 }
+  - { kind: caption, t: 42.6, until: 46.1, text: "三年后再度被废，从此不再公开立储", reveal: 12, color: 26 }
+  - { kind: text, t: 42.8, until: 44.4, follow: er, dy: -62, text: "再废", size: 16, bold: true, color: 5, outline: 16 }
+  - { kind: bars, t: 43.4, until: 46.1, follow: er }
+  - { kind: tag, t: 44.8, until: 46.1, x: 160, y: 70, space: world, text: "储位空悬", bg: 1, color: 7, pin: 10 }
+
+  # ================= G 八爷党 vs 四阿哥 (46.1–61.0)
+  - { kind: caption, t: 46.6, until: 49.8, text: "八阿哥联合九阿哥、十阿哥、十四阿哥", reveal: 12 }
+  - { kind: tag, t: 47.0, until: 53.2, follow: shi,   dy: -48, text: "十阿哥 胤䄉", bg: 6 }
+  - { kind: tag, t: 47.3, until: 53.2, follow: jiu,   dy: -64, text: "九阿哥 胤禟", bg: 28 }
+  - { kind: tag, t: 47.6, until: 53.2, follow: ba,    dy: -48, text: "八阿哥 胤禩", bg: 28 }
+  - { kind: tag, t: 47.9, until: 53.2, follow: shisi, dy: -64, text: "十四阿哥 胤禵", bg: 26 }
+  - { kind: caption, t: 49.8, until: 53.2, text: "人称「八爷党」", reveal: 12, color: 28 }
+  - { kind: bubble, t: 50.4, until: 52.8, follow: ba, dx: 8, dy: -78, text: "众望所归！", tail: left }
+  - { kind: caption, t: 53.5, until: 57.0, text: "四阿哥胤禛却吃斋念佛……", reveal: 12 }
+  - { kind: tag, t: 53.4, until: 56.6, follow: si, dy: -48, text: "四阿哥 胤禛", bg: 3 }
+  - { kind: bubble, t: 54.4, until: 56.6, follow: si, dx: -8, dy: -62, icons: [beads], text: "天下第一闲人", tail: right }
+  - { kind: caption, t: 57.0, until: 61.0, text: "暗中与十三阿哥胤祥交好", reveal: 12, color: 30 }
+  - { kind: tag, t: 58.0, until: 61.0, follow: shisan, dy: -64, text: "十三阿哥 胤祥", bg: 30 }
+  - { kind: tag, t: 58.0, until: 61.0, follow: si, dy: -48, text: "四阿哥 胤禛", bg: 3 }
+  - { kind: tag, t: 59.6, until: 61.0, x: 60,  y: 36, space: world, text: "八爷党", bg: 28 }
+  - { kind: tag, t: 59.6, until: 61.0, x: 250, y: 36, space: world, text: "四爷", bg: 3 }
+  - { kind: text, t: 59.8, until: 61.0, x: 160, y: 56, space: world, text: "VS", size: 16, bold: true, color: 5, outline: 16 }
+
+  # ================= H 西北 · 抚远大将军 (61.0–67.2)
+  - { kind: tag, t: 61.4, until: 67.2, x: 6, y: 6, align: left, text: "康熙五十七年 · 西北", bg: 14, color: 4, border: 0 }
+  - { kind: caption, t: 61.4, until: 64.6, text: "十四阿哥被任命为抚远大将军，出征西北", reveal: 12 }
+  - { kind: tag, t: 62.2, until: 67.2, follow: shisi, dy: -56, text: "抚远大将军", bg: 5, color: 4 }
+  - { kind: caption, t: 64.6, until: 67.2, text: "声望大涨！", reveal: 12, color: 7 }
+  - { kind: bubble, t: 65.4, until: 67.0, follow: bing1, dx: 6, dy: -54, text: "威武！", tail: left }
+
+  # ================= I 畅春园 (69.9–77.9)
+  - { kind: tag, t: 70.0, until: 77.9, x: 6, y: 6, align: left, text: "康熙六十一年冬 · 畅春园", bg: 1, color: 7, border: 0 }
+  - { kind: caption, t: 70.2, until: 73.4, text: "康熙病逝于畅春园", reveal: 12 }
+  - { kind: caption, t: 73.4, until: 77.9, text: "隆科多宣布遗命：皇四子胤禛继位", reveal: 12, color: 7 }
+  - { kind: tag, t: 73.6, until: 74.8, follow: longkeduo, dy: -50, text: "隆科多", bg: 14, color: 4 }
+  - { kind: bubble, t: 73.9, until: 74.8, follow: longkeduo, dx: -8, dy: -64, icons: [edict], text: "遗命", tail: right }
+  - { kind: bubble, t: 74.9, until: 75.8, follow: si, dx: 6, dy: -58, text: "!", tail: left }
+  - { kind: bubble, t: 75.9, until: 76.8, follow: ba, dx: 0, dy: -58, text: "?!", color: 5 }
+  - { kind: bubble, t: 76.0, until: 76.8, follow: jiu, dx: 0, dy: -58, text: "?!", color: 5 }
+  - { kind: tag, t: 76.8, until: 77.9, x: 252, y: 6, text: "十四阿哥远在西北", bg: 14, color: 4, border: 0 }
+
+  # ================= J 雍正即位 (77.9–81.2) + 传说卡
+  - { kind: tag, t: 78.6, until: 81.2, follow: yongzheng, dy: -54, text: "雍正帝 胤禛", bg: 7 }
+  - { kind: caption, t: 78.4, until: 81.2, text: "四阿哥即位——雍正皇帝", reveal: 12, color: 7 }
+
+  # ================= K 圈禁 · 守陵 (86.0–93.4)
+  - { kind: tag, t: 86.2, until: 93.4, x: 6, y: 6, align: left, text: "雍正年间", bg: 27, color: 4, border: 0 }
+  - { kind: caption, t: 86.5, until: 89.8, text: "八阿哥、九阿哥被圈禁而死", reveal: 12 }
+  - { kind: bars, t: 87.0, until: 93.4, follow: ba }
+  - { kind: bars, t: 87.5, until: 93.4, follow: jiu }
+  - { kind: tag, t: 87.6, until: 89.6, follow: ba,  dy: -62, text: "八阿哥", bg: 28 }
+  - { kind: tag, t: 87.9, until: 89.6, follow: jiu, dy: -62, text: "九阿哥", bg: 28 }
+  - { kind: caption, t: 89.8, until: 93.4, text: "十四阿哥被派去看守皇陵", reveal: 12, color: 3 }
+  - { kind: tag, t: 89.8, until: 93.4, follow: shisi, dy: -50, text: "十四阿哥", bg: 26 }
+  - { kind: tag, t: 90.4, until: 93.4, x: 296, y: 96, space: world, text: "景陵 →", bg: 14, color: 4 }
+
+  # ================= L 秘密立储 (93.4–100.4)
+  - { kind: caption, t: 93.8, until: 97.0, text: "雍正创立「秘密立储」", reveal: 12, color: 7 }
+  - { kind: tag, t: 93.6, until: 95.0, follow: yongzheng, dy: -54, text: "雍正帝", bg: 7 }
+  - { kind: caption, t: 97.0, until: 100.4, text: "继承人之名，藏于「正大光明」匾后", reveal: 12 }
+  - { kind: tag, t: 97.8, until: 100.4, x: 124, y: 12, space: world, text: "传位密旨", bg: 5, color: 4 }
+
+  # ================= title / chapter cards
+  - kind: card
+    t: 0
+    until: 4.6
+    bg: 27
+    stripe: 7
+    items:
+      - { text: "清史故事", size: 12, color: 31 }
+      - { text: "九子夺嫡", size: 32, color: 7 }
+      - { text: "康熙晚年 · 储位之争", size: 12, color: 4, at: 0.7 }
+      - { icons: [seal, edict], scale: 3, at: 1.2 }
+  - kind: card
+    t: 67.2
+    until: 69.9
+    bg: 16
+    stripe: 27
+    items:
+      - { text: "康熙六十一年冬", size: 24, color: 4 }
+      - { text: "（公元1722年）", size: 12, color: 3, at: 0.5 }
+  - kind: card
+    t: 81.2
+    until: 86.0
+    bg: 24
+    stripe: 6
+    items:
+      - { text: "民间传说", size: 12, color: 31 }
+      - { text: "传位十四子", size: 24, color: 4, at: 0.3 }
+      - { text: "↓", size: 16, color: 3, at: 1.1 }
+      - { text: "传位于四子", size: 24, color: 26, at: 1.5 }
+      - { text: "遗诏满汉文并书，此说并无实据", size: 12, color: 3, at: 2.6 }
+  - kind: card
+    t: 100.4
+    until: 106.0
+    bg: 27
+    stripe: 7
+    items:
+      - { text: "九子夺嫡 · 大事记", size: 16, color: 7 }
+      - { text: "康熙十四年　立胤礽为太子", size: 12, color: 4, at: 0.6 }
+      - { text: "康熙四十七年　一废太子", size: 12, color: 4, at: 1.0 }
+      - { text: "康熙四十八年　复立　·　五十一年　再废", size: 12, color: 4, at: 1.4 }
+      - { text: "康熙六十一年　胤禛继位（雍正）", size: 12, color: 4, at: 1.8 }
+      - { text: "雍正元年　创立秘密立储", size: 12, color: 4, at: 2.2 }
+      - { text: "Animasis · 像素历史", size: 12, color: 3, at: 3.6 }
+
+timeline:
+  # ---------- A 乾清宫开场
+  - { t: 0.0,  action: view,  target: kangxi, name: front }
+  - { t: 0.0,  action: pose,  target: kangxi, name: sit }
+  - { t: 0.0,  action: cycle, target: si,     name: idle, speed: 0.5 }
+  - { t: 0.0,  action: cycle, target: ba,     name: idle, speed: 0.6 }
+  - { t: 0.0,  action: cycle, target: shisi,  name: idle, speed: 0.7 }
+  - { t: 0.0,  action: pose,  target: si, name: hold }
+  - { t: 9.0,  action: expression, target: er, name: happy }
+  - { t: 9.6,  action: expression, target: ba, name: happy }
+  - { t: 11.3, action: expression, target: shisi, name: happy }
+  - { t: 12.1, action: expression, target: si, name: blink }
+  - { t: 12.1, action: expression, target: er, name: surprise }
+  - { t: 12.2, action: expression, target: ba, name: surprise }
+
+  # ---------- B 闪回 (all adults off, young Kangxi + child)
+  - { t: 13.1, action: hide, target: kangxi }
+  - { t: 13.1, action: hide, target: da }
+  - { t: 13.1, action: hide, target: er }
+  - { t: 13.1, action: hide, target: san }
+  - { t: 13.1, action: hide, target: si }
+  - { t: 13.1, action: hide, target: ba }
+  - { t: 13.1, action: hide, target: jiu }
+  - { t: 13.1, action: hide, target: shi }
+  - { t: 13.1, action: hide, target: shisan }
+  - { t: 13.1, action: hide, target: shisi }
+  - { t: 13.1, action: show, target: kangxi_young }
+  - { t: 13.1, action: show, target: er_kid }
+  - { t: 13.1, action: pose, target: kangxi_young, name: hold }
+  - { t: 13.1, action: expression, target: er_kid, name: neutral }
+  - { t: 15.2, action: give, target: kangxi_young, to: er_kid, object: edict }
+  - { t: 15.2, action: expression, target: kangxi_young, name: happy }
+  - { t: 15.4, action: expression, target: er_kid, name: happy }
+  - { t: 16.6, action: pose, target: kangxi_young, name: idle }
+  - { t: 16.8, action: pose, target: er_kid, name: bow }
+
+  # ---------- C 一废太子
+  - { t: 18.4, action: hide, target: kangxi_young }
+  - { t: 18.4, action: hide, target: er_kid }
+  - { t: 18.4, action: attach, target: stash, object: edict }
+  - { t: 18.4, action: show, target: kangxi }
+  - { t: 18.4, action: view, target: kangxi, name: front }
+  - { t: 18.4, action: pose, target: kangxi, name: sit }
+  - { t: 18.4, action: move, target: kangxi, x: 160, y: 141 }
+  - { t: 18.4, action: show, target: da }
+  - { t: 18.4, action: show, target: er }
+  - { t: 18.4, action: show, target: san }
+  - { t: 18.4, action: show, target: si }
+  - { t: 18.4, action: show, target: ba }
+  - { t: 18.4, action: show, target: jiu }
+  - { t: 18.4, action: show, target: shi }
+  - { t: 18.4, action: show, target: shisan }
+  - { t: 18.4, action: show, target: shisi }
+  - { t: 18.4, action: move, target: er, x: 112 }
+  - { t: 18.4, action: move, target: ba, x: 92 }
+  - { t: 18.4, action: move, target: si, x: 74 }
+  - { t: 18.4, action: move, target: san, x: 54 }
+  - { t: 18.4, action: move, target: da, x: 30 }
+  - { t: 18.4, action: expression, target: er, name: happy }
+  - { t: 18.4, action: expression, target: si, name: neutral }
+  - { t: 18.4, action: expression, target: ba, name: neutral }
+  - { t: 18.4, action: expression, target: shisi, name: neutral }
+  - { t: 18.6, action: walk_to, target: er, x: 134, speed: 30 }
+  - { t: 19.8, action: cycle, target: er, name: wave, speed: 0.9 }
+  - { t: 20.4, action: expression, target: kangxi, name: angry }
+  - { t: 22.2, action: pose, target: er, name: hold }
+  - { t: 22.2, action: view, target: kangxi, name: side }
+  - { t: 22.2, action: face, target: kangxi, dir: -1 }
+  - { t: 22.2, action: move, target: kangxi, y: 150 }
+  - { t: 22.4, action: pose, target: kangxi, name: reach }
+  - { t: 22.6, action: expression, target: er, name: surprise }
+  - { t: 23.2, action: drop, target: er, vx: 38, vy: -120 }
+  - { t: 23.3, action: pose, target: er, name: crouch }
+  - { t: 23.3, action: expression, target: er, name: sad }
+  - { t: 23.6, action: view, target: kangxi, name: front }
+  - { t: 23.6, action: pose, target: kangxi, name: sit }
+  - { t: 23.6, action: move, target: kangxi, x: 160, y: 141 }
+
+  # ---------- D 大阿哥魇镇 → 圈禁 (er leaves the line)
+  - { t: 26.1, action: hide, target: er }
+  - { t: 26.1, action: attach, target: stash, object: seal }
+  - { t: 26.1, action: move, target: da, x: 40 }
+  - { t: 26.1, action: move, target: san, x: 74 }
+  - { t: 26.1, action: move, target: si, x: 94 }
+  - { t: 26.1, action: move, target: ba, x: 116 }
+  - { t: 26.1, action: pose, target: da, name: hold }
+  - { t: 26.1, action: expression, target: da, name: angry }
+  - { t: 26.1, action: expression, target: kangxi, name: neutral }
+  - { t: 28.4, action: face, target: san, dir: -1 }
+  - { t: 28.6, action: pose, target: san, name: reach }
+  - { t: 28.6, action: expression, target: san, name: angry }
+  - { t: 28.9, action: expression, target: da, name: surprise }
+  - { t: 30.0, action: expression, target: da, name: sad }
+  - { t: 30.0, action: pose, target: da, name: idle }
+  - { t: 30.0, action: attach, target: stash, object: doll }
+  - { t: 30.4, action: pose, target: san, name: idle }
+  - { t: 30.4, action: expression, target: san, name: neutral }
+
+  # ---------- E 大臣推举八阿哥 (just Kangxi, Yinsi and two ministers on set)
+  - { t: 32.5, action: hide, target: da }
+  - { t: 32.5, action: hide, target: san }
+  - { t: 32.5, action: hide, target: si }
+  - { t: 32.5, action: hide, target: jiu }
+  - { t: 32.5, action: hide, target: shi }
+  - { t: 32.5, action: hide, target: shisan }
+  - { t: 32.5, action: hide, target: shisi }
+  - { t: 32.5, action: face, target: san, dir: 1 }
+  - { t: 32.5, action: move, target: ba, x: 120 }
+  - { t: 32.5, action: face, target: ba, dir: -1 }
+  - { t: 32.5, action: show, target: dachen1 }
+  - { t: 32.5, action: show, target: dachen2 }
+  - { t: 32.5, action: pose, target: dachen1, name: bow }
+  - { t: 32.5, action: pose, target: dachen2, name: bow }
+  - { t: 32.5, action: expression, target: ba, name: happy }
+  - { t: 33.4, action: expression, target: dachen1, name: happy }
+  - { t: 35.8, action: expression, target: kangxi, name: angry }
+  - { t: 36.0, action: face, target: ba, dir: 1 }
+  - { t: 36.2, action: expression, target: ba, name: surprise }
+  - { t: 36.4, action: pose, target: dachen1, name: idle }
+  - { t: 36.4, action: pose, target: dachen2, name: idle }
+  - { t: 36.6, action: expression, target: dachen1, name: surprise }
+  - { t: 36.6, action: expression, target: dachen2, name: surprise }
+  - { t: 35.6, action: view, target: kangxi, name: front }
+  - { t: 35.6, action: pose, target: kangxi, name: sit }
+  - { t: 35.6, action: move, target: kangxi, x: 160, y: 141 }
+  - { t: 37.6, action: view, target: kangxi, name: side }
+  - { t: 37.6, action: face, target: kangxi, dir: -1 }
+  - { t: 37.6, action: move, target: kangxi, y: 150 }
+  - { t: 37.6, action: pose, target: kangxi, name: reach }
+  - { t: 37.8, action: pose, target: ba, name: bow }
+  - { t: 37.8, action: expression, target: ba, name: sad }
+
+  # ---------- F 复立 → 再废
+  - { t: 39.4, action: hide, target: dachen1 }
+  - { t: 39.4, action: hide, target: dachen2 }
+  - { t: 39.4, action: show, target: si }
+  - { t: 39.4, action: show, target: jiu }
+  - { t: 39.4, action: show, target: shi }
+  - { t: 39.4, action: show, target: shisan }
+  - { t: 39.4, action: show, target: shisi }
+  - { t: 39.4, action: show, target: er }
+  - { t: 39.4, action: move, target: ba, x: 96 }
+  - { t: 39.4, action: move, target: si, x: 74 }
+  - { t: 39.4, action: face, target: ba, dir: 1 }
+  - { t: 39.4, action: pose, target: ba, name: idle }
+  - { t: 39.4, action: pose, target: si, name: hold }
+  - { t: 39.4, action: expression, target: ba, name: neutral }
+  - { t: 39.4, action: move, target: er, x: 134 }
+  - { t: 39.4, action: pose, target: er, name: bow }
+  - { t: 39.4, action: expression, target: er, name: happy }
+  - { t: 39.4, action: attach, target: er, object: seal }
+  - { t: 39.4, action: view, target: kangxi, name: front }
+  - { t: 39.4, action: pose, target: kangxi, name: sit }
+  - { t: 39.4, action: move, target: kangxi, x: 160, y: 141 }
+  - { t: 39.4, action: expression, target: kangxi, name: neutral }
+  - { t: 40.6, action: pose, target: er, name: hold }
+  - { t: 41.4, action: expression, target: kangxi, name: sad }
+  - { t: 42.4, action: expression, target: kangxi, name: angry }
+  - { t: 42.6, action: expression, target: er, name: surprise }
+  - { t: 42.8, action: drop, target: er, vx: -46, vy: -140 }
+  - { t: 42.9, action: pose, target: er, name: crouch }
+  - { t: 42.9, action: expression, target: er, name: sad }
+  - { t: 43.6, action: expression, target: kangxi, name: sad }
+  - { t: 44.0, action: view, target: kangxi, name: side }
+  - { t: 44.0, action: face, target: kangxi, dir: 1 }
+  - { t: 44.0, action: move, target: kangxi, y: 150 }
+  - { t: 44.2, action: walk_to, target: kangxi, x: 184, speed: 24 }
+  - { t: 45.6, action: face, target: kangxi, dir: -1 }
+
+  # ---------- G 宫院 (palace_court): 八爷党 left, 四阿哥 right
+  - { t: 46.1, action: background, name: palace_court }
+  - { t: 46.1, action: attach, target: stash, object: seal }
+  - { t: 46.1, action: hide, target: kangxi }
+  - { t: 46.1, action: hide, target: er }
+  - { t: 46.1, action: hide, target: shisan }
+  - { t: 46.1, action: move, target: shi,   x: 38 }
+  - { t: 46.1, action: move, target: jiu,   x: 60 }
+  - { t: 46.1, action: move, target: ba,    x: 82 }
+  - { t: 46.1, action: move, target: shisi, x: 104 }
+  - { t: 46.1, action: move, target: si,    x: 244 }
+  - { t: 46.1, action: move, target: shisan, x: 346 }
+  - { t: 46.1, action: face, target: shi, dir: 1 }
+  - { t: 46.1, action: face, target: jiu, dir: 1 }
+  - { t: 46.1, action: face, target: ba, dir: 1 }
+  - { t: 46.1, action: face, target: shisi, dir: -1 }
+  - { t: 46.1, action: face, target: si, dir: -1 }
+  - { t: 46.1, action: expression, target: ba, name: happy }
+  - { t: 46.1, action: expression, target: jiu, name: happy }
+  - { t: 46.1, action: expression, target: shi, name: happy }
+  - { t: 46.1, action: expression, target: shisi, name: happy }
+  - { t: 46.1, action: expression, target: si, name: blink }
+  - { t: 46.1, action: pose, target: si, name: hold }
+  - { t: 47.0, action: cycle, target: shi, name: wave, speed: 1.0 }
+  - { t: 47.4, action: cycle, target: jiu, name: wave, speed: 0.8 }
+  - { t: 50.2, action: cycle, target: ba, name: wave, speed: 0.7 }
+  - { t: 50.2, action: cycle, target: shisi, name: wave, speed: 1.1 }
+  - { t: 52.8, action: pose, target: shi, name: idle }
+  - { t: 52.8, action: pose, target: jiu, name: idle }
+  - { t: 53.0, action: pose, target: ba, name: idle }
+  - { t: 53.0, action: pose, target: shisi, name: idle }
+  - { t: 56.6, action: show, target: shisan }
+  - { t: 56.6, action: walk_to, target: shisan, x: 270, speed: 52 }
+  - { t: 57.2, action: face, target: si, dir: 1 }
+  - { t: 57.2, action: expression, target: si, name: happy }
+  - { t: 58.2, action: expression, target: shisan, name: happy }
+  - { t: 58.4, action: pose, target: shisan, name: bow }
+  - { t: 58.6, action: pose, target: si, name: bow }
+  - { t: 59.4, action: pose, target: shisan, name: idle }
+  - { t: 59.4, action: pose, target: si, name: hold }
+  - { t: 59.6, action: face, target: si, dir: -1 }
+  - { t: 59.6, action: expression, target: si, name: neutral }
+  - { t: 59.6, action: expression, target: ba, name: angry }
+
+  # ---------- H 西北 (frontier): 十四阿哥 + 两名兵士
+  - { t: 61.0, action: background, name: frontier }
+  - { t: 61.0, action: hide, target: ba }
+  - { t: 61.0, action: hide, target: jiu }
+  - { t: 61.0, action: hide, target: shi }
+  - { t: 61.0, action: hide, target: si }
+  - { t: 61.0, action: hide, target: shisan }
+  - { t: 61.0, action: move, target: shisi, x: 40 }
+  - { t: 61.0, action: face, target: shisi, dir: 1 }
+  - { t: 61.0, action: attach, target: shisi, object: flag }
+  - { t: 61.0, action: pose, target: shisi, name: hold }
+  - { t: 61.0, action: expression, target: shisi, name: happy }
+  - { t: 61.0, action: show, target: bing1 }
+  - { t: 61.0, action: show, target: bing2 }
+  - { t: 61.0, action: move, target: bing1, x: 14 }
+  - { t: 61.0, action: move, target: bing2, x: -10 }
+  - { t: 61.6, action: walk_to, target: shisi, x: 170, speed: 40 }
+  - { t: 61.6, action: walk_to, target: bing1, x: 140, speed: 40 }
+  - { t: 61.6, action: walk_to, target: bing2, x: 114, speed: 40 }
+  - { t: 65.0, action: pose, target: shisi, name: reach }
+  - { t: 65.2, action: jump, target: bing1, vy: -150 }
+  - { t: 65.5, action: jump, target: bing2, vy: -130 }
+  - { t: 65.4, action: expression, target: bing1, name: happy }
+  - { t: 65.4, action: expression, target: bing2, name: happy }
+  - { t: 66.2, action: cycle, target: bing1, name: wave, speed: 1.2 }
+
+  # ---------- I 畅春园 (night)
+  - { t: 67.2, action: background, name: palace_hall_night }
+  - { t: 67.2, action: hide, target: bing1 }
+  - { t: 67.2, action: hide, target: bing2 }
+  - { t: 67.2, action: hide, target: shisi }
+  - { t: 67.2, action: attach, target: stash, object: flag }
+  - { t: 67.2, action: show, target: kangxi }
+  - { t: 67.2, action: view, target: kangxi, name: side }
+  - { t: 67.2, action: move, target: kangxi, x: 160, y: 150 }
+  - { t: 67.2, action: face, target: kangxi, dir: -1 }
+  - { t: 67.2, action: pose, target: kangxi, name: idle }
+  - { t: 67.2, action: expression, target: kangxi, name: sad }
+  - { t: 71.2, action: expression, target: kangxi, name: blink }
+  - { t: 70.0, action: view, target: kangxi, name: side }
+  - { t: 70.0, action: face, target: kangxi, dir: -1 }
+  - { t: 71.6, action: pose, target: kangxi, name: crouch }
+  - { t: 72.9, action: hide, target: kangxi }
+  - { t: 72.9, action: show, target: longkeduo }
+  - { t: 72.9, action: pose, target: longkeduo, name: hold }
+  - { t: 72.9, action: show, target: san }
+  - { t: 72.9, action: show, target: si }
+  - { t: 72.9, action: show, target: shisan }
+  - { t: 72.9, action: show, target: ba }
+  - { t: 72.9, action: show, target: jiu }
+  - { t: 72.9, action: show, target: shi }
+  - { t: 72.9, action: move, target: san, x: 70 }
+  - { t: 72.9, action: move, target: shisan, x: 92 }
+  - { t: 72.9, action: move, target: si, x: 116 }
+  - { t: 72.9, action: move, target: ba, x: 206 }
+  - { t: 72.9, action: move, target: jiu, x: 228 }
+  - { t: 72.9, action: move, target: shi, x: 250 }
+  - { t: 72.9, action: face, target: san, dir: 1 }
+  - { t: 72.9, action: face, target: shisan, dir: 1 }
+  - { t: 72.9, action: face, target: si, dir: 1 }
+  - { t: 72.9, action: face, target: ba, dir: -1 }
+  - { t: 72.9, action: face, target: jiu, dir: -1 }
+  - { t: 72.9, action: face, target: shi, dir: -1 }
+  - { t: 72.9, action: pose, target: si, name: idle }
+  - { t: 72.9, action: pose, target: ba, name: idle }
+  - { t: 72.9, action: pose, target: jiu, name: idle }
+  - { t: 72.9, action: pose, target: shi, name: idle }
+  - { t: 72.9, action: attach, target: stash, object: beads }
+  - { t: 72.9, action: expression, target: san, name: sad }
+  - { t: 72.9, action: expression, target: si, name: sad }
+  - { t: 72.9, action: expression, target: shisan, name: sad }
+  - { t: 72.9, action: expression, target: ba, name: sad }
+  - { t: 72.9, action: expression, target: jiu, name: sad }
+  - { t: 72.9, action: expression, target: shi, name: sad }
+  - { t: 74.0, action: face, target: longkeduo, dir: -1 }
+  - { t: 74.0, action: pose, target: longkeduo, name: give }
+  - { t: 74.8, action: expression, target: si, name: surprise }
+  - { t: 75.4, action: pose, target: si, name: bow }
+  - { t: 75.8, action: expression, target: ba, name: surprise }
+  - { t: 75.9, action: expression, target: jiu, name: angry }
+  - { t: 76.2, action: expression, target: shi, name: angry }
+  - { t: 76.4, action: expression, target: ba, name: angry }
+
+  # ---------- J 雍正即位 (palace_hall day)
+  - { t: 77.9, action: background, name: palace_hall }
+  - { t: 77.9, action: hide, target: longkeduo }
+  - { t: 77.9, action: hide, target: si }
+  - { t: 77.9, action: show, target: yongzheng }
+  - { t: 77.9, action: cycle, target: yongzheng, name: idle, speed: 0.4 }
+  - { t: 77.9, action: expression, target: yongzheng, name: neutral }
+  - { t: 77.9, action: pose, target: san, name: bow }
+  - { t: 77.9, action: pose, target: shisan, name: bow }
+  - { t: 77.9, action: pose, target: ba, name: bow }
+  - { t: 77.9, action: pose, target: jiu, name: bow }
+  - { t: 77.9, action: pose, target: shi, name: bow }
+  - { t: 77.9, action: move, target: shisan, x: 116 }
+  - { t: 77.9, action: move, target: san, x: 92 }
+  - { t: 77.9, action: expression, target: shisan, name: happy }
+  - { t: 77.9, action: expression, target: san, name: neutral }
+  - { t: 77.9, action: expression, target: ba, name: sad }
+  - { t: 77.9, action: expression, target: jiu, name: angry }
+  - { t: 77.9, action: expression, target: shi, name: angry }
+  - { t: 79.6, action: expression, target: yongzheng, name: happy }
+
+  # ---------- K 黄昏宫院: 圈禁 · 守陵
+  - { t: 86.0, action: background, name: palace_court_dusk }
+  - { t: 86.0, action: hide, target: yongzheng }
+  - { t: 86.0, action: hide, target: san }
+  - { t: 86.0, action: hide, target: shisan }
+  - { t: 86.0, action: hide, target: shi }
+  - { t: 86.0, action: move, target: ba, x: 96 }
+  - { t: 86.0, action: move, target: jiu, x: 126 }
+  - { t: 86.0, action: face, target: ba, dir: 1 }
+  - { t: 86.0, action: face, target: jiu, dir: -1 }
+  - { t: 86.0, action: pose, target: ba, name: idle }
+  - { t: 86.0, action: pose, target: jiu, name: idle }
+  - { t: 86.0, action: expression, target: ba, name: sad }
+  - { t: 86.0, action: expression, target: jiu, name: sad }
+  - { t: 86.0, action: show, target: shisi }
+  - { t: 86.0, action: move, target: shisi, x: 190 }
+  - { t: 86.0, action: face, target: shisi, dir: -1 }
+  - { t: 86.0, action: pose, target: shisi, name: idle }
+  - { t: 86.0, action: expression, target: shisi, name: sad }
+  - { t: 87.2, action: pose, target: ba, name: crouch }
+  - { t: 87.7, action: pose, target: jiu, name: crouch }
+  - { t: 90.0, action: walk_to, target: shisi, x: 340, speed: 34 }
+
+  # ---------- L 秘密立储 (palace_hall day)
+  - { t: 93.4, action: background, name: palace_hall }
+  - { t: 93.4, action: hide, target: ba }
+  - { t: 93.4, action: hide, target: jiu }
+  - { t: 93.4, action: hide, target: shisi }
+  - { t: 93.4, action: show, target: yongzheng }
+  - { t: 93.4, action: attach, target: yongzheng, object: casket }
+  - { t: 93.4, action: pose, target: yongzheng, name: hold }
+  - { t: 93.4, action: expression, target: yongzheng, name: neutral }
+  - { t: 95.0, action: pose, target: yongzheng, name: reach }
+  - { t: 96.4, action: attach, target: stash, object: casket }
+  - { t: 96.6, action: pose, target: yongzheng, name: idle }
+  - { t: 96.6, action: expression, target: yongzheng, name: happy }

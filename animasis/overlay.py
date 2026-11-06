@@ -161,7 +161,8 @@ class Overlay:
 
 
 BACK_KINDS = {"stall", "cabinet", "rect", "icon_back", "hut", "fence",
-              "planet", "orbit", "satellite", "range", "ring", "pin", "phone", "glyph"}
+              "planet", "orbit", "satellite", "range", "ring", "pin", "phone", "glyph",
+              "throne", "plaque", "banner", "lantern", "candle"}
 
 
 def overlay_from_dict(d: dict[str, Any]) -> Overlay:
@@ -175,6 +176,43 @@ def overlay_from_dict(d: dict[str, Any]) -> Overlay:
 
 # camera hand-off for the screen pass: world point -> screen point, and mirror flag
 _XF: dict[str, Any] = {"f": None, "flip": False, "W": 320, "H": 180}
+
+
+def _palace():
+    from . import palace
+    return palace
+
+
+def _draw_palace_back(put: Put, o: "Overlay", g: int, t: float, flip: bool, chars: dict[str, Any]) -> None:
+    pm = _palace()
+    k = o.kind
+    if k == "throne":
+        pm.draw_throne(put, o.p, g, t)
+    elif k == "plaque":
+        pm.draw_plaque(put, o.p, t, mirror_text=flip)
+    elif k == "banner":
+        p = dict(o.p)
+        if p.get("follow") in chars:
+            ch = chars[p["follow"]]
+            if not ch.visible:
+                return
+            p["x"] = ch.x + float(p.get("dx", 0))
+        pm.draw_banner(put, p, g, t, mirror_text=flip)
+    elif k == "lantern":
+        pm.draw_lantern(put, o.p, t)
+    elif k == "candle":
+        pm.draw_candle(put, o.p, g, t)
+
+
+def _draw_bars(put: Put, o: "Overlay", g: int, t: float, chars: dict[str, Any]) -> None:
+    who = o.p.get("follow")
+    if who in chars:
+        if not chars[who].visible:
+            return
+        x = chars[who].x + float(o.p.get("dx", 0))
+    else:
+        x = float(o.p.get("x", 160))
+    _palace().draw_bars(put, {**o.p, "_t0": o.t}, x, g, t)
 
 
 def _space():
@@ -615,6 +653,8 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
         for o in live:
             if o.kind == "stall":
                 _draw_stall_front(put, o, g, t)
+            elif o.kind == "bars":
+                _draw_bars(put, o, g, t, characters)
         return
     if layer == "screen":
         _XF.update(f=to_screen, flip=flip, W=width, H=height)
@@ -636,6 +676,8 @@ def draw_overlays(put: Put, overlays: list[Overlay], t: float, layer: str, *, wi
                 _draw_hut(put, o, g, t, mirror_text=flip)
             elif k == "fence":
                 _draw_fence(put, o, g, t)
+            elif k in _palace().PALACE_BACK:
+                _draw_palace_back(put, o, g, t, flip, characters)
             elif k in _space().SPACE_KINDS:
                 _space().draw_space(put, o, t, width, height)
             elif k == "rect":
@@ -654,6 +696,8 @@ def _draw_front(put: Put, live: list[Overlay], t: float, width: int, height: int
         for o in live:
             if o.kind == "stall":
                 _draw_stall_front(put, o, g, t)
+            elif o.kind == "bars":
+                _draw_bars(put, o, g, t, characters)
     for o in live:
         if o.layer != "front" or o.kind == "card":
             continue

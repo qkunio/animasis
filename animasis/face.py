@@ -5,7 +5,9 @@ Layout (``n``/``m`` = centre column/row of the head, ``f`` = facing):
     m-2  brows            m+2  blush
     m..m+1 eyes (1x2)     m+3  mouth
 
-Eyes and mouth are shifted one pixel toward ``facing`` for a 3/4 view.
+Eyes and mouth are shifted one pixel toward ``facing`` for a 3/4 side view.
+Pass ``view="front"`` for a centred 正体位 face (no shift); ``view="back"``
+skips the face entirely (occiput / queue only).
 """
 
 from __future__ import annotations
@@ -37,12 +39,22 @@ def draw_face(
     blush: bool = True,
     lashes: bool = False,
     skin_shade: int = pal.SKIN_SHADE,
+    view: str = "side",
 ) -> None:
     """Draw a face onto ``put`` around head centre pixel (n, m)."""
+    from .skeleton import normalize_view
+    view = normalize_view(view)
+    if view == "back":
+        return
     expr = EXPRESSIONS.get(expression, EXPRESSIONS["neutral"])
-    f = 1 if facing >= 0 else -1
-    c = n + f                     # face centre column (3/4 view)
-    e1, e2 = c - 2, c + 2         # eye columns
+    if view == "front":
+        f = 0
+        c = n                       # centred 正体位
+        e1, e2 = n - 2, n + 2
+    else:
+        f = 1 if facing >= 0 else -1
+        c = n + f                   # face centre column (3/4 view)
+        e1, e2 = c - 2, c + 2
     E = pal.EYE
 
     eyes = expr["eyes"]

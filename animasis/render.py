@@ -326,6 +326,9 @@ BG_DRAWERS = {
     "cottage_snow": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "snow"),
     "cottage_spring": lambda b, w, h, g: draw_bg_cottage(b, w, h, g, "spring"),
 }
+from .palace import BG as _PALACE_BG  # noqa: E402
+
+BG_DRAWERS.update(_PALACE_BG)
 
 
 class FrameBuffer:
@@ -490,3 +493,34 @@ def export_frames(
         ]
         subprocess.run(cmd, check=True, capture_output=True)
     return output
+
+
+def stream_mp4(frames: Iterable[Image.Image], output: str | Path, fps: int = 60) -> Path:
+    """Encode frames as they are produced (rawvideo -> ffmpeg stdin); same H.264 settings as export_frames."""
+    output = Path(output)
+    if output.suffix.lower() not in (".mp4", ".mov", ".webm"):
+        output = output.with_suffix(".mp4")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    it = iter(frames)
+    first = next(it, None)
+    if first is None:
+        raise ValueError("No frames to export")
+    w, h = first.size
+    cmd = [shutil.which("ffmpeg") or "ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+           "-s", f"{w}x{h}", "-framerate", str(fps), "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+           "-crf", "20", str(output)]
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+    assert proc.stdin is not None
+    try:
+        proc.stdin.write(first.convert("RGB").tobytes())
+        for im in it:
+            proc.stdin.write(im.convert("RGB").tobytes())
+    finally:
+        proc.stdin.close()
+        code = proc.wait()
+    if code != 0:
+        raise RuntimeError(f"ffmpeg exited with {code}")
+    return output
+
+
+stream_mp4.available = lambda: shutil.which("ffmpeg") is not None  # type: ignore[attr-defined]

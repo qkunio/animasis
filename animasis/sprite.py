@@ -6,9 +6,13 @@ share joint end-points and overlap with round caps, so nothing can detach.  A
 single 1px soft outline is traced around the whole silhouette afterwards, plus
 thin contour lines where a front limb overlaps the body.
 
-Layer order (back → front):
+Layer order (back → front), side / 3/4:
   hair_back · back arm · back leg · front leg · torso · skirt · head · face ·
   hair · hat · front arm
+
+Front / back (``Character.view``): both limbs are peers; front draws
+  hair_back · legs · torso · skirt · head · face · hair · hat · arms.
+  Back skips the face and emphasises the occiput / queue.
 """
 
 from __future__ import annotations
@@ -254,36 +258,96 @@ def _head_center(rig: Rig) -> tuple[int, int]:
     return int(math.floor(hc[0])), int(math.floor(hc[1]))
 
 
-def _hair_masks(n: int, m: int, f: int, style: str, pr: dict[str, float]) -> tuple[set[Pix], set[Pix]]:
+def _hair_masks(n: int, m: int, f: int, style: str, pr: dict[str, float],
+                view: str = "side") -> tuple[set[Pix], set[Pix]]:
     """Return (front_hair, back_hair) masks."""
     rx, ry = pr["head_rx"], pr["head_ry"]
     E = superellipse(n, m, rx + 1.0, ry + 1.1)
     front: set[Pix] = set()
     back: set[Pix] = set()
-    for (x, y) in E:
-        dx = (x - n) * f            # >0 = toward the face
-        if y <= m - 4:
-            front.add((x, y))
-        elif style == "buzz":
-            continue
-        elif dx < 0 and abs(x - n) >= 4 and y <= m + (3 if style in ("long", "bob") else 1):
-            front.add((x, y))           # back-of-head lock (3/4 view)
-        elif dx > 0 and abs(x - n) >= 5 and y <= m + (3 if style in ("long", "bob") else -1):
-            front.add((x, y))           # front side lock / sideburn
-    # fringe: a few strands sweeping back over the forehead
+    if view == "front":
+        # centred fringe + sideburns; queue/ponytail hang straight down behind
+        for (x, y) in E:
+            if y <= m - 4:
+                front.add((x, y))
+            elif style != "buzz" and abs(x - n) >= 5 and y <= m + (2 if style in ("long", "bob") else 0):
+                front.add((x, y))
+        if style == "queue":
+            # 清式: shaved forehead — keep only a thin top fringe + sideburns
+            front = {(x, y) for (x, y) in front if y <= m - 5 or abs(x - n) >= 5}
+            root = (n + 0.5, m + 2.5)
+            for i in range(13):
+                cy = m + 3 + i + 0.5
+                back |= capsule((n + 0.5, cy), (n + 0.5, cy), 0.9 if i < 11 else 0.6)
+            back |= capsule(root, (n + 0.5, m + 4.5), 1.2)
+            return front, back
+        if style == "ponytail":
+            tie = (n + 0.5, m - 2 + 0.5)
+            back |= capsule(tie, (n + 0.5, m + 5 + 0.5), 1.6)
+            back |= capsule(tie, (n + 0.5, m - 1 + 0.5), 2.0)
+        # fall through for fringe / spiky / long / bob / topknot shared below
+    elif view == "back":
+        # full occiput; no face fringe. Queue hangs down the centre.
+        for (x, y) in E:
+            if y <= m + 1:
+                front.add((x, y))
+        if style == "queue":
+            root = (n + 0.5, m + 2.5)
+            for i in range(14):
+                cy = m + 3 + i + 0.5
+                back |= capsule((n + 0.5, cy), (n + 0.5, cy), 1.0 if i < 12 else 0.6)
+            back |= capsule(root, (n + 0.5, m + 5.5), 1.4)
+            return front, back
+        if style == "ponytail":
+            tie = (n + 0.5, m - 1 + 0.5)
+            back |= capsule(tie, (n + 0.5, m + 6 + 0.5), 1.8)
+        if style == "long":
+            for y in range(m - 2, m + 11):
+                for x in range(n - 6, n + 7):
+                    if abs(x - n) <= 5 or y < m + 6:
+                        back.add((x, y))
+            return front, back
+        # buzz / short / etc.: just the occiput fill
+        return front, back
+    else:
+        for (x, y) in E:
+            dx = (x - n) * f            # >0 = toward the face
+            if y <= m - 4:
+                front.add((x, y))
+            elif style == "buzz":
+                continue
+            elif dx < 0 and abs(x - n) >= 4 and y <= m + (3 if style in ("long", "bob") else 1):
+                front.add((x, y))           # back-of-head lock (3/4 view)
+            elif dx > 0 and abs(x - n) >= 5 and y <= m + (3 if style in ("long", "bob") else -1):
+                front.add((x, y))           # front side lock / sideburn
+        if style == "queue":  # 清式辫发: shaved forehead, hair only on the back half + a long braid
+            front = {(x, y) for (x, y) in front if (x - n) * f <= -1 or y <= m - 6 and (x - n) * f <= 1}
+            root = (n - 4 * f + 0.5, m + 1.5)
+            for i in range(13):
+                cx = n - (5 + (1 if i > 5 else 0)) * f + 0.5
+                cy = m + 2 + i + 0.5
+                back |= capsule((cx, cy), (cx, cy), 0.9 if i < 11 else 0.6)
+            back |= capsule(root, (n - 5 * f + 0.5, m + 3.5), 1.2)
+            return front, back
+    # fringe / style extras (side uses facing; front is symmetric around n)
+    ff = 1 if view == "front" else f
     if style != "buzz":
-        for ddx in (0, -1, -2, 3):
-            front.add((n + ddx * f, m - 3))
-        front.add((n - 3 * f, m - 3))
+        if view == "front":
+            for ddx in (-3, -1, 0, 1, 3):
+                front.add((n + ddx, m - 3))
+        else:
+            for ddx in (0, -1, -2, 3):
+                front.add((n + ddx * ff, m - 3))
+            front.add((n - 3 * ff, m - 3))
     if style == "spiky":
         for ddx, h in ((-4, 2), (-1, 3), (2, 2), (4, 1)):
             for k in range(1, h + 1):
                 for w in range(0, max(1, 3 - k)):
-                    front.add((n + (ddx - w) * f, m - 6 - k + 0))
-    if style == "long":
+                    front.add((n + (ddx - w) * ff, m - 6 - k + 0))
+    if style == "long" and view != "front":
         for y in range(m - 3, m + 10):
             for x in range(n - 6, n + 7):
-                xx = x - f
+                xx = x - ff
                 yy = y
                 edge = abs(x - n)
                 if yy >= m + 8 and edge >= 5:
@@ -291,47 +355,69 @@ def _hair_masks(n: int, m: int, f: int, style: str, pr: dict[str, float]) -> tup
                 if yy == m + 9 and edge >= 3:
                     continue
                 back.add((xx, yy))
+    if style == "long" and view == "front":
+        for y in range(m - 2, m + 10):
+            for x in range(n - 6, n + 7):
+                edge = abs(x - n)
+                if y >= m + 8 and edge >= 5:
+                    continue
+                if edge >= 4 or y >= m + 2:
+                    back.add((x, y))
     if style == "bob":
         for (x, y) in E:
             if m - 1 <= y <= m + 3 and abs(x - n) >= 5:
                 front.add((x, y))
-    if style == "ponytail":
-        tie = (n - 6 * f + 0.5, m - 3 + 0.5)
-        back |= capsule(tie, (n - 8 * f + 0.5, m + 4 + 0.5), 1.6)
-        back |= capsule(tie, (n - 7 * f + 0.5, m - 2 + 0.5), 2.2)
+    if style == "ponytail" and view != "front":
+        tie = (n - 6 * ff + 0.5, m - 3 + 0.5)
+        back |= capsule(tie, (n - 8 * ff + 0.5, m + 4 + 0.5), 1.6)
+        back |= capsule(tie, (n - 7 * ff + 0.5, m - 2 + 0.5), 2.2)
     if style == "topknot":  # 发髻: hair pulled up into a bun on the crown
         top = m - pr["head_ry"] - 1.0
-        bun = (n - 1 * f + 0.5, top - 1.6)
+        bun = (n - (0 if view == "front" else 1 * ff) + 0.5, top - 1.6)
         front |= capsule(bun, bun, 2.3)
-        front |= {(n - 1 * f + k, int(top) + 1) for k in (-2, -1, 0, 1, 2)}
+        front |= {(n + k, int(top) + 1) for k in (-2, -1, 0, 1, 2)}
     return front, back
 
 
-def _beard_mask(n: int, m: int, f: int, style: str, pr: dict[str, float]) -> set[Pix]:
+def _beard_mask(n: int, m: int, f: int, style: str, pr: dict[str, float],
+                view: str = "side") -> set[Pix]:
     """Beard in the hair colour: ``short`` = full jaw (张飞), ``long`` = jaw + long beard (关羽)."""
-    c = n + f
+    if view == "back":
+        return set()
+    frontish = view == "front"
+    c = n if frontish else n + f
     rx, ry = pr["head_rx"], pr["head_ry"]
     out: set[Pix] = set()
     jaw = superellipse(n, m, rx + 0.6, ry + 1.2)
     for (x, y) in jaw:
-        dx = (x - n) * f
-        if y >= m + 3 and dx >= -3:
-            if y == m + 3 and abs(x - c) <= 1:
-                continue  # keep the mouth readable
-            if y == m + 3 and dx < 1 and style == "long":
-                continue
-            out.add((x, y))
-    # sideburn toward the ear
-    for y in range(m + 1, m + 3):
-        out.add((n - 3 * f, y))
-    if style == "short":  # bushy: a little wider + spiky chin tufts
+        if frontish:
+            if y >= m + 3 and abs(x - n) <= rx:
+                if y == m + 3 and abs(x - c) <= 1:
+                    continue
+                out.add((x, y))
+        else:
+            dx = (x - n) * f
+            if y >= m + 3 and dx >= -3:
+                if y == m + 3 and abs(x - c) <= 1:
+                    continue  # keep the mouth readable
+                if y == m + 3 and dx < 1 and style == "long":
+                    continue
+                out.add((x, y))
+    if frontish:
+        for y in range(m + 1, m + 3):
+            out.add((n - 4, y))
+            out.add((n + 4, y))
+    else:
+        for y in range(m + 1, m + 3):
+            out.add((n - 3 * f, y))
+    if style == "short":
         for k in (-2, 0, 2):
             out.add((c + k, int(m + ry + 2)))
     if style == "long":
         y0 = int(m + ry + 1)
         for i in range(10):
             w = 2 if i < 4 else (1 if i < 8 else 0)
-            cx = c + (1 if i >= 6 else 0) * f
+            cx = c if frontish else c + (1 if i >= 6 else 0) * f
             for k in range(-w, w + 1):
                 out.add((cx + k, y0 + i))
     return out
@@ -352,20 +438,27 @@ def draw_sprite(ch: Character, hat: int | None = None) -> Canvas:
     look = ch.look
     pr = rig.props
     f = rig.facing
+    view = getattr(rig, "view", None) or getattr(ch, "view", "side")
     cv = Canvas()
     n, m = _head_center(rig)
     hair_ramp = pal.ramp(look.hair)
     style = look.hair_style
     hat = look.hat if hat is None else hat
-    front_hair, back_hair = _hair_masks(n, m, f, style, pr)
+    front_hair, back_hair = _hair_masks(n, m, f, style, pr, view=view)
 
     if back_hair:
-        cv.paint(shade(back_hair, back_ramp(hair_ramp) if style == "long" else hair_ramp,
+        cv.paint(shade(back_hair, back_ramp(hair_ramp) if style in ("long", "queue") else hair_ramp,
                        rim_light=False), "hair_back")
-    _limb(cv, rig, "l", "arm", look, back=True)
-    _limb(cv, rig, "l", "leg", look, back=True)
-    _limb(cv, rig, "r", "leg", look, back=False)
-    _torso(cv, rig, look)
+    if view in ("front", "back"):
+        # both limbs are peers: legs under the robe, then torso, then arms on top
+        _limb(cv, rig, "l", "leg", look, back=True)
+        _limb(cv, rig, "r", "leg", look, back=False)
+        _torso(cv, rig, look)
+    else:
+        _limb(cv, rig, "l", "arm", look, back=True)
+        _limb(cv, rig, "l", "leg", look, back=True)
+        _limb(cv, rig, "r", "leg", look, back=False)
+        _torso(cv, rig, look)
 
     head = superellipse(n, m, pr["head_rx"], pr["head_ry"])
     skin = pal.ramp(look.skin)
@@ -373,23 +466,44 @@ def draw_sprite(ch: Character, hat: int | None = None) -> Canvas:
     cv.paint(hc, "head")
     draw_face(cv.put("head"), n, m, facing=f, expression=ch.expression,
               brow_color=hair_ramp[2] if look.hair not in (1, 24) else pal.OUTLINE_SOFT,
-              blush=look.blush, lashes=look.lashes, skin_shade=skin[2])
+              blush=look.blush, lashes=look.lashes, skin_shade=skin[2], view=view)
     if hat is not None:
         front_hair = {p for p in front_hair if p[1] > m - 4}
     cv.paint(_hair_colors(front_hair, hair_ramp, n, m), "head")
     if look.beard:
-        cv.paint(shade(_beard_mask(n, m, f, look.beard, pr), hair_ramp, rim_light=False), "head")
+        cv.paint(shade(_beard_mask(n, m, f, look.beard, pr, view=view), hair_ramp, rim_light=False), "head")
     if hat is not None:
         hr = pal.ramp(hat)
         dome = {p for p in superellipse(n, m - 1, pr["head_rx"] + 1.0, pr["head_ry"] + 1.0) if p[1] <= m - 4}
-        brim = {(n + k * f, m - 4) for k in range(-5, 8)} | {(n + k * f, m - 3) for k in range(3, 8)}
+        if view in ("front", "back"):
+            brim = {(n + k, m - 4) for k in range(-6, 7)} | {(n + k, m - 3) for k in (-6, -5, 5, 6)}
+        else:
+            brim = {(n + k * f, m - 4) for k in range(-5, 8)} | {(n + k * f, m - 3) for k in range(3, 8)}
         cv.paint(shade(dome, hr), "head")
         band = {p for p in dome if p[1] == m - 5}
         cv.paint({p: hr[2] for p in band}, "head")
         cv.paint(shade(brim, (hr[1], hr[1], hr[2]), rim_light=False), "head")
-    _limb(cv, rig, "r", "arm", look, back=False)
-    # no contour line where the front arm roots into its own shoulder
-    cv.seams = [(snap_even(rig.points["shoulder_r"]), pr.get("shoulder_r", 1.45) + 1.2, "arm_r", "body")]
+        hs = look.hat_style
+        if hs in ("qing", "crown"):
+            top_y = min(y for _, y in dome)
+            tassel = {p for p in dome if p[1] <= m - 6 or (p[1] == m - 5 and (p[0] + p[1]) % 2 == 0)}
+            cv.paint({p: (26 if (p[0] * 3 + p[1]) % 4 == 0 else (5 if p[1] < m - 6 else 27)) for p in tassel}, "head")
+            if view in ("front", "back"):
+                cv.paint({(n, top_y - 1): 6, (n - 1, top_y - 1): 7, (n + 1, top_y - 1): 7, (n, top_y - 2): 31}, "head")
+            else:
+                cv.paint({(n, top_y - 1): 6, (n - f, top_y - 1): 7, (n, top_y - 2): 31}, "head")
+            if hs == "crown":
+                cv.paint({(n, top_y - 3): 7, (n, top_y - 4): 4}, "head")
+    if view in ("front", "back"):
+        _limb(cv, rig, "l", "arm", look, back=True)
+        _limb(cv, rig, "r", "arm", look, back=False)
+        cv.seams = [
+            (snap_even(rig.points["shoulder_r"]), pr.get("shoulder_r", 1.45) + 1.2, "arm_r", "body"),
+            (snap_even(rig.points["shoulder_l"]), pr.get("shoulder_r", 1.45) + 1.2, "arm_l", "body"),
+        ]
+    else:
+        _limb(cv, rig, "r", "arm", look, back=False)
+        cv.seams = [(snap_even(rig.points["shoulder_r"]), pr.get("shoulder_r", 1.45) + 1.2, "arm_r", "body")]
     _contours(cv)
     _outline(cv)
     return cv

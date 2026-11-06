@@ -69,6 +69,7 @@ characters:
     pants: red
     hat: gold
     expression: happy
+    # view: front   # 正体位 (also: side | 3/4 | back); facing: ±1 still mirrors side views
 
 objects:
   - name: ball
@@ -100,11 +101,12 @@ SceneBuilder("hi") \
 
 ### Timeline actions | 时间轴动作
 
-`pose` · `cycle` · `expression` · `face` · `move` · `walk_to` · `jump` · `pickup` · `drop` · `give` · `impulse` · `say`
+`pose` · `cycle` · `expression` · `face` · `view` · `move` · `walk_to` · `jump` · `pickup` · `drop` · `give` · `impulse` · `say`
 
-Character presets | 角色预设: `hero`, `alice`, `bob`, `runner`, `kid` (`preset:`; override with `hair_style` short/spiky/long/bob/ponytail/buzz, `body` default/slim/stocky, `skin` light/medium/tan, `cloth`, `pants`, `hair`, `shoes`, `skirt`, `sleeves`, `belt`, `hat`)  
-Built-in poses | 内置姿态: `idle`, `walk_a/b`, `walk_pass_a/b`, `jump`, `crouch`, `land`, `wave`, `pickup`, `reach`, `give`, `receive`  
-Cycles | 循环: `idle`, `walk`, `wave`, `jump`, `pickup`
+Character presets | 角色预设: `hero`, `alice`, `bob`, `runner`, `kid` (`preset:`; override with `hair_style` short/spiky/long/bob/ponytail/buzz/queue/topknot, `body` default/slim/stocky, `skin` light/medium/tan, `cloth`, `pants`, `hair`, `shoes`, `skirt`, `sleeves`, `belt`, `hat`)  
+Body view / 体位 | `view:` `side` (default 3/4), `front` / `正` / `正面` / `正体位`, `three_quarter` / `3/4`, `back` / `背` — also timeline action `view` and `face: {view: …}`  
+Built-in poses | 内置姿态: `idle`, `walk_a/b`, `walk_pass_a/b`, `jump`, `crouch`, `land`, `wave`, `pickup`, `reach`, `give`, `receive`, `sit`, `sit_wave`, `bow`, `knock`, `hold`  
+Cycles | 循环: `idle`, `walk`, `wave`, `jump`, `pickup`, `sit`
 
 ---
 
@@ -155,6 +157,10 @@ MIT
 ## Story demo: 三顾茅庐（edge-tts 中文旁白）
 
 `demos/sangu_maolu.yaml` → `demos/output/sangu_maolu.mp4`：88 秒有声像素短片，刘备三请诸葛亮（草庐 / 雪天 / 春日三种背景，关羽、张飞、书童配角），旁白为 edge-tts `zh-CN-YunxiNeural`。带相机分镜：33 个镜位，包括远景、中景、近景和特写，以及推拉摇、硬切、黑场和反打视角，由 YAML `camera:` 关键帧控制，可用 `animasis shots` 打印镜头表。详见 [demos/sangu_maolu_README.md](demos/sangu_maolu_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4`
+
+## Story demo: 九子夺嫡（多角度体位 + edge-tts 旁白）
+
+`demos/jiuzi_duodi.yaml` → `demos/output/jiuzi_duodi.mp4`：清史像素短片。开场康熙用 `view: front` + `pose: sit` 正体位坐于御座；行走/物理场景仍用默认 `side`。详见 [demos/jiuzi_duodi_README.md](demos/jiuzi_duodi_README.md)。
 
 ## Story demo: GNSS 卫星导航科普（相机分镜 + edge-tts 旁白）
 
