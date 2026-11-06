@@ -3,7 +3,7 @@
     python demos/petroleum_gen.py
     python -m animasis narrate demos/petroleum.yaml -o demos/output/petroleum.mp4
 
-Narration (edge-tts zh-CN-YunxiNeural +5%) is written into the scene; the visual beats
+Narration (edge-tts zh-CN-YunjianNeural +5%) is written into the scene; the visual beats
 below follow the synthesized line lengths (~92 s total).
 """
 from __future__ import annotations
@@ -291,7 +291,7 @@ scene = dict(
     ground_y=150, scale=3, gravity=420,
     characters=[F(name="xiaoke", preset="hero", x=-16, hat=7, cloth=10, pants=25,
                   hair=24, hair_style="short", expression="neutral", visible=False)],
-    narration=F(voice="zh-CN-YunxiNeural", rate="+5%",
+    narration=F(voice="zh-CN-YunjianNeural", rate="+5%",
                 lines=[F(t=t, text=text) for t, text in LINES]),
     camera=cam, overlays=ov, timeline=tl,
 )

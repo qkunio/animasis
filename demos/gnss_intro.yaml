@@ -19,7 +19,7 @@ characters:
 objects:
 - {name: phone, kind: phone, held_by: xiaoming, w: 5, h: 7}
 narration:
-  voice: zh-CN-YunxiNeural
+  voice: zh-CN-YunjianNeural
   rate: +5%
   lines:
   - {t: 0.1, text: 打开手机地图，小蓝点立刻知道你在哪儿。它靠的，是天上的卫星。}

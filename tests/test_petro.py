@@ -70,4 +70,4 @@ def test_petroleum_scene_loads_with_camera_and_narration():
     assert {"pumpjack", "barrel", "droplet", "molecule", "column", "cutbar", "product"} <= kinds
     from animasis.narrate import load_narration
     nar = load_narration(ROOT / "demos" / "petroleum.yaml")
-    assert nar["voice"] == "zh-CN-YunxiNeural" and len(nar["lines"]) == 13
+    assert nar["voice"] == "zh-CN-YunjianNeural" and len(nar["lines"]) == 13

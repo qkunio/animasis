@@ -2,7 +2,7 @@
 
 - 场景：`demos/petroleum.yaml`（由 `demos/petroleum_gen.py` 生成）
 - 成片：`demos/output/petroleum.mp4`，**95 秒**，960×540、30fps，H.264 + AAC
-- 旁白：edge-tts `zh-CN-YunxiNeural`，语速 `+5%`，共 13 句（`demos/audio/petroleum/01–13_*.mp3`，对齐后的整轨在 `demos/audio/petroleum_narration.wav`）
+- 旁白：edge-tts `zh-CN-YunjianNeural`，语速 `+5%`，共 13 句（`demos/audio/petroleum/01–13_*.mp3`，对齐后的整轨在 `demos/audio/petroleum_narration.wav`）
 - 镜头：37 个镜位，含推、拉、横摇、下摇和段落间的短暂黑场
 - 关键帧：`demos/frames/petroleum_t{2.0,8.0,15.0,30.0,42.0,55.0,63.0,73.0,84.5,90.0}.png`
 

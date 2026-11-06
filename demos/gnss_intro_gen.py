@@ -3,7 +3,7 @@
     .venv/bin/python demos/gnss_intro_gen.py && .venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4
 """
 import math, re, sys, yaml
-# narration script (one line per beat; edge-tts zh-CN-YunxiNeural +5%)
+# narration script (one line per beat; edge-tts zh-CN-YunjianNeural +5%)
 LINES = [
  "打开手机地图，小蓝点立刻知道你在哪儿。它靠的，是天上的卫星。",
  "GNSS 是全球卫星导航系统的统称：几十颗卫星，在两万多公里的高空绕着地球飞行。",
@@ -320,7 +320,7 @@ scene = dict(
  name='gnss_intro', width=320, height=180, fps=60, duration=82.4, background='market', ground_y=150, scale=3, gravity=420,
  characters=[F(name='xiaoming', preset='hero', x=150, hair=24, hair_style='short', cloth=6, pants=25, expression='neutral')],
  objects=[F(name='phone', kind='phone', held_by='xiaoming', w=5, h=7)],
- narration=F(voice='zh-CN-YunxiNeural', rate='+5%', lines=[F(t=t, text=x) for t, x in zip(NT, LINES)]),
+ narration=F(voice='zh-CN-YunjianNeural', rate='+5%', lines=[F(t=t, text=x) for t, x in zip(NT, LINES)]),
  camera=cam, overlays=ov, timeline=tl,
 )
 hdr = '''# GNSS 科普 · 全球卫星导航系统是怎么给你定位的？

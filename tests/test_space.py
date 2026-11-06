@@ -89,4 +89,4 @@ def test_gnss_scene_loads_with_camera_and_narration():
     assert {"planet", "satellite", "ring", "range", "phone", "pin"} <= kinds
     from animasis.narrate import load_narration
     nar = load_narration(ROOT / "demos" / "gnss_intro.yaml")
-    assert nar["voice"] == "zh-CN-YunxiNeural" and len(nar["lines"]) == 11
+    assert nar["voice"] == "zh-CN-YunjianNeural" and len(nar["lines"]) == 11

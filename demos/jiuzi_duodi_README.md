@@ -2,7 +2,7 @@
 
 - 场景：`demos/jiuzi_duodi.yaml`（320×180 像素舞台，×3 输出 960×540，**60fps**）
 - 成片：`demos/output/jiuzi_duodi.mp4`，**106 秒**，H.264 + AAC（edge-tts 旁白，单声道 24 kHz）
-- 旁白：edge-tts `zh-CN-YunxiNeural`，语速 `+5%`，共 15 句，无重叠
+- 旁白：edge-tts `zh-CN-YunjianNeural`，语速 `+5%`，共 15 句，无重叠
 - 镜头：53 个镜位（远景 / 全景 / 中景 / 近景 / 特写），含 4 处反打、十余段推 / 拉 / 摇、多处黑场转场
 - 关键帧：`demos/frames/jiuzi_duodi_t*.png`（16 张）
 

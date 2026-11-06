@@ -56,7 +56,7 @@ objects:
   - { name: casket, kind: casket, held_by: stash, w: 11, h: 8 }              # 锦匣
 
 narration:
-  voice: zh-CN-YunxiNeural
+  voice: zh-CN-YunjianNeural
   rate: "+5%"
   lines:
     - { t: 0.8,   text: "九子夺嫡。" }

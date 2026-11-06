@@ -2,7 +2,7 @@
 
 - 场景：`demos/sangu_maolu.yaml`（320×180 像素，×3 输出 960×540，12fps）
 - 成片：`demos/output/sangu_maolu.mp4`，**88 秒**，H.264 + AAC（单声道 24 kHz 旁白）
-- 旁白：edge-tts `zh-CN-YunxiNeural`，语速 `+5%`，共 12 句
+- 旁白：edge-tts `zh-CN-YunjianNeural`，语速 `+5%`，共 12 句
 - 关键帧：`demos/frames/sangu_maolu_t{14.8,26.8,29.5,39.0,49.6,63.2,65.8,73.4}.png`（远景摇、叩门近景、反打越肩、雪景广角、递信特写、窗内 zZZ 特写、门外静候中景、隆中对近景）
 - 镜头：33 个镜位（远景 / 全景 / 中景 / 近景 / 特写），硬切为主，段落间短暂黑场，含 2 处反打视角与 7 段推 / 拉 / 摇
 

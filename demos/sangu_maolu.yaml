@@ -29,7 +29,7 @@ objects:
   - { name: letter, kind: letter, x: -80, y: 140, w: 11, h: 5, dynamic: false }
 
 narration:
-  voice: zh-CN-YunxiNeural
+  voice: zh-CN-YunjianNeural
   rate: "+5%"
   lines:
     - { t: 0.8,  text: "三顾茅庐。" }

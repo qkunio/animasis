@@ -17,7 +17,7 @@ gravity: 420
 characters:
 - {name: xiaoke, preset: hero, x: -16, hat: 7, cloth: 10, pants: 25, hair: 24, hair_style: short, expression: neutral, visible: false}
 narration:
-  voice: zh-CN-YunxiNeural
+  voice: zh-CN-YunjianNeural
   rate: +5%
   lines:
   - {t: 0.8, text: 一桶石油，究竟能变出多少东西？}

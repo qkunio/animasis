@@ -130,6 +130,10 @@ Outputs land in `demos/output/*.mp4`.
 - 不要标题栏或开场标题卡。
 - 结尾只保留本片标题和 `@像素万物局` 两行字。
 
+### 旁白默认音色
+
+默认使用 edge-tts 云健音色 `zh-CN-YunjianNeural`。可通过 YAML 的 `narration.voice` 或单句 `voice` 覆盖。
+
 ---
 
 ## Aesthetic defaults | 审美默认
@@ -166,7 +170,7 @@ MIT
 
 ## Story demo: 三顾茅庐（edge-tts 中文旁白）
 
-`demos/sangu_maolu.yaml` → `demos/output/sangu_maolu.mp4`：88 秒有声像素短片，刘备三请诸葛亮（草庐 / 雪天 / 春日三种背景，关羽、张飞、书童配角），旁白为 edge-tts `zh-CN-YunxiNeural`。带相机分镜：33 个镜位，包括远景、中景、近景和特写，以及推拉摇、硬切、黑场和反打视角，由 YAML `camera:` 关键帧控制，可用 `animasis shots` 打印镜头表。详见 [demos/sangu_maolu_README.md](demos/sangu_maolu_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4`
+`demos/sangu_maolu.yaml` → `demos/output/sangu_maolu.mp4`：88 秒有声像素短片，刘备三请诸葛亮（草庐 / 雪天 / 春日三种背景，关羽、张飞、书童配角），旁白为 edge-tts `zh-CN-YunjianNeural`。带相机分镜：33 个镜位，包括远景、中景、近景和特写，以及推拉摇、硬切、黑场和反打视角，由 YAML `camera:` 关键帧控制，可用 `animasis shots` 打印镜头表。详见 [demos/sangu_maolu_README.md](demos/sangu_maolu_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/sangu_maolu.yaml -o demos/output/sangu_maolu.mp4`
 
 ## Story demo: 九子夺嫡（多角度体位 + edge-tts 旁白）
 
@@ -174,8 +178,8 @@ MIT
 
 ## Story demo: GNSS 卫星导航科普（相机分镜 + edge-tts 旁白）
 
-`demos/gnss_intro.yaml` → `demos/output/gnss_intro.mp4`：82 秒有声像素科普，没有标题卡，结尾只有“全球导航定位系统（GNSS） / @像素万物局”两行字。讲什么是 GNSS、四大系统、卫星发信号 → 接收机测距 → 多星定位、为什么至少要 4 颗卫星，最后带一下民用用途。画面包括自转地球与卫星星座、手机地图特写和测距示意图，共 52 个镜位。旁白为 `zh-CN-YunxiNeural`。详见 [demos/gnss_README.md](demos/gnss_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4`
+`demos/gnss_intro.yaml` → `demos/output/gnss_intro.mp4`：82 秒有声像素科普，没有标题卡，结尾只有“全球导航定位系统（GNSS） / @像素万物局”两行字。讲什么是 GNSS、四大系统、卫星发信号 → 接收机测距 → 多星定位、为什么至少要 4 颗卫星，最后带一下民用用途。画面包括自转地球与卫星星座、手机地图特写和测距示意图，共 52 个镜位。旁白为 `zh-CN-YunjianNeural`。详见 [demos/gnss_README.md](demos/gnss_README.md)。重新渲染：`.venv/bin/python -m animasis narrate demos/gnss_intro.yaml -o demos/output/gnss_intro.mp4`
 
 ## Story demo: 石油科普「一桶石油，能变出多少东西？」（原油分馏 + 石油化工）
 
-`demos/petroleum.yaml` → `demos/output/petroleum.mp4`：95 秒有声像素科普，冷开场用油滴坠落 + 逐字大字抓人，字幕与旁白逐句对齐，结尾只有“一桶石油，半个现代生活 / @像素万物局”两行字。讲原油是上千种碳氢化合物的混合物、分馏塔如何按沸点分出 6 大馏分、一桶 159 升原油大致能产出多少汽油/柴油/航煤，以及石脑油 → 乙烯 → 聚乙烯 → 塑料瓶的裂解聚合链条，最后用 12 个产品组成一面“石油产品墙”。共 45 个镜位，旁白为 `zh-CN-YunxiNeural`。详见 [demos/petroleum_README.md](demos/petroleum_README.md)。重新渲染：`python -m animasis narrate demos/petroleum.yaml -o demos/output/petroleum.mp4`
+`demos/petroleum.yaml` → `demos/output/petroleum.mp4`：95 秒有声像素科普，冷开场用油滴坠落 + 逐字大字抓人，字幕与旁白逐句对齐，结尾只有“一桶石油，半个现代生活 / @像素万物局”两行字。讲原油是上千种碳氢化合物的混合物、分馏塔如何按沸点分出 6 大馏分、一桶 159 升原油大致能产出多少汽油/柴油/航煤，以及石脑油 → 乙烯 → 聚乙烯 → 塑料瓶的裂解聚合链条，最后用 12 个产品组成一面“石油产品墙”。共 45 个镜位，旁白为 `zh-CN-YunjianNeural`。详见 [demos/petroleum_README.md](demos/petroleum_README.md)。重新渲染：`python -m animasis narrate demos/petroleum.yaml -o demos/output/petroleum.mp4`

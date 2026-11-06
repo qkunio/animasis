@@ -36,3 +36,11 @@ def test_load_yaml():
     sc = load_scene(root / "demos" / "econ_opportunity_cost.yaml")
     assert sc.name == "econ_opportunity_cost"
     assert sc.overlays
+
+
+def test_narration_default_voice():
+    from animasis.narrate import load_narration
+
+    root = Path(__file__).resolve().parents[1]
+    nar = load_narration(root / "demos" / "econ_opportunity_cost.yaml")
+    assert nar["voice"] == "zh-CN-YunjianNeural"

@@ -2,7 +2,7 @@
 
 - 场景：`demos/gnss_intro.yaml`（由 `demos/gnss_intro_gen.py` 生成，脚本里算好了多星测距的几何关系）
 - 成片：`demos/output/gnss_intro.mp4`，**82 秒**，960×540、60fps，H.264 + AAC
-- 旁白：edge-tts `zh-CN-YunxiNeural`，语速 `+5%`，共 11 句（`demos/audio/gnss_intro/01–11_*.mp3`，对齐后的整轨在 `demos/audio/gnss_intro_narration.wav`）
+- 旁白：edge-tts `zh-CN-YunjianNeural`，语速 `+5%`，共 11 句（`demos/audio/gnss_intro/01–11_*.mp3`，对齐后的整轨在 `demos/audio/gnss_intro_narration.wav`）
 - 配乐：`animasis/assets/default_bgm.m4a` 为 `narrate` 的默认 BGM，全程保持 16% 基础音量，不随旁白自动压低；YAML 中可用 `bgm: false` 关闭，`bgm` / `bgm_volume` 可覆盖。12 秒试听版：`demos/output/gnss_intro_bgm_preview.mp4`
 - 镜头：52 个镜位（远景 / 全景 / 中景 / 近景 / 特写），包含推、拉、横摇、跟拍，以及段落之间的短暂黑场
 - 关键帧：`demos/frames/gnss_intro_t{0.2,1.4,2.6,8.6,14.2,23.2,34.2,43.2,53.2,55.8,69.0,79.5,82.0}.png`

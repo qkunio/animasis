@@ -3,7 +3,7 @@
 Scene YAML::
 
     narration:
-      voice: zh-CN-YunxiNeural     # any `edge-tts --list-voices` name
+      voice: zh-CN-YunjianNeural     # any `edge-tts --list-voices` name
       rate: "+5%"
       lines:
         - { t: 0.8, text: "三顾茅庐。" }
@@ -32,7 +32,7 @@ from typing import Any
 
 import yaml
 
-DEFAULT_VOICE = "zh-CN-YunxiNeural"
+DEFAULT_VOICE = "zh-CN-YunjianNeural"
 DEFAULT_BGM = Path(__file__).parent / "assets" / "default_bgm.m4a"
 DEFAULT_BGM_VOLUME = 0.16
 
